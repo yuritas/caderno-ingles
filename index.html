@@ -360,6 +360,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
         <div class="row"><button class="btn ghost" id="btIa" type="button">Salvar chave</button></div>
       </div>
       <div class="task">
+        <h3>Voz do Gemini</h3>
+        <p class="small" id="gemInfo"></p>
+        <label class="f" for="gemKey">Chave da API do Gemini<input type="password" id="gemKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+        <p class="hint">Crie em aistudio.google.com › Get API key. Com ela, todas as frases (aulas e tutor) passam a usar vozes naturais do Gemini: Kore (feminina) e Charon (masculina).</p>
+        <div class="row"><button class="btn ghost" id="btGem" type="button">Salvar chave</button></div>
+      </div>
+      <div class="task">
         <h3>Convidar alguém</h3>
         <p class="small">Mande o link do app e este código. A pessoa cria a própria conta em "Criar conta".</p>
         <div class="row"><b id="convite" style="font:700 1.4rem var(--f-mono);letter-spacing:.12em"></b><button class="btn ghost" id="btConvite" type="button">Gerar código novo</button></div>
@@ -462,10 +469,14 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       return;
     }
     if (!TRIED[v][text]) {
-      fetchAudio([text], v).then(function () { if (AUD[v][text]) toast('Áudio carregado. Toque de novo.'); else speakSynth(text, v); });
+      if (S && S.vozGemini) toast('Gerando o áudio…');
+      fetchAudio([text], v).then(function () { if (AUD[v][text]) playUrl(AUD[v][text]); else speakSynth(text, v); });
       return;
     }
     speakSynth(text, v);
+  }
+  function playUrl(url) {
+    try { player.pause(); player.src = url; player.playbackRate = slow ? 0.7 : 1; var p = player.play(); if (p && p.catch) p.catch(function () { toast('Áudio pronto. Toque de novo para ouvir.'); }); } catch (e) { toast('Toque de novo para ouvir.'); }
   }
   function speakSynth(text, vozForcada, onEnd) {
     var vv = synth && pickVoice(vozForcada || voz());
@@ -909,6 +920,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       var sel = $('rUser'); sel.replaceChildren.apply(sel, a.usuarios.map(function (u) { var o = el('option', null, u.nome + ' (' + u.usuario + ')'); o.value = u.usuario; return o; }));
       $('audInfo').textContent = a.audios + ' áudios cadastrados · ' + a.aulas + ' aulas.';
       $('iaInfo').textContent = a.iaAtiva ? 'Ativa. Para trocar a chave, cole uma nova e salve.' : 'Ainda não ativada. Cole a chave abaixo para liberar a conversa com o tutor.';
+      $('gemInfo').textContent = a.vozGemini ? 'Ativa. Cada frase é gerada uma vez e fica guardada no Drive.' : 'Ainda não ativada. Sem ela, as aulas usam os áudios gravados e o tutor usa a voz do aparelho.';
       $('sheetLink').href = a.planilha;
     }).catch(function (e) { toast(msgOf(e)); });
   }
@@ -931,6 +943,10 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   $('btIa').onclick = function () {
     var k = $('iaKey').value.trim(); if (!k) { $('iaKey').focus(); return; }
     api('salvarChaveIA', TOKEN, k).then(function () { $('iaKey').value = ''; if (S) S.iaAtiva = true; toast('Chave salva. A conversa com o tutor está ativa.'); loadAdmin(); }).catch(function (e) { toast(msgOf(e)); });
+  };
+  $('btGem').onclick = function () {
+    var k = $('gemKey').value.trim(); if (!k) { $('gemKey').focus(); return; }
+    api('salvarChaveGemini', TOKEN, k).then(function () { $('gemKey').value = ''; if (S) S.vozGemini = true; AUD.feminina = {}; AUD.masculina = {}; TRIED.feminina = {}; TRIED.masculina = {}; toast('Chave salva. A voz do Gemini está ativa.'); loadAdmin(); }).catch(function (e) { toast(msgOf(e)); });
   };
   $('btConvite').onclick = function () { api('novoConvite', TOKEN).then(function (c) { $('convite').textContent = c; toast('Código novo gerado.'); }).catch(function (e) { toast(msgOf(e)); }); };
   $('btReset').onclick = function () {
@@ -1145,8 +1161,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   try { $('hideTutor').checked = lsGet('caderno_hide') !== '0'; } catch (e) {}
   $('hideTutor').onchange = function () { lsSet('caderno_hide', $('hideTutor').checked ? '1' : '0'); };
   function voiceSpeak(text) {
-    // the tutor's replies are new sentences: use the device voice of the chosen gender
-    slow = false; lastText = text; speakSynth(text);
+    // the tutor's replies are new sentences: Gemini voice when active, device voice otherwise
+    slow = false; lastText = text;
+    if (S && S.vozGemini) speak(text); else speakSynth(text);
   }
   function addBubble(quem, texto, extra) {
     var b = el('div', 'bub ' + (quem === 'tutor' ? 't' : 'a'));
@@ -1158,7 +1175,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       b.append(show);
     }
     if (quem === 'tutor') {
-      var row = el('div', 'row'); var sb = sayBtn(texto); sb.onclick = function () { slow = (lastText === texto) ? !slow : false; lastText = texto; speakSynth(texto); };
+      var row = el('div', 'row'); var sb = sayBtn(texto); sb.onclick = function () { if (S && S.vozGemini) { speak(texto); return; } slow = (lastText === texto) ? !slow : false; lastText = texto; speakSynth(texto); };
       row.append(sb);
       if (extra && extra.traducao) { var tr = el('div', 'tr', extra.traducao); tr.hidden = true; var lb = el('button', 'linkbtn', 'Ver tradução'); lb.type = 'button'; lb.onclick = function () { tr.hidden = !tr.hidden; lb.textContent = tr.hidden ? 'Ver tradução' : 'Esconder tradução'; }; row.append(lb); b.append(row, tr); }
       else b.append(row);
