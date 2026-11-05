@@ -114,7 +114,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
 .loading { padding-block: 60px; text-align: center; color: var(--muted) }
 .seg { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px }
-.seg button { flex: 1; border: 0; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--muted); cursor: pointer }
+.seg button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 10px 4px; font-size: .86rem; white-space: nowrap; border-radius: 9px; font-weight: 700; color: var(--muted); cursor: pointer }
 .seg button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
 .err { color: var(--bad); font-size: .92rem }
 hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
@@ -226,11 +226,40 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 
     <section class="view" id="v-conversar" hidden>
       <div class="seg" role="tablist">
-        <button type="button" id="segRep" aria-selected="true">Repetir frases</button>
+        <button type="button" id="segResp" aria-selected="true">Responder</button>
+        <button type="button" id="segDit" aria-selected="false">Ditado</button>
+        <button type="button" id="segRep" aria-selected="false">Repetir</button>
         <button type="button" id="segTutor" aria-selected="false">Tutor</button>
       </div>
       <p class="note small" id="micWarn" hidden></p>
-      <div id="repBox" class="stack">
+      <div id="respBox" class="stack">
+        <p class="muted small">Alguém vai falar com você. Ouça sem ler, entenda e responda falando. Se não entender, ouça de novo ou mais devagar antes de ver o texto.</p>
+        <div class="task" style="justify-items:center;gap:12px">
+          <p class="eyebrow" id="respCount"></p>
+          <button class="btn" id="respPlay" type="button">Ouvir a pergunta</button>
+          <div class="row" style="justify-content:center"><button class="linkbtn" id="respSlow" type="button">Mais devagar</button><button class="linkbtn" id="respShow" type="button">Mostrar o texto</button></div>
+          <div id="respText" class="stack" style="text-align:center" hidden><p class="target" id="respQ"></p><p class="muted small" id="respPt"></p></div>
+          <button class="mic" id="respMic" type="button" aria-label="Responder falando"></button>
+          <p class="heard" id="respHeard">Toque no microfone e responda em inglês.</p>
+          <div class="row" style="width:100%"><input type="text" id="respTxt" placeholder="Ou digite a resposta" style="flex:1" autocomplete="off"><button class="btn ghost" id="respSend" type="button">Enviar</button></div>
+          <div id="respOut" class="stack" style="width:100%" hidden></div>
+          <div class="row" style="justify-content:center"><button class="btn ghost" id="respPrev" type="button">Anterior</button><button class="btn" id="respNext" type="button">Próxima pergunta</button></div>
+        </div>
+      </div>
+      <div id="ditBox" class="stack" hidden>
+        <p class="muted small">Ouça a frase e escreva exatamente o que ouviu. Pode ouvir quantas vezes quiser. O objetivo é treinar o ouvido, não a ortografia.</p>
+        <div class="task" style="justify-items:center;gap:12px">
+          <p class="eyebrow" id="ditCount"></p>
+          <button class="btn" id="ditPlay" type="button">Ouvir a frase</button>
+          <button class="linkbtn" id="ditSlow" type="button">Mais devagar</button>
+          <textarea id="ditTxt" placeholder="Escreva o que ouviu" style="min-height:80px;width:100%" autocomplete="off" autocapitalize="sentences" spellcheck="false"></textarea>
+          <button class="btn" id="ditCheck" type="button">Conferir</button>
+          <div class="words" id="ditWords"></div>
+          <div id="ditAns" class="stack" style="text-align:center" hidden><p class="target" id="ditEn"></p><p class="muted small" id="ditPt"></p></div>
+          <div class="row" style="justify-content:center"><button class="btn ghost" id="ditPrev" type="button">Anterior</button><button class="btn" id="ditNext" type="button">Próxima frase</button></div>
+        </div>
+      </div>
+      <div id="repBox" class="stack" hidden>
         <p class="muted small">Ouça a frase, toque no microfone e repita em voz alta. As palavras em verde foram entendidas; as em vermelho, não. Repita até ficarem todas verdes.</p>
         <div class="task" style="justify-items:center;gap:14px">
           <p class="eyebrow" id="repCount"></p>
@@ -603,7 +632,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       var sp = el('div', 'task'); sp.append(stepTitle(5, 'Converse com o tutor'), el('p', null, L.speakPrompt));
       var go = el('button', 'btn', 'Ir para a conversa'); go.type = 'button'; go.onclick = function () { show('conversar'); setSegConv(true); };
       var rp = el('button', 'btn ghost', 'Repetir as falas'); rp.type = 'button'; rp.onclick = function () { show('conversar'); setSegConv(false); };
-      var r2 = el('div', 'row'); r2.append(go, rp); sp.append(r2); frag.append(sp);
+      var rs = el('button', 'btn ghost', 'Responder perguntas'); rs.type = 'button'; rs.onclick = function () { show('conversar'); setConvMode('resp'); };
+      var r2 = el('div', 'row'); r2.append(rs, go, rp); sp.append(r2); frag.append(sp);
     }
     var row = el('div', 'row');
     if (!done(L)) {
@@ -915,7 +945,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   /* ---------- conversação ---------- */
   var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   var micSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
-  $('repMic').innerHTML = micSvg; $('tutorMic').innerHTML = micSvg;
+  $('repMic').innerHTML = micSvg; $('tutorMic').innerHTML = micSvg; $('respMic').innerHTML = micSvg;
   var rec = null, recBtn = null;
   function listen(btn, onInterim, onFinal) {
     if (!SR) { toast('Este navegador não reconhece voz. Use o Chrome no Android ou o Safari no iPhone.'); return; }
@@ -946,18 +976,117 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     btn.classList.add('on'); btn.setAttribute('aria-label', 'Parar');
     try { r.start(); } catch (e) { rec = null; btn.classList.remove('on'); toast('Não consegui abrir o microfone.'); }
   }
-  function setSegConv(tutor) {
-    $('segRep').setAttribute('aria-selected', String(!tutor)); $('segTutor').setAttribute('aria-selected', String(tutor));
-    $('repBox').hidden = tutor; $('tutorBox').hidden = !tutor;
+  var CONV_MODES = { resp: ['segResp', 'respBox'], dit: ['segDit', 'ditBox'], rep: ['segRep', 'repBox'], tutor: ['segTutor', 'tutorBox'] };
+  function setConvMode(m) {
+    Object.keys(CONV_MODES).forEach(function (k) { $(CONV_MODES[k][0]).setAttribute('aria-selected', String(k === m)); $(CONV_MODES[k][1]).hidden = k !== m; });
+    lsSet('caderno_conv', m);
+    if (m === 'resp') renderResp(); if (m === 'dit') renderDit(); if (m === 'rep') renderRep();
   }
-  $('segRep').onclick = function () { setSegConv(false); };
-  $('segTutor').onclick = function () { setSegConv(true); };
+  function setSegConv(tutor) { setConvMode(tutor ? 'tutor' : 'rep'); }
+  $('segResp').onclick = function () { setConvMode('resp'); };
+  $('segDit').onclick = function () { setConvMode('dit'); };
+  $('segRep').onclick = function () { setConvMode('rep'); };
+  $('segTutor').onclick = function () { setConvMode('tutor'); };
   function enterConversa() {
     var w = $('micWarn');
     if (!SR) { w.hidden = false; w.textContent = 'Seu navegador não reconhece voz. Abra o caderno no Chrome (Android) ou no Safari (iPhone). Na conversa com o tutor você também pode digitar.'; }
     else w.hidden = true;
-    buildRepList(); renderRep();
+    buildRepList(); buildResp();
+    var m = lsGet('caderno_conv'); setConvMode(CONV_MODES[m] ? m : 'resp');
   }
+
+  /* ouvir e responder */
+  var RESP = [], respIdx = 0, respKey = '';
+  function buildResp() {
+    var L = shownLesson(), list = (L && L.listen) || [];
+    var key = (L ? L.id : '') + ':' + list.length;
+    if (key !== respKey) { RESP = list; respIdx = 0; respKey = key; }
+    var byV = { feminina: [], masculina: [] };
+    RESP.forEach(function (x) { (byV[x.voice] || byV.feminina).push(x.q); });
+    fetchAudio(byV.feminina, 'feminina').then(function () { return fetchAudio(byV.masculina, 'masculina'); }).then(function () { fetchAudio(RESP.filter(function (x) { return x.modelAudio !== false; }).map(function (x) { return x.model; })); });
+  }
+  function renderResp() {
+    var item = RESP[respIdx];
+    $('respOut').hidden = true; $('respOut').replaceChildren(); $('respText').hidden = true; $('respShow').textContent = 'Mostrar o texto';
+    $('respHeard').textContent = 'Toque no microfone e responda em inglês.'; $('respTxt').value = '';
+    if (!item) { $('respCount').textContent = ''; $('respPlay').disabled = true; $('respMic').disabled = true; $('respHeard').textContent = 'Esta aula ainda não tem perguntas faladas. Escolha outra aula na aba Aula.'; return; }
+    $('respPlay').disabled = false; $('respMic').disabled = false;
+    $('respCount').textContent = 'Pergunta ' + (respIdx + 1) + ' de ' + RESP.length;
+    $('respQ').textContent = item.q; $('respPt').textContent = item.pt || '';
+  }
+  $('respPlay').onclick = function () { var it = RESP[respIdx]; if (it) { slow = true; lastText = it.q; speak(it.q, it.voice); } };
+  $('respSlow').onclick = function () { var it = RESP[respIdx]; if (it) { slow = false; lastText = it.q; speak(it.q, it.voice); } };
+  $('respShow').onclick = function () { var h = !$('respText').hidden; $('respText').hidden = h; $('respShow').textContent = h ? 'Mostrar o texto' : 'Esconder o texto'; };
+  $('respPrev').onclick = function () { if (respIdx > 0) { respIdx--; renderResp(); } };
+  $('respNext').onclick = function () { if (respIdx < RESP.length - 1) { respIdx++; renderResp(); setTimeout(function () { $('respPlay').click(); }, 150); } else toast('Fim das perguntas desta aula. Muito bem!'); };
+  function okLocal(item, ans) {
+    var a = ' ' + String(ans || '').toLowerCase().replace(/[’‘`]/g, "'").replace(/[.,!?;:"]/g, ' ').replace(/\s+/g, ' ') + ' ';
+    return (item.ok || []).some(function (k) { return a.indexOf(String(k).toLowerCase()) >= 0; });
+  }
+  function showRespResult(item, ans, r) {
+    var out = $('respOut'); out.hidden = false; out.replaceChildren();
+    var good = r.entendeu && r.adequada;
+    var v = el('div', 'fb ' + (good ? 'ok' : 'bad'));
+    v.append(el('span', null, good ? 'Você entendeu e respondeu bem!' : (r.entendeu ? 'Você entendeu, mas a resposta pode melhorar.' : 'Parece que a pergunta não foi entendida. Ouça de novo.')));
+    out.append(v);
+    if (r.comentario) out.append(el('p', 'small', r.comentario));
+    out.append(el('p', 'small muted', 'Você disse: "' + ans + '"'));
+    var better = r.melhor || '';
+    if (better) { var b = el('div', 'row'); b.append(el('span', 'small', 'Melhor dizer: '), el('b', null, better)); out.append(b); }
+    var m = el('div', 'row'); m.append(el('span', 'small', 'Resposta-modelo: '), el('b', null, item.model));
+    if (item.modelAudio !== false) m.append(sayBtn(item.model));
+    out.append(m);
+    if (!$('respText').hidden) return;
+    $('respText').hidden = false; $('respShow').textContent = 'Esconder o texto';
+  }
+  function answerResp(ans) {
+    var item = RESP[respIdx]; if (!item || !ans) return;
+    var ok = okLocal(item, ans);
+    showRespResult(item, ans, { entendeu: ok, adequada: ok, comentario: S.iaAtiva ? 'Conferindo com o tutor…' : '' });
+    bumpDay('conversas');
+    var tw = weekOf(S.hoje), sw = S.semanas.find(function (s) { return s.semana === tw; });
+    if (!sw) { sw = { semana: tw, exercicios: 0, exAcertos: 0, cartoes: 0, cartoesAcertos: 0 }; S.semanas.push(sw); }
+    var aula = (shownLesson() || {}).id, idxAtual = respIdx;
+    api('avaliarResposta', TOKEN, { aula: aula, pergunta: item.q, resposta: ans, modelo: item.model, okLocal: ok }).then(function (r) {
+      sw.exercicios++; if (r.entendeu && r.adequada) sw.exAcertos++;
+      if (respIdx === idxAtual) showRespResult(item, ans, r.ia ? r : { entendeu: ok, adequada: ok, comentario: '' });
+    }).catch(function (e) { if (respIdx === idxAtual) showRespResult(item, ans, { entendeu: ok, adequada: ok, comentario: '' }); });
+  }
+  $('respMic').onclick = function () {
+    $('respHeard').textContent = 'Ouvindo…';
+    listen($('respMic'), function (t) { $('respHeard').textContent = t; }, function (alts) {
+      if (!alts.length) { $('respHeard').textContent = 'Não ouvi. Toque e responda de novo.'; return; }
+      var item = RESP[respIdx], best = alts.find(function (a) { return okLocal(item, a); }) || alts[0];
+      $('respHeard').textContent = '"' + best + '"'; answerResp(best);
+    });
+  };
+  $('respSend').onclick = function () { var t = $('respTxt').value.trim(); if (t) answerResp(t); };
+  $('respTxt').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('respSend').onclick(); });
+
+  /* ditado */
+  var ditIdx = 0;
+  function renderDit() {
+    var item = REP[ditIdx];
+    $('ditWords').replaceChildren(); $('ditAns').hidden = true; $('ditTxt').value = '';
+    if (!item) { $('ditCount').textContent = 'Sem frases nesta aula.'; $('ditPlay').disabled = true; return; }
+    $('ditPlay').disabled = false;
+    $('ditCount').textContent = 'Frase ' + (ditIdx + 1) + ' de ' + REP.length;
+    $('ditEn').textContent = item.en; $('ditPt').textContent = item.pt || '';
+    fetchAudio([item.en], item.voice || undefined);
+  }
+  $('ditPlay').onclick = function () { var it = REP[ditIdx]; if (it) { slow = true; lastText = it.en; speak(it.en, it.voice || undefined); } };
+  $('ditSlow').onclick = function () { var it = REP[ditIdx]; if (it) { slow = false; lastText = it.en; speak(it.en, it.voice || undefined); } };
+  $('ditPrev').onclick = function () { if (ditIdx > 0) { ditIdx--; renderDit(); } };
+  $('ditNext').onclick = function () { if (ditIdx < REP.length - 1) { ditIdx++; renderDit(); setTimeout(function () { $('ditPlay').click(); }, 150); } else toast('Fim das frases desta aula.'); };
+  $('ditCheck').onclick = function () {
+    var item = REP[ditIdx]; var txt = $('ditTxt').value.trim(); if (!item) return; if (!txt) { $('ditTxt').focus(); return; }
+    var sc = scoreWords(item.en, txt), n = sc.filter(function (x) { return x.ok; }).length;
+    $('ditWords').replaceChildren.apply($('ditWords'), sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
+    $('ditAns').hidden = false;
+    toast(n === sc.length ? 'Perfeito! Você ouviu tudo.' : 'Você pegou ' + n + ' de ' + sc.length + ' palavras.');
+    bumpDay('exercicios');
+    queue(function () { return api('registrarDitado', TOKEN, { aula: (shownLesson() || {}).id, alvo: item.en, escrito: txt, acertos: n, total: sc.length, faltaram: sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
+  };
 
   /* repetir frases */
   var REP = [], repIdx = 0;
