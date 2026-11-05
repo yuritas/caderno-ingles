@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Caderno de Inglês</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: caderno em uma coluna; abas fixas no topo; cartões só no que se toca */
+:root {
+  --bg: #eef3f4; --surface: #ffffff; --ink: #12233d; --muted: #56677a; --line: #d3dde1;
+  --accent: #0d5f6e; --accent-soft: #d8ecee; --ok: #1f7a4a; --ok-soft: #dcf1e4; --bad: #b23a2c; --bad-soft: #f8e1dd;
+  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) { :root {
+  --bg: #0b151d; --surface: #13212b; --ink: #e3ebee; --muted: #93a6b2; --line: #24363f;
+  --accent: #5bb8c4; --accent-soft: #163b43; --ok: #5ccf8d; --ok-soft: #12352a; --bad: #f08a7c; --bad-soft: #3d1f1b;
+  color-scheme: dark } }
+* { box-sizing: border-box }
+html, body { margin: 0 }
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--f-body); -webkit-text-size-adjust: 100% }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0 }
+h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em }
+h2 { font-size: 1.3rem; font-weight: 800 }
+h3 { font-size: 1.05rem; font-weight: 600 }
+p { margin: 0 }
+[hidden] { display: none !important }
+.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700 }
+.muted { color: var(--muted) } .small { font-size: .88rem }
+header.top { padding-block: 20px 4px; display: grid; gap: 2px }
+.scale { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px }
+.scale span { font: 500 .72rem var(--f-mono); color: var(--muted); padding-top: 6px; border-top: 4px solid var(--line) }
+.scale span.on { color: var(--accent); border-color: var(--accent) }
+nav.tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; gap: 4px; padding-block: 12px; overflow-x: auto; margin-top: 8px; border-bottom: 1px solid var(--line) }
+nav.tabs button { flex: 1 0 auto; font: 700 .9rem var(--f-body); background: none; border: 0; color: var(--muted); padding: 8px 12px; border-radius: 999px; cursor: pointer }
+nav.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
+nav.tabs .badge { font: 500 .7rem var(--f-mono); margin-left: 4px; opacity: .85 }
+section.view { display: grid; gap: 20px; padding-top: 20px }
+.stack { display: grid; gap: 12px }
+#lessonBox { display: grid; gap: 22px }
+.row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
+.note { background: var(--accent-soft); border-radius: 12px; padding: 14px 16px; display: grid; gap: 4px; white-space: pre-wrap }
+.prose { display: grid; gap: 10px; max-width: 65ch }
+.prose b { color: var(--accent) }
+.ex { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding-block: 12px; border-bottom: 1px solid var(--line); align-items: center }
+.ex .en { font-weight: 700; font-size: 1.1rem; min-width: 0 }
+.ex .pron { font: 500 .85rem var(--f-mono); color: var(--accent); grid-column: 1 }
+.ex .pt { color: var(--muted); grid-column: 1; font-size: .92rem }
+.ex .say { grid-row: 1 / span 3; grid-column: 2 }
+button { font: inherit }
+.btn { font: 700 .95rem var(--f-body); border-radius: 10px; padding: 10px 16px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; min-height: 44px }
+.btn.ghost { background: transparent; color: var(--ink) }
+.btn.ok { background: var(--ok); border-color: var(--ok); color: var(--bg) }
+.btn.bad { background: var(--bad); border-color: var(--bad); color: var(--bg) }
+.btn:disabled { opacity: .45; cursor: default }
+.say { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; display: inline-grid; place-items: center; flex: none }
+.say svg { width: 20px; height: 20px }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px }
+.task .q { font-weight: 700 }
+.hint { font-size: .85rem; color: var(--muted) }
+label.f { display: grid; gap: 4px; font-weight: 700; font-size: .92rem }
+input[type=text], input[type=password], input[type=number], textarea, select { font: 1.05rem var(--f-body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 44px }
+textarea { min-height: 110px; resize: vertical }
+textarea.mono { font: .82rem/1.45 var(--f-mono); min-height: 160px }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none }
+.fb { border-radius: 10px; padding: 10px 12px; font-size: .95rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap }
+.fb.ok { background: var(--ok-soft); color: var(--ok) }
+.fb.bad { background: var(--bad-soft); color: var(--bad) }
+.fb .ans { font-weight: 700; color: var(--ink) }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px 20px; display: grid; gap: 14px; justify-items: center; text-align: center; min-height: 240px; align-content: center }
+.card .big { font-family: var(--f-display); font-weight: 800; font-size: 1.7rem; line-height: 1.2 }
+.card .pron { font: 500 .95rem var(--f-mono); color: var(--accent) }
+.boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px }
+.boxes div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; text-align: center }
+.boxes b { display: block; font: 700 1.2rem var(--f-display); font-variant-numeric: tabular-nums }
+.boxes span { font-size: .72rem; color: var(--muted) }
+.stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px }
+.stat b { display: block; font: 800 1.6rem var(--f-display); font-variant-numeric: tabular-nums }
+.stat span { font-size: .82rem; color: var(--muted) }
+.days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px }
+.days i { aspect-ratio: 1; border-radius: 4px; background: var(--line) }
+.days i.on { background: var(--accent) }
+.days i.today { outline: 2px solid var(--ink); outline-offset: 1px }
+.meter { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden }
+.meter i { display: block; height: 100%; background: var(--accent) }
+.chart { width: 100%; height: auto; display: block }
+.chart text { font: 500 11px var(--f-mono); fill: var(--muted) }
+.chart .grid { stroke: var(--line); stroke-width: 1 }
+.chart .lineA { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round }
+.chart .areaA { fill: var(--accent-soft) }
+.chart .dot { fill: var(--accent) }
+.chart .bar { fill: var(--accent) }
+.chart .goal { stroke: var(--ok); stroke-width: 1.5; stroke-dasharray: 4 4 }
+.chart .goalt { fill: var(--ok) }
+.list { display: grid }
+.li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding-block: 10px; border-bottom: 1px solid var(--line); align-items: baseline }
+.li .tag { font: 500 .75rem var(--f-mono); color: var(--muted); text-align: right }
+.li.done .tag { color: var(--ok) } .li.now .tag { color: var(--accent) }
+.bad-t { color: var(--bad) } .ok-t { color: var(--ok) }
+.writing { display: grid; gap: 8px; padding-block: 12px; border-bottom: 1px solid var(--line) }
+.writing .txt { white-space: pre-wrap }
+.writing .corr { white-space: pre-wrap; background: var(--ok-soft); border-radius: 10px; padding: 10px 12px }
+.pill { display: inline-block; font: 500 .72rem var(--f-mono); padding: 2px 8px; border-radius: 999px; background: var(--line); color: var(--muted) }
+.pill.ok { background: var(--ok-soft); color: var(--ok) }
+.empty { border: 1.5px dashed var(--line); border-radius: 14px; padding: 20px; color: var(--muted); display: grid; gap: 6px }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
+.loading { padding-block: 60px; text-align: center; color: var(--muted) }
+.seg { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px }
+.seg button { flex: 1; border: 0; background: none; padding: 10px; border-radius: 9px; font-weight: 700; color: var(--muted); cursor: pointer }
+.seg button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
+.err { color: var(--bad); font-size: .92rem }
+hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
+.mic { width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; cursor: pointer; margin: 0 auto; box-shadow: 0 0 0 6px var(--accent-soft) }
+.mic svg { width: 32px; height: 32px }
+.mic.on { background: var(--bad); box-shadow: 0 0 0 10px var(--bad-soft) }
+@media (prefers-reduced-motion: no-preference) { .mic.on { animation: pulse 1.2s ease-in-out infinite } @keyframes pulse { 50% { box-shadow: 0 0 0 16px var(--bad-soft) } } }
+.mic:disabled { opacity: .45; cursor: default }
+.target { font-family: var(--f-display); font-weight: 800; font-size: 1.45rem; line-height: 1.3; text-align: center }
+.words { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center }
+.words span { padding: 4px 10px; border-radius: 8px; font-weight: 700 }
+.words .w-ok { background: var(--ok-soft); color: var(--ok) }
+.words .w-bad { background: var(--bad-soft); color: var(--bad); text-decoration: underline wavy }
+.heard { text-align: center; font-size: .92rem; color: var(--muted) }
+.chat { display: grid; gap: 10px }
+.bub { max-width: 88%; padding: 10px 14px; border-radius: 14px; display: grid; gap: 6px }
+.bub.t { background: var(--surface); border: 1px solid var(--line); justify-self: start; border-bottom-left-radius: 4px }
+.bub.a { background: var(--ink); color: var(--bg); justify-self: end; border-bottom-right-radius: 4px }
+.bub .tr { font-size: .85rem; color: var(--muted) }
+.bub .row { gap: 6px }
+.corr-box { background: var(--bad-soft); color: var(--ink); border-radius: 12px; padding: 10px 12px; font-size: .92rem; justify-self: end; max-width: 88% }
+.corr-box b { color: var(--ok) }
+.linkbtn { background: none; border: 0; color: var(--accent); font: 700 .85rem var(--f-body); cursor: pointer; padding: 0 }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <p class="eyebrow">Do zero ao B2 · fim de 2028</p>
+    <h1>Caderno de Inglês</h1>
+    <p class="muted small" id="whoLine" hidden></p>
+    <div class="scale" id="scale" hidden>
+      <span data-lv="A1">A1</span><span data-lv="A2">A2</span><span data-lv="B1">B1</span><span data-lv="B2">B2</span>
+    </div>
+  </header>
+
+  <!-- LOGIN -->
+  <section class="view" id="v-login" hidden>
+    <div class="seg" role="tablist">
+      <button type="button" id="segEntrar" aria-selected="true">Entrar</button>
+      <button type="button" id="segCriar" aria-selected="false">Criar conta</button>
+    </div>
+    <form class="task" id="fEntrar" autocomplete="on">
+      <label class="f" for="inUser">Usuário<input type="text" id="inUser" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+      <label class="f" for="inPass">Senha<input type="password" id="inPass" autocomplete="current-password" required></label>
+      <p class="err" id="errEntrar" hidden></p>
+      <button class="btn" type="submit" id="btEntrar">Entrar</button>
+    </form>
+    <form class="task" id="fCriar" hidden>
+      <label class="f" for="cNome">Seu primeiro nome<input type="text" id="cNome" maxlength="40" required></label>
+      <label class="f" for="cUser">Usuário (para entrar)<input type="text" id="cUser" autocomplete="username" autocapitalize="none" spellcheck="false" placeholder="ex.: yuri" required></label>
+      <label class="f" for="cPass">Senha (mínimo 6 caracteres)<input type="password" id="cPass" autocomplete="new-password" required></label>
+      <label class="f" for="cTrilha">Sua área de trabalho
+        <select id="cTrilha"><option value="contabil">Contabilidade e finanças da saúde</option><option value="direito">Direito</option></select>
+      </label>
+      <label class="f" for="cVoz">Voz dos áudios
+        <select id="cVoz"><option value="feminina">Feminina</option><option value="masculina">Masculina</option></select>
+      </label>
+      <label class="f" for="cConvite">Código de convite<input type="text" id="cConvite" autocapitalize="characters" spellcheck="false"></label>
+      <p class="hint">A primeira conta criada vira a do administrador e não precisa de código. As outras usam o código que aparece na aba Admin.</p>
+      <p class="err" id="errCriar" hidden></p>
+      <button class="btn" type="submit" id="btCriar">Criar conta</button>
+    </form>
+  </section>
+
+  <div id="app" hidden>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-v="aula" aria-selected="true">Aula</button>
+      <button role="tab" data-v="revisar" aria-selected="false">Revisar<span class="badge" id="dueBadge"></span></button>
+      <button role="tab" data-v="conversar" aria-selected="false">Conversar</button>
+      <button role="tab" data-v="escrever" aria-selected="false">Escrever</button>
+      <button role="tab" data-v="evolucao" aria-selected="false">Evolução</button>
+      <button role="tab" data-v="admin" aria-selected="false" id="tabAdmin" hidden>Admin</button>
+    </nav>
+
+    <section class="view" id="v-aula">
+      <div class="note" id="recado" hidden><p class="eyebrow">Recado do professor</p><p id="recadoTxt"></p></div>
+      <label class="f" for="pickAula" id="pickWrap" hidden>Aula<select id="pickAula"></select></label>
+      <div id="lessonBox"></div>
+    </section>
+
+    <section class="view" id="v-revisar" hidden>
+      <div class="stack">
+        <h2>Revisão do dia</h2>
+        <p class="muted small">Leia em português, diga em inglês em voz alta e depois confira. Errou? A palavra volta amanhã. Acertou? Ela some por mais tempo.</p>
+      </div>
+      <div id="cardArea"></div>
+      <div class="stack"><p class="eyebrow">Suas palavras por caixa</p><div class="boxes" id="boxes"></div></div>
+    </section>
+
+    <section class="view" id="v-conversar" hidden>
+      <div class="seg" role="tablist">
+        <button type="button" id="segRep" aria-selected="true">Repetir frases</button>
+        <button type="button" id="segTutor" aria-selected="false">Tutor</button>
+      </div>
+      <p class="note small" id="micWarn" hidden></p>
+      <div id="repBox" class="stack">
+        <p class="muted small">Ouça a frase, toque no microfone e repita em voz alta. As palavras em verde foram entendidas; as em vermelho, não. Repita até ficarem todas verdes.</p>
+        <div class="task" style="justify-items:center;gap:14px">
+          <p class="eyebrow" id="repCount"></p>
+          <p class="target" id="repTarget"></p>
+          <p class="muted small" id="repPt"></p>
+          <div class="row" style="justify-content:center"><span id="repSay"></span></div>
+          <button class="mic" id="repMic" type="button" aria-label="Falar"></button>
+          <div class="words" id="repWords"></div>
+          <p class="heard" id="repHeard"></p>
+          <div class="row" style="justify-content:center"><button class="btn ghost" id="repPrev" type="button">Anterior</button><button class="btn" id="repNext" type="button">Próxima frase</button></div>
+        </div>
+      </div>
+      <div id="tutorBox" class="stack" hidden>
+        <p class="muted small">Converse por voz com o tutor sobre o tema da aula. Ele responde em inglês simples e corrige você em português.</p>
+        <div class="chat" id="chat"></div>
+        <button class="btn" id="tutorStart" type="button">Começar conversa</button>
+        <div class="stack" id="tutorControls" hidden>
+          <button class="mic" id="tutorMic" type="button" aria-label="Falar com o tutor"></button>
+          <p class="heard" id="tutorHeard">Toque no microfone e fale em inglês.</p>
+          <div class="row"><input type="text" id="tutorText" placeholder="Ou digite aqui" style="flex:1" autocomplete="off"><button class="btn ghost" id="tutorSend" type="button">Enviar</button></div>
+          <div class="row"><button class="linkbtn" id="tutorReset" type="button">Começar outra conversa</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="view" id="v-escrever" hidden>
+      <div class="stack">
+        <h2>Escreva em inglês</h2>
+        <p class="muted small">Escreva frases sobre o tema da aula. Elas ficam salvas e são corrigidas, com explicação em português, na próxima atualização do caderno.</p>
+      </div>
+      <div class="task">
+        <label class="q" for="freeText" id="freePrompt">Escreva 3 frases sobre você.</label>
+        <textarea id="freeText" placeholder="My name is…"></textarea>
+        <div class="row"><button class="btn" id="freeSend" type="button">Enviar para correção</button><span class="muted small" id="freeStatus"></span></div>
+      </div>
+      <div class="stack"><p class="eyebrow">Suas escritas</p><div id="writings"></div></div>
+    </section>
+
+    <section class="view" id="v-evolucao" hidden>
+      <div class="stats">
+        <div class="stat"><b id="stStreak">0</b><span>dias seguidos</span></div>
+        <div class="stat"><b id="stHours">0 h</b><span>de estudo no total</span></div>
+        <div class="stat"><b id="stAcc">–</b><span>de acerto nas últimas 4 semanas</span></div>
+        <div class="stat"><b id="stKnown">0</b><span>palavras firmes (caixa 4 ou 5)</span></div>
+      </div>
+      <div class="stack">
+        <div class="row" style="justify-content:space-between"><p class="eyebrow">Horas rumo ao B2</p><span class="small muted" id="b2txt"></span></div>
+        <div class="meter"><i id="b2bar" style="width:0%"></i></div>
+        <p class="hint">Referência: cerca de 600 horas de estudo guiado para sair do zero e chegar ao B2.</p>
+      </div>
+      <div class="stack"><p class="eyebrow">Acerto por semana · últimas 12</p><div id="chAcc"></div></div>
+      <div class="stack"><p class="eyebrow">Minutos por semana · meta 420</p><div id="chMin"></div></div>
+      <div class="stack"><p class="eyebrow">Últimos 14 dias</p><div class="days" id="days"></div></div>
+      <div class="task">
+        <label class="q" for="minutes">Quantos minutos você estudou hoje?</label>
+        <div class="row"><input type="number" id="minutes" min="0" max="300" step="5" value="60" style="max-width:120px"><button class="btn" id="saveMin" type="button">Registrar</button></div>
+        <p class="hint">Meta: 60 minutos por dia, somando aula, revisão, escrita e o que você ouviu.</p>
+      </div>
+      <div class="stack"><p class="eyebrow">Palavras que você mais erra</p><div class="list" id="worst"></div></div>
+      <div class="stack"><p class="eyebrow">Palavras mais praticadas</p><div class="list" id="most"></div></div>
+      <div class="stack"><p class="eyebrow">Aulas</p><div class="list" id="lessonList"></div></div>
+      <hr>
+      <div class="task">
+        <h3>Seu perfil</h3>
+        <label class="f" for="pNome">Nome<input type="text" id="pNome" maxlength="40"></label>
+        <label class="f" for="pTrilha">Área de trabalho
+          <select id="pTrilha"><option value="contabil">Contabilidade e finanças da saúde</option><option value="direito">Direito</option></select>
+        </label>
+        <label class="f" for="pVoz">Voz dos áudios
+          <select id="pVoz"><option value="feminina">Feminina</option><option value="masculina">Masculina</option></select>
+        </label>
+        <div class="row"><button class="btn" id="pSave" type="button">Salvar perfil</button><button class="btn ghost" id="pTest" type="button">Ouvir a voz</button></div>
+      </div>
+      <div class="task">
+        <h3>Trocar senha</h3>
+        <label class="f" for="sAtual">Senha atual<input type="password" id="sAtual" autocomplete="current-password"></label>
+        <label class="f" for="sNova">Nova senha<input type="password" id="sNova" autocomplete="new-password"></label>
+        <div class="row"><button class="btn" id="sSave" type="button">Trocar senha</button><button class="btn ghost" id="btSair" type="button">Sair deste aparelho</button></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-admin" hidden>
+      <div class="task">
+        <h3>Atualizar o caderno com o Claude</h3>
+        <p class="small">1. Gere o relatório e cole no chat com o Claude. 2. Ele devolve um pacote. 3. Cole o pacote aqui embaixo e importe.</p>
+        <div class="row"><button class="btn" id="btRel" type="button">Gerar relatório</button><button class="btn ghost" id="btCopyRel" type="button" hidden>Copiar relatório</button></div>
+        <textarea class="mono" id="relTxt" readonly hidden></textarea>
+        <label class="f" for="impTxt">Pacote do Claude<textarea class="mono" id="impTxt" placeholder='{"aulas": [...]}'></textarea></label>
+        <div class="row"><button class="btn" id="btImp" type="button">Importar pacote</button><span class="small muted" id="impMsg"></span></div>
+      </div>
+      <div class="task">
+        <h3>Conversa com o tutor (IA)</h3>
+        <p class="small" id="iaInfo"></p>
+        <label class="f" for="iaKey">Chave da API da Anthropic<input type="password" id="iaKey" autocomplete="off" spellcheck="false" placeholder="sk-ant-…"></label>
+        <p class="hint">Crie em console.anthropic.com › API Keys. A chave fica guardada só no servidor do app, nunca na tela.</p>
+        <div class="row"><button class="btn ghost" id="btIa" type="button">Salvar chave</button></div>
+      </div>
+      <div class="task">
+        <h3>Convidar alguém</h3>
+        <p class="small">Mande o link do app e este código. A pessoa cria a própria conta em "Criar conta".</p>
+        <div class="row"><b id="convite" style="font:700 1.4rem var(--f-mono);letter-spacing:.12em"></b><button class="btn ghost" id="btConvite" type="button">Gerar código novo</button></div>
+      </div>
+      <div class="task">
+        <h3>Pessoas</h3>
+        <div class="list" id="users"></div>
+        <label class="f" for="rUser">Redefinir senha de<select id="rUser"></select></label>
+        <label class="f" for="rPass">Nova senha<input type="password" id="rPass" autocomplete="new-password"></label>
+        <div class="row"><button class="btn ghost" id="btReset" type="button">Redefinir senha</button></div>
+      </div>
+      <div class="task">
+        <h3>Áudios</h3>
+        <p class="small" id="audInfo"></p>
+        <label class="f" for="audLink">Link do zip de áudios no Google Drive<input type="text" id="audLink" spellcheck="false"></label>
+        <div class="row"><button class="btn ghost" id="btAud" type="button">Importar áudios</button><span class="small muted" id="audMsg"></span></div>
+      </div>
+      <p class="small"><a id="sheetLink" href="#" target="_blank" rel="noopener">Abrir a planilha com todos os dados</a> · dá para baixar como Excel em Arquivo › Fazer download.</p>
+    </section>
+  </div>
+
+  <p class="loading" id="loading">Abrindo o caderno…</p>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function addDays(s, n) { var p = s.split('-').map(Number); var d = new Date(Date.UTC(p[0], p[1] - 1, p[2])); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+  function weekOf(s) { var p = s.split('-').map(Number); var d = new Date(Date.UTC(p[0], p[1] - 1, p[2])); d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7)); return d.toISOString().slice(0, 10); }
+  function norm(s) { return String(s || '').toLowerCase().replace(/[’‘`]/g, "'").replace(/[.,!?;:"]/g, '').replace(/\s+/g, ' ').trim(); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var INTERVALOS = [0, 1, 2, 4, 8, 16];
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(function () { t.hidden = true; }, 2600); }
+
+  /* ---------- storage ---------- */
+  function lsGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
+  function lsSet(k, v) { try { if (v == null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} }
+  var TOKEN = lsGet('caderno_token');
+
+  /* ---------- server ---------- */
+  function msgOf(e) { return String((e && e.message) || e || 'Erro desconhecido').replace(/^Error:\s*/, ''); }
+  var API_URL = 'https://script.google.com/macros/s/AKfycbwzNexWmLdFwKxKrQNpzTRY87-w3fNO3nni5ocC8maDV8lhrdYFcJvb1aHxk0ILwMpf1w/exec';
+  function api(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (!(window.google && google.script && google.script.run)) {
+      return fetch(API_URL, { method: 'POST', body: JSON.stringify({ fn: fn, args: args }), redirect: 'follow' })
+        .then(function (r) { if (!r.ok) throw new Error('Sem conexão com o servidor do caderno (' + r.status + ').'); return r.json(); }, function () { throw new Error('Sem internet ou servidor indisponível. Tente de novo.'); })
+        .then(function (x) {
+          if (x && x.ok) return x.data;
+          var m = (x && x.erro) || 'Erro desconhecido';
+          if (m.indexOf('SESSAO') >= 0) logoutLocal('Sua sessão expirou. Entre de novo.');
+          throw new Error(m);
+        });
+    }
+    return new Promise(function (res, rej) {
+      var r = google.script.run.withSuccessHandler(res).withFailureHandler(function (e) {
+        if (msgOf(e).indexOf('SESSAO') >= 0) { logoutLocal('Sua sessão expirou. Entre de novo.'); }
+        rej(e);
+      });
+      r[fn].apply(r, args);
+    });
+  }
+  var chain = Promise.resolve();
+  function queue(fn) {
+    chain = chain.then(fn).catch(function (e) { toast('Não consegui salvar: ' + msgOf(e)); });
+    return chain;
+  }
+
+  /* ---------- audio ---------- */
+  var AUD = { feminina: {}, masculina: {} };
+  var TRIED = { feminina: {}, masculina: {} };
+  var player = new Audio();
+  var lastText = '', slow = false;
+  var synth = window.speechSynthesis, voices = [];
+  function loadVoices() { try { voices = synth.getVoices().filter(function (v) { return /^en(-|_)?US/i.test(v.lang) || /^en/i.test(v.lang); }); } catch (e) { voices = []; } }
+  if (synth) { loadVoices(); try { synth.onvoiceschanged = loadVoices; } catch (e) {} }
+  function pickVoice(g) {
+    var F = /samantha|victoria|zira|aria|jenny|ava|allison|susan|karen|female|google us english/i;
+    var M = /daniel|alex|david|guy|fred|aaron|tom|male|google uk english male/i;
+    var us = voices.filter(function (v) { return /en(-|_)?US/i.test(v.lang); });
+    var pool = us.length ? us : voices;
+    var re = g === 'masculina' ? M : F;
+    return pool.find(function (v) { return re.test(v.name) && !(g === 'feminina' && /male/i.test(v.name) && !/female/i.test(v.name)); }) || pool[0] || null;
+  }
+  function voz() { return (S && S.eu && S.eu.voz) || 'feminina'; }
+  function speak(text) {
+    text = String(text).trim();
+    slow = (text === lastText) ? !slow : false; lastText = text;
+    var v = voz(), url = AUD[v][text];
+    if (url) {
+      try {
+        player.pause(); player.src = url; player.playbackRate = slow ? 0.7 : 1;
+        var p = player.play(); if (p && p.catch) p.catch(function () { toast('Toque de novo para ouvir.'); });
+        if (slow) toast('Mais devagar');
+      } catch (e) { toast('Não consegui tocar o áudio.'); }
+      return;
+    }
+    if (!TRIED[v][text]) {
+      fetchAudio([text]).then(function () { if (AUD[v][text]) toast('Áudio carregado. Toque de novo.'); else speakSynth(text); });
+      return;
+    }
+    speakSynth(text);
+  }
+  function speakSynth(text) {
+    var vv = synth && pickVoice(voz());
+    if (!vv) { toast('Este aparelho não tem voz em inglês para ler esta frase. Abra o caderno no Chrome ou no Safari.'); return; }
+    try { synth.cancel(); var u = new SpeechSynthesisUtterance(text); u.voice = vv; u.lang = vv.lang; u.rate = slow ? 0.6 : 0.9; synth.speak(u); } catch (e) { toast('Não consegui tocar o áudio.'); }
+  }
+  function fetchAudio(texts) {
+    var v = voz();
+    var need = texts.map(function (t) { return String(t).trim(); }).filter(function (t, i, a) { return t && !AUD[v][t] && !TRIED[v][t] && a.indexOf(t) === i; });
+    var p = Promise.resolve();
+    for (var i = 0; i < need.length; i += 12) {
+      (function (batch) {
+        p = p.then(function () {
+          batch.forEach(function (t) { TRIED[v][t] = true; });
+          return api('audios', TOKEN, batch, v).then(function (m) { Object.keys(m || {}).forEach(function (k) { AUD[v][k] = m[k]; }); }).catch(function () {});
+        });
+      })(need.slice(i, i + 12));
+    }
+    return p;
+  }
+  var speakerSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+  function sayBtn(text) { var b = el('button', 'say'); b.type = 'button'; b.innerHTML = speakerSvg; b.setAttribute('aria-label', 'Ouvir: ' + text); b.title = 'Toque de novo para ouvir mais devagar'; b.onclick = function () { speak(text); }; return b; }
+
+  /* ---------- state ---------- */
+  var S = null;
+  var selectedLesson = null;
+  function done(L) { return !!(S.eu.aulasFeitas && S.eu.aulasFeitas[L.id]); }
+  function currentLesson() { return S.aulas.find(function (l) { return !done(l); }) || S.aulas[S.aulas.length - 1] || null; }
+  function shownLesson() { return S.aulas.find(function (l) { return l.id === selectedLesson; }) || currentLesson(); }
+
+  /* ---------- views ---------- */
+  var views = ['aula', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
+  function show(v) {
+    if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'aula';
+    views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
+    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v)); });
+    if (v === 'revisar') renderCard();
+    if (v === 'conversar') enterConversa();
+    if (v === 'evolucao') renderProgress();
+    if (v === 'admin') loadAdmin();
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { show(b.dataset.v); }; });
+
+  /* ---------- login ---------- */
+  function setSeg(criar) {
+    $('segEntrar').setAttribute('aria-selected', String(!criar)); $('segCriar').setAttribute('aria-selected', String(criar));
+    $('fEntrar').hidden = criar; $('fCriar').hidden = !criar;
+  }
+  $('segEntrar').onclick = function () { setSeg(false); };
+  $('segCriar').onclick = function () { setSeg(true); };
+  function showLogin(msg) {
+    $('loading').hidden = true; $('app').hidden = true; $('v-login').hidden = false; $('whoLine').hidden = true; $('scale').hidden = true;
+    if (msg) { $('errEntrar').textContent = msg; $('errEntrar').hidden = false; }
+  }
+  function logoutLocal(msg) { TOKEN = null; lsSet('caderno_token', null); S = null; showLogin(msg); }
+  $('fEntrar').onsubmit = function (e) {
+    e.preventDefault();
+    var b = $('btEntrar'); b.disabled = true; $('errEntrar').hidden = true;
+    api('entrar', $('inUser').value, $('inPass').value).then(function (r) {
+      TOKEN = r.token; lsSet('caderno_token', TOKEN); $('inPass').value = ''; start();
+    }).catch(function (err) { $('errEntrar').textContent = msgOf(err); $('errEntrar').hidden = false; }).then(function () { b.disabled = false; });
+  };
+  $('fCriar').onsubmit = function (e) {
+    e.preventDefault();
+    var b = $('btCriar'); b.disabled = true; $('errCriar').hidden = true;
+    api('criarConta', { nome: $('cNome').value, usuario: $('cUser').value, senha: $('cPass').value, trilha: $('cTrilha').value, voz: $('cVoz').value, convite: $('cConvite').value }).then(function (r) {
+      TOKEN = r.token; lsSet('caderno_token', TOKEN); $('cPass').value = ''; start();
+    }).catch(function (err) { $('errCriar').textContent = msgOf(err); $('errCriar').hidden = false; }).then(function () { b.disabled = false; });
+  };
+
+  function start() {
+    $('v-login').hidden = true; $('loading').hidden = false; $('app').hidden = true;
+    return api('carregar', TOKEN).then(function (st) {
+      S = st; selectedLesson = null;
+      $('loading').hidden = true; $('app').hidden = false;
+      $('tabAdmin').hidden = !S.eu.admin;
+      renderAll();
+      show('aula');
+      preloadAudio();
+    }).catch(function (e) {
+      if (msgOf(e).indexOf('SESSAO') >= 0) return;
+      $('loading').textContent = 'Não consegui abrir o caderno: ' + msgOf(e) + ' Recarregue a página.';
+    });
+  }
+  function preloadAudio() {
+    if (!S) return;
+    var L = shownLesson(), t = [];
+    if (L) {
+      (L.examples || []).forEach(function (x) { t.push(x.en); });
+      (L.exercises || []).forEach(function (x) { t.push(Array.isArray(x.answer) ? x.answer[0] : x.answer); });
+      (L.words || []).forEach(function (x) { t.push(x.en); });
+    }
+    dueCards().slice(0, 30).forEach(function (c) { t.push(c.en); });
+    fetchAudio(t);
+  }
+
+  /* ---------- render: header ---------- */
+  function renderHeader() {
+    $('whoLine').hidden = false;
+    $('whoLine').textContent = 'Olá, ' + S.eu.nome + ' · ' + (S.eu.trilha === 'direito' ? 'trilha Direito' : 'trilha Contabilidade e saúde') + ' · voz ' + S.eu.voz;
+    $('scale').hidden = false;
+    var order = ['A1', 'A2', 'B1', 'B2'], idx = order.indexOf(S.eu.nivel);
+    document.querySelectorAll('#scale span').forEach(function (s) { s.className = order.indexOf(s.dataset.lv) <= idx ? 'on' : ''; });
+    var parts = [S.eu.recado, S.recadoGeral].filter(Boolean);
+    $('recado').hidden = !parts.length; $('recadoTxt').textContent = parts.join('\n\n');
+  }
+
+  /* ---------- render: lesson ---------- */
+  function renderPicker() {
+    var sel = $('pickAula'); sel.replaceChildren();
+    S.aulas.forEach(function (l) { var o = el('option', null, pad(l.n || 0) + ' · ' + (l.title || l.id) + (done(l) ? ' ✓' : '')); o.value = l.id; sel.append(o); });
+    var L = shownLesson(); if (L) sel.value = L.id;
+    $('pickWrap').hidden = S.aulas.length < 2;
+  }
+  $('pickAula').onchange = function () { selectedLesson = $('pickAula').value; renderLesson(); preloadAudio(); };
+  function renderLesson() {
+    var box = $('lessonBox'), L = shownLesson();
+    if (!L) { var e = el('div', 'empty'); e.append(el('h3', null, 'Nenhuma aula ainda'), el('p', null, S.eu.admin ? 'Vá à aba Admin e importe o pacote de aulas que o Claude enviou.' : 'As aulas aparecem aqui assim que forem cadastradas.')); box.replaceChildren(e); return; }
+    var frag = document.createDocumentFragment();
+    var head = el('div', 'stack');
+    head.append(el('p', 'eyebrow', (L.level || 'A1') + ' · Aula ' + pad(L.n || 0) + (done(L) ? ' · concluída' : '')), el('h2', null, L.title || ''));
+    frag.append(head);
+    if ((L.explain || []).length) {
+      var pr = el('div', 'prose');
+      L.explain.forEach(function (t) { var p = el('p'); p.innerHTML = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); pr.append(p); });
+      frag.append(pr);
+    }
+    if ((L.examples || []).length) {
+      var st = el('div', 'stack'); st.append(el('p', 'eyebrow', 'Ouça e repita em voz alta'));
+      var list = el('div');
+      L.examples.forEach(function (x) { var r = el('div', 'ex'); r.append(el('div', 'en', x.en), sayBtn(x.en), el('div', 'pron', x.pron || ''), el('div', 'pt', x.pt || '')); list.append(r); });
+      st.append(list, el('p', 'muted small', 'Toque uma vez para ouvir na velocidade normal e de novo para ouvir devagar.'));
+      frag.append(st);
+    }
+    if ((L.tips || []).length) {
+      var n = el('div', 'note'); n.append(el('p', 'eyebrow', 'Cuidado'));
+      L.tips.forEach(function (t) { var p = el('p', 'small'); p.innerHTML = esc(t).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); n.append(p); });
+      frag.append(n);
+    }
+    if ((L.exercises || []).length) {
+      var st2 = el('div', 'stack'); st2.append(el('p', 'eyebrow', 'Exercícios · escreva em inglês'));
+      L.exercises.forEach(function (x, i) { st2.append(exerciseCard(L, x, i)); });
+      frag.append(st2);
+    }
+    $('freePrompt').textContent = L.writePrompt || 'Escreva 3 frases em inglês sobre o tema da aula.';
+    var row = el('div', 'row');
+    if (!done(L)) {
+      var b = el('button', 'btn ok', 'Concluí esta aula'); b.type = 'button';
+      b.onclick = function () {
+        b.disabled = true;
+        api('concluirAula', TOKEN, L.id).then(function (f) { S.eu.aulasFeitas = f; selectedLesson = null; renderLesson(); renderPicker(); preloadAudio(); toast('Aula concluída.'); window.scrollTo(0, 0); })
+          .catch(function (e) { b.disabled = false; toast(msgOf(e)); });
+      };
+      row.append(b, el('span', 'muted small', 'Marque depois de fazer os exercícios e repetir os exemplos.'));
+    } else {
+      var next = S.aulas.find(function (l) { return !done(l); });
+      row.append(el('p', 'muted small', next ? 'Aula concluída. A próxima é a ' + pad(next.n) + '.' : 'Aula concluída. A próxima aula chega na próxima atualização do caderno.'));
+    }
+    frag.append(row);
+    box.replaceChildren(frag);
+  }
+  function exerciseCard(L, x, i) {
+    var t = el('div', 'task'), id = 'ex-' + L.id + '-' + i;
+    var lab = el('label', 'q', (i + 1) + '. ' + x.pt); lab.htmlFor = id;
+    var inp = el('input'); inp.type = 'text'; inp.id = id; inp.autocomplete = 'off'; inp.setAttribute('autocapitalize', 'sentences'); inp.spellcheck = false; inp.placeholder = 'Sua resposta em inglês';
+    var row = el('div', 'row'), chk = el('button', 'btn', 'Conferir'); chk.type = 'button'; row.append(chk);
+    var hint = el('p', 'hint', x.hint ? 'Dica: ' + x.hint : ''); hint.hidden = true;
+    if (x.hint) { var h = el('button', 'btn ghost', 'Dica'); h.type = 'button'; h.onclick = function () { hint.hidden = false; }; row.append(h); }
+    var fb = el('div', 'fb'); fb.hidden = true;
+    var answers = (Array.isArray(x.answer) ? x.answer : [x.answer]).filter(Boolean);
+    function go() {
+      var given = inp.value.trim(); if (!given) { inp.focus(); return; }
+      var ok = answers.some(function (a) { return norm(a) === norm(given); });
+      fb.hidden = false; fb.className = 'fb ' + (ok ? 'ok' : 'bad'); fb.replaceChildren();
+      if (ok) fb.append(el('span', null, 'Certo!'), el('span', 'ans', answers[0]));
+      else fb.append(el('span', null, 'Ainda não. O certo é:'), el('span', 'ans', answers[0]), el('span', null, x.why ? '(' + x.why + ')' : ''));
+      fb.append(sayBtn(answers[0]));
+      var tw = weekOf(S.hoje), sw = S.semanas.find(function (s) { return s.semana === tw; });
+      if (!sw) { sw = { semana: tw, exercicios: 0, exAcertos: 0, cartoes: 0, cartoesAcertos: 0 }; S.semanas.push(sw); }
+      sw.exercicios++; if (ok) sw.exAcertos++;
+      bumpDay('exercicios');
+      S.tentativas.push({ tipo: 'exercicio', aula: L.id, pergunta: x.pt, esperado: answers[0], resposta: given, correto: ok });
+      queue(function () { return api('registrarExercicio', TOKEN, { aula: L.id, pergunta: x.pt, esperado: answers[0], resposta: given, correto: ok }); });
+    }
+    chk.onclick = go; inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') go(); });
+    t.append(lab, inp, row, hint, fb);
+    return t;
+  }
+  function bumpDay(field) { var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d[field] = (d[field] || 0) + 1; }
+
+  /* ---------- render: cards ---------- */
+  var revealed = false, currentCardId = null;
+  function dueCards() { return S.cartoes.filter(function (c) { return (c.proxima || '') <= S.hoje; }).sort(function (a, b) { return (a.caixa || 1) - (b.caixa || 1) || String(a.proxima).localeCompare(String(b.proxima)); }); }
+  function renderBoxes() {
+    var counts = [0, 0, 0, 0, 0];
+    S.cartoes.forEach(function (c) { counts[Math.min(5, Math.max(1, c.caixa || 1)) - 1]++; });
+    var labels = ['nova', '2 dias', '4 dias', '8 dias', '16 dias'];
+    $('boxes').replaceChildren.apply($('boxes'), counts.map(function (n, i) { var d = el('div'); d.append(el('b', null, String(n)), el('span', null, labels[i])); return d; }));
+    var due = dueCards().length; $('dueBadge').textContent = due ? String(due) : '';
+  }
+  function renderCard() {
+    renderBoxes();
+    var area = $('cardArea'), list = dueCards();
+    if (!S.cartoes.length) { var e = el('div', 'empty'); e.append(el('h3', null, 'Ainda sem palavras'), el('p', null, 'As palavras de cada aula entram aqui automaticamente.')); area.replaceChildren(e); return; }
+    if (!list.length) { var e2 = el('div', 'empty'); e2.append(el('h3', null, 'Revisão de hoje completa'), el('p', null, 'Volte amanhã. As palavras reaparecem no dia certo para você não esquecer.')); area.replaceChildren(e2); return; }
+    var c = list.find(function (x) { return x.id === currentCardId; }) || list[0];
+    if (c.id !== currentCardId) { revealed = false; currentCardId = c.id; }
+    var card = el('div', 'card');
+    card.append(el('p', 'eyebrow', 'Faltam ' + list.length + (list.length === 1 ? ' palavra' : ' palavras')), el('div', 'big', c.pt));
+    if (!revealed) {
+      card.append(el('p', 'muted small', 'Diga em inglês, em voz alta.'));
+      var b = el('button', 'btn', 'Mostrar resposta'); b.type = 'button';
+      b.onclick = function () { revealed = true; renderCard(); speak(c.en); };
+      card.append(b);
+    } else {
+      var en = el('div', 'big', c.en); en.style.color = 'var(--accent)';
+      card.append(en, el('div', 'pron', c.pron || ''), sayBtn(c.en));
+      var row = el('div', 'row');
+      var bad = el('button', 'btn bad', 'Errei'); bad.type = 'button';
+      var ok = el('button', 'btn ok', 'Acertei'); ok.type = 'button';
+      function grade(good) {
+        var box = good ? Math.min(5, (c.caixa || 1) + 1) : 1;
+        c.caixa = box; c.proxima = addDays(S.hoje, good ? INTERVALOS[box] : 1);
+        if (good) c.acertos++; else c.erros++;
+        var tw = weekOf(S.hoje), sw = S.semanas.find(function (s) { return s.semana === tw; });
+        if (!sw) { sw = { semana: tw, exercicios: 0, exAcertos: 0, cartoes: 0, cartoesAcertos: 0 }; S.semanas.push(sw); }
+        sw.cartoes++; if (good) sw.cartoesAcertos++;
+        bumpDay('cartoes');
+        revealed = false; currentCardId = null; renderCard();
+        queue(function () { return api('avaliarCartao', TOKEN, c.id, good); });
+      }
+      bad.onclick = function () { grade(false); }; ok.onclick = function () { grade(true); };
+      row.append(bad, ok); card.append(row);
+    }
+    area.replaceChildren(card);
+  }
+
+  /* ---------- render: writing ---------- */
+  function renderWritings() {
+    var box = $('writings');
+    if (!S.escritas.length) { box.replaceChildren(el('p', 'muted small', 'Nenhuma escrita ainda.')); return; }
+    box.replaceChildren.apply(box, S.escritas.map(function (w) {
+      var d = el('div', 'writing');
+      var top = el('div', 'row'); top.append(el('span', 'small muted', String(w.data).slice(0, 10) + (w.aula ? ' · aula ' + w.aula : '')), el('span', 'pill' + (w.correcao ? ' ok' : ''), w.correcao ? 'corrigida' : 'aguardando correção'));
+      d.append(top, el('div', 'txt', w.texto));
+      if (w.correcao) d.append(el('div', 'corr', w.correcao));
+      return d;
+    }));
+  }
+  $('freeSend').onclick = function () {
+    var text = $('freeText').value.trim(); if (!text) { $('freeText').focus(); return; }
+    var b = $('freeSend'); b.disabled = true; $('freeStatus').textContent = 'Enviando…';
+    var L = shownLesson();
+    api('salvarEscrita', TOKEN, L ? L.id : '', text).then(function (w) {
+      S.escritas.unshift(w); bumpDay('escritas'); $('freeText').value = ''; renderWritings();
+      $('freeStatus').textContent = 'Enviado. A correção aparece aqui na próxima atualização.';
+    }).catch(function (e) { $('freeStatus').textContent = msgOf(e); }).then(function () { b.disabled = false; });
+  };
+
+  /* ---------- render: progress ---------- */
+  function svgLine(labels, values, goal) {
+    var W = 360, H = 170, L = 34, R = 20, T = 14, B = 24, iw = W - L - R, ih = H - T - B, n = labels.length;
+    var x = function (i) { return L + (n === 1 ? iw / 2 : i * iw / (n - 1)); }, y = function (v) { return T + ih - v / 100 * ih; };
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Acerto por semana">';
+    [0, 50, 100].forEach(function (g) { s += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(g) + '" y2="' + y(g) + '"/><text x="' + (L - 6) + '" y="' + (y(g) + 3) + '" text-anchor="end">' + g + '%</text>'; });
+    if (goal) s += '<line class="goal" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(goal) + '" y2="' + y(goal) + '"/><text class="goalt" x="' + (W - R) + '" y="' + (y(goal) - 5) + '" text-anchor="end">meta ' + goal + '%</text>';
+    var pts = []; values.forEach(function (v, i) { if (v != null) pts.push([x(i), y(v)]); });
+    if (pts.length > 1) {
+      s += '<path class="areaA" d="M' + pts[0][0] + ' ' + y(0) + ' L' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L') + ' L' + pts[pts.length - 1][0] + ' ' + y(0) + ' Z" opacity=".6"/>';
+      s += '<path class="lineA" d="M' + pts.map(function (p) { return p[0] + ' ' + p[1]; }).join(' L') + '"/>';
+    }
+    values.forEach(function (v, i) { if (v != null) s += '<circle class="dot" cx="' + x(i) + '" cy="' + y(v) + '" r="' + (i === n - 1 ? 5 : 3) + '"/>'; });
+    var last = -1; values.forEach(function (v, i) { if (v != null) last = i; });
+    if (last >= 0) s += '<text x="' + x(last) + '" y="' + (y(values[last]) - 10) + '" text-anchor="middle" style="fill:var(--ink);font-weight:700">' + values[last] + '%</text>';
+    labels.forEach(function (lb, i) { if (i % 3 === (n - 1) % 3) s += '<text x="' + x(i) + '" y="' + (H - 6) + '" text-anchor="middle">' + lb + '</text>'; });
+    return s + '</svg>';
+  }
+  function svgBars(labels, values, goal) {
+    var W = 360, H = 170, L = 34, R = 20, T = 14, B = 24, iw = W - L - R, ih = H - T - B, n = labels.length;
+    var max = Math.max(goal || 0, Math.max.apply(null, values.concat([60])));
+    max = Math.ceil(max / 60) * 60;
+    var bw = iw / n * 0.62, x = function (i) { return L + (i + 0.5) * iw / n; }, y = function (v) { return T + ih - v / max * ih; };
+    var s = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Minutos por semana">';
+    [0, max / 2, max].forEach(function (g) { s += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(g) + '" y2="' + y(g) + '"/><text x="' + (L - 6) + '" y="' + (y(g) + 3) + '" text-anchor="end">' + Math.round(g) + '</text>'; });
+    values.forEach(function (v, i) { if (v > 0) s += '<rect class="bar" x="' + (x(i) - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + (y(0) - y(v)) + '" rx="3"' + (i === n - 1 ? '' : ' opacity=".55"') + '/>'; });
+    if (goal) s += '<line class="goal" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(goal) + '" y2="' + y(goal) + '"/>';
+    labels.forEach(function (lb, i) { if (i % 3 === (n - 1) % 3) s += '<text x="' + x(i) + '" y="' + (H - 6) + '" text-anchor="middle">' + lb + '</text>'; });
+    return s + '</svg>';
+  }
+  function renderProgress() {
+    var t = S.hoje, streak = 0, d = S.estudo[t] ? t : addDays(t, -1);
+    while (S.estudo[d]) { streak++; d = addDays(d, -1); }
+    $('stStreak').textContent = String(streak);
+    var mins = Object.keys(S.estudo).reduce(function (s, k) { return s + (Number(S.estudo[k].minutos) || 0); }, 0);
+    $('stHours').textContent = (mins / 60).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' h';
+    var w0 = weekOf(t), weeks = []; for (var i = 11; i >= 0; i--) weeks.push(addDays(w0, -7 * i));
+    var bySem = {}; S.semanas.forEach(function (s) { bySem[s.semana] = s; });
+    var acc = weeks.map(function (w) { var s = bySem[w]; var tot = s ? s.exercicios + s.cartoes : 0; return tot ? Math.round(100 * (s.exAcertos + s.cartoesAcertos) / tot) : null; });
+    var last4 = weeks.slice(-4).map(function (w) { return bySem[w]; }).filter(Boolean);
+    var tot4 = last4.reduce(function (s, x) { return s + x.exercicios + x.cartoes; }, 0), ok4 = last4.reduce(function (s, x) { return s + x.exAcertos + x.cartoesAcertos; }, 0);
+    $('stAcc').textContent = tot4 ? Math.round(100 * ok4 / tot4) + '%' : '–';
+    $('stKnown').textContent = String(S.cartoes.filter(function (c) { return c.caixa >= 4; }).length);
+    var pct = Math.min(100, mins / 60 / 600 * 100);
+    $('b2bar').style.width = pct.toFixed(1) + '%';
+    $('b2txt').textContent = (mins / 60).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' de ~600 h';
+    var lbl = weeks.map(function (w) { return w.slice(8, 10) + '/' + w.slice(5, 7); });
+    $('chAcc').innerHTML = acc.some(function (v) { return v != null; }) ? svgLine(lbl, acc, 80) : '<p class="muted small">O gráfico aparece depois dos primeiros exercícios e revisões.</p>';
+    var minW = weeks.map(function (w) { var s = 0; for (var k = 0; k < 7; k++) { var e = S.estudo[addDays(w, k)]; if (e) s += Number(e.minutos) || 0; } return s; });
+    $('chMin').innerHTML = minW.some(function (v) { return v > 0; }) ? svgBars(lbl, minW, 420) : '<p class="muted small">Registre seus minutos de estudo abaixo para ver o gráfico.</p>';
+    var cells = []; for (var j = 13; j >= 0; j--) { var k = addDays(t, -j), c = el('i'); if (S.estudo[k]) c.className = 'on'; if (j === 0) c.classList.add('today'); c.title = k + (S.estudo[k] ? ' · ' + (S.estudo[k].minutos || 0) + ' min' : ''); cells.push(c); }
+    $('days').replaceChildren.apply($('days'), cells);
+    if (S.estudo[t] && S.estudo[t].minutos && document.activeElement !== $('minutes')) $('minutes').value = S.estudo[t].minutos;
+    var worst = S.cartoes.filter(function (c) { return c.erros > 0; }).sort(function (a, b) { return b.erros - a.erros || a.acertos - b.acertos; }).slice(0, 8);
+    $('worst').replaceChildren.apply($('worst'), worst.length ? worst.map(function (c) { var r = el('div', 'li'); var l = el('div'); l.append(el('b', null, c.en + ' '), el('span', 'muted small', c.pt)); r.append(l, el('span', 'tag bad-t', c.erros + ' erro' + (c.erros > 1 ? 's' : '') + ' · ' + c.acertos + ' acerto' + (c.acertos === 1 ? '' : 's'))); return r; }) : [el('p', 'muted small', 'Nenhum erro na revisão ainda.')]);
+    var most = S.cartoes.filter(function (c) { return c.acertos + c.erros > 0; }).sort(function (a, b) { return (b.acertos + b.erros) - (a.acertos + a.erros); }).slice(0, 8);
+    $('most').replaceChildren.apply($('most'), most.length ? most.map(function (c) { var r = el('div', 'li'); var l = el('div'); l.append(el('b', null, c.en + ' '), el('span', 'muted small', c.pt)); r.append(l, el('span', 'tag', (c.acertos + c.erros) + 'x · caixa ' + c.caixa)); return r; }) : [el('p', 'muted small', 'Faça a revisão para ver suas palavras aqui.')]);
+    var cur = currentLesson();
+    $('lessonList').replaceChildren.apply($('lessonList'), S.aulas.length ? S.aulas.map(function (l) { var isNow = cur && l.id === cur.id && !done(l); var r = el('div', 'li' + (done(l) ? ' done' : isNow ? ' now' : '')); r.append(el('span', null, pad(l.n || 0) + ' · ' + (l.title || '')), el('span', 'tag', done(l) ? 'feita' : isNow ? 'atual' : 'depois')); return r; }) : [el('p', 'muted small', 'As aulas aparecem aqui.')]);
+    $('pNome').value = S.eu.nome; $('pTrilha').value = S.eu.trilha; $('pVoz').value = S.eu.voz;
+  }
+  $('saveMin').onclick = function () {
+    var m = Math.max(0, Math.min(300, Number($('minutes').value) || 0));
+    var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d.minutos = m; renderProgress();
+    queue(function () { return api('registrarMinutos', TOKEN, m).then(function () { toast(m + ' minutos registrados.'); }); });
+  };
+  $('pSave').onclick = function () {
+    var b = $('pSave'); b.disabled = true;
+    var trilhaMudou = $('pTrilha').value !== S.eu.trilha;
+    api('preferencias', TOKEN, { nome: $('pNome').value, trilha: $('pTrilha').value, voz: $('pVoz').value }).then(function (eu) {
+      S.eu = eu; toast('Perfil salvo.');
+      if (trilhaMudou) return start(); renderHeader(); preloadAudio();
+    }).catch(function (e) { toast(msgOf(e)); }).then(function () { b.disabled = false; });
+  };
+  $('pTest').onclick = function () { var prev = S.eu.voz; S.eu.voz = $('pVoz').value; speak('Nice to meet you.'); S.eu.voz = prev; };
+  $('sSave').onclick = function () {
+    api('trocarSenha', TOKEN, $('sAtual').value, $('sNova').value).then(function () { $('sAtual').value = ''; $('sNova').value = ''; toast('Senha trocada.'); }).catch(function (e) { toast(msgOf(e)); });
+  };
+  $('btSair').onclick = function () { var t = TOKEN; logoutLocal(); api('sair', t).catch(function () {}); };
+
+  /* ---------- admin ---------- */
+  function loadAdmin() {
+    api('adminInfo', TOKEN).then(function (a) {
+      $('convite').textContent = a.convite;
+      $('users').replaceChildren.apply($('users'), a.usuarios.map(function (u) { var r = el('div', 'li'); r.append(el('span', null, u.nome + ' (' + u.usuario + ')' + (u.admin ? ' · admin' : '')), el('span', 'tag', (u.trilha === 'direito' ? 'Direito' : 'Contabilidade') + ' · ' + u.nivel)); return r; }));
+      var sel = $('rUser'); sel.replaceChildren.apply(sel, a.usuarios.map(function (u) { var o = el('option', null, u.nome + ' (' + u.usuario + ')'); o.value = u.usuario; return o; }));
+      $('audInfo').textContent = a.audios + ' áudios cadastrados · ' + a.aulas + ' aulas.';
+      $('iaInfo').textContent = a.iaAtiva ? 'Ativa. Para trocar a chave, cole uma nova e salve.' : 'Ainda não ativada. Cole a chave abaixo para liberar a conversa com o tutor.';
+      $('sheetLink').href = a.planilha;
+    }).catch(function (e) { toast(msgOf(e)); });
+  }
+  function copyText(ta) {
+    var txt = ta.value;
+    function fallback() { ta.hidden = false; ta.focus(); ta.select(); try { document.execCommand('copy'); toast('Copiado.'); } catch (e) { toast('Selecione o texto e copie.'); } }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { toast('Relatório copiado. Cole no chat com o Claude.'); }, fallback); else fallback();
+  }
+  $('btRel').onclick = function () {
+    var b = $('btRel'); b.disabled = true;
+    api('relatorio', TOKEN).then(function (txt) { $('relTxt').value = txt; $('relTxt').hidden = false; $('btCopyRel').hidden = false; copyText($('relTxt')); })
+      .catch(function (e) { toast(msgOf(e)); }).then(function () { b.disabled = false; });
+  };
+  $('btCopyRel').onclick = function () { copyText($('relTxt')); };
+  $('btImp').onclick = function () {
+    var b = $('btImp'); b.disabled = true; $('impMsg').textContent = 'Importando…';
+    api('importar', TOKEN, $('impTxt').value).then(function (msg) { $('impMsg').textContent = msg; $('impTxt').value = ''; return start().then(function () { show('admin'); }); })
+      .catch(function (e) { $('impMsg').textContent = msgOf(e); }).then(function () { b.disabled = false; });
+  };
+  $('btIa').onclick = function () {
+    var k = $('iaKey').value.trim(); if (!k) { $('iaKey').focus(); return; }
+    api('salvarChaveIA', TOKEN, k).then(function () { $('iaKey').value = ''; if (S) S.iaAtiva = true; toast('Chave salva. A conversa com o tutor está ativa.'); loadAdmin(); }).catch(function (e) { toast(msgOf(e)); });
+  };
+  $('btConvite').onclick = function () { api('novoConvite', TOKEN).then(function (c) { $('convite').textContent = c; toast('Código novo gerado.'); }).catch(function (e) { toast(msgOf(e)); }); };
+  $('btReset').onclick = function () {
+    api('redefinirSenha', TOKEN, $('rUser').value, $('rPass').value).then(function () { $('rPass').value = ''; toast('Senha redefinida. Avise a pessoa.'); }).catch(function (e) { toast(msgOf(e)); });
+  };
+  $('btAud').onclick = function () {
+    var b = $('btAud'); b.disabled = true; $('audMsg').textContent = 'Importando, pode levar um minuto…';
+    api('importarAudiosAdmin', TOKEN, $('audLink').value).then(function (n) { $('audMsg').textContent = n + ' áudios importados.'; AUD = { feminina: {}, masculina: {} }; TRIED = { feminina: {}, masculina: {} }; loadAdmin(); preloadAudio(); })
+      .catch(function (e) { $('audMsg').textContent = msgOf(e); }).then(function () { b.disabled = false; });
+  };
+
+  /* ---------- conversação ---------- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var micSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
+  $('repMic').innerHTML = micSvg; $('tutorMic').innerHTML = micSvg;
+  var rec = null, recBtn = null;
+  function listen(btn, onInterim, onFinal) {
+    if (!SR) { toast('Este navegador não reconhece voz. Use o Chrome no Android ou o Safari no iPhone.'); return; }
+    if (rec) { try { rec.stop(); } catch (e) {} return; }
+    try { if (synth) synth.cancel(); player.pause(); } catch (e) {}
+    var r = new SR(); rec = r; recBtn = btn;
+    r.lang = 'en-US'; r.interimResults = true; r.maxAlternatives = 3; r.continuous = false;
+    var finals = [];
+    r.onresult = function (ev) {
+      var interim = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var res = ev.results[i];
+        if (res.isFinal) { var alts = []; for (var j = 0; j < res.length; j++) alts.push(res[j].transcript); finals.push(alts); }
+        else interim += res[0].transcript;
+      }
+      onInterim(finals.map(function (a) { return a[0]; }).join(' ') + ' ' + interim);
+    };
+    r.onerror = function (ev) {
+      var m = ev.error === 'not-allowed' || ev.error === 'service-not-allowed' ? 'Permita o uso do microfone para este site nas configurações do navegador.' : ev.error === 'no-speech' ? 'Não ouvi nada. Toque e fale de novo.' : ev.error === 'network' ? 'O reconhecimento de voz precisa de internet.' : '';
+      if (m) toast(m);
+    };
+    r.onend = function () {
+      rec = null; btn.classList.remove('on'); btn.setAttribute('aria-label', 'Falar');
+      var alts = [''];
+      finals.forEach(function (a) { var next = []; alts.forEach(function (p) { a.forEach(function (x) { next.push((p + ' ' + x).trim()); }); }); alts = next.slice(0, 9); });
+      onFinal(alts.filter(Boolean));
+    };
+    btn.classList.add('on'); btn.setAttribute('aria-label', 'Parar');
+    try { r.start(); } catch (e) { rec = null; btn.classList.remove('on'); toast('Não consegui abrir o microfone.'); }
+  }
+  function setSegConv(tutor) {
+    $('segRep').setAttribute('aria-selected', String(!tutor)); $('segTutor').setAttribute('aria-selected', String(tutor));
+    $('repBox').hidden = tutor; $('tutorBox').hidden = !tutor;
+  }
+  $('segRep').onclick = function () { setSegConv(false); };
+  $('segTutor').onclick = function () { setSegConv(true); };
+  function enterConversa() {
+    var w = $('micWarn');
+    if (!SR) { w.hidden = false; w.textContent = 'Seu navegador não reconhece voz. Abra o caderno no Chrome (Android) ou no Safari (iPhone). Na conversa com o tutor você também pode digitar.'; }
+    else w.hidden = true;
+    buildRepList(); renderRep();
+  }
+
+  /* repetir frases */
+  var REP = [], repIdx = 0;
+  function buildRepList() {
+    var L = shownLesson(), seen = {}, list = [];
+    function add(en, pt, pron) { en = String(en || '').trim(); if (!en || seen[en] || /…|\//.test(en)) return; seen[en] = 1; list.push({ en: en, pt: pt || '', pron: pron || '' }); }
+    if (L) {
+      (L.examples || []).forEach(function (x) { add(x.en, x.pt, x.pron); });
+      (L.exercises || []).forEach(function (x) { add(Array.isArray(x.answer) ? x.answer[0] : x.answer, x.pt); });
+    }
+    var key = list.map(function (x) { return x.en; }).join('|');
+    if (key !== REP.map(function (x) { return x.en; }).join('|')) { REP = list; repIdx = 0; }
+  }
+  function tokens(s) { return norm(s).replace(/'/g, "'").split(' ').filter(Boolean); }
+  var CONTR = { "i'm": 'i am', "he's": 'he is', "she's": 'she is', "it's": 'it is', "you're": 'you are', "we're": 'we are', "they're": 'they are', "name's": 'name is', "don't": 'do not', "can't": 'can not', "isn't": 'is not' };
+  function expand(arr) { var o = []; arr.forEach(function (w) { (CONTR[w] || w).split(' ').forEach(function (x) { o.push(x); }); }); return o; }
+  function scoreWords(target, heard) {
+    var t = tokens(target), h = expand(tokens(heard)), used = {};
+    return t.map(function (w) {
+      var parts = expand([w]), ok = parts.every(function (p) { for (var i = 0; i < h.length; i++) { if (!used[i] && h[i] === p) { used[i] = 1; return true; } } return false; });
+      return { w: w, ok: ok };
+    });
+  }
+  function renderRep() {
+    var item = REP[repIdx];
+    $('repWords').replaceChildren(); $('repHeard').textContent = '';
+    if (!item) { $('repTarget').textContent = 'Sem frases nesta aula.'; $('repPt').textContent = ''; $('repSay').replaceChildren(); $('repMic').disabled = true; $('repCount').textContent = ''; return; }
+    $('repMic').disabled = false;
+    $('repCount').textContent = 'Frase ' + (repIdx + 1) + ' de ' + REP.length;
+    $('repTarget').textContent = item.en;
+    $('repPt').textContent = item.pt + (item.pron ? '  ·  ' + item.pron : '');
+    $('repSay').replaceChildren(sayBtn(item.en));
+    fetchAudio([item.en]);
+  }
+  $('repPrev').onclick = function () { if (repIdx > 0) { repIdx--; renderRep(); } };
+  $('repNext').onclick = function () { if (repIdx < REP.length - 1) { repIdx++; renderRep(); } else toast('Fim das frases desta aula. Muito bem!'); };
+  $('repMic').onclick = function () {
+    var item = REP[repIdx]; if (!item) return;
+    $('repWords').replaceChildren(); $('repHeard').textContent = 'Ouvindo…';
+    listen($('repMic'), function (t) { $('repHeard').textContent = t; }, function (alts) {
+      if (!alts.length) { $('repHeard').textContent = 'Não entendi. Toque e fale de novo, perto do celular.'; return; }
+      var best = null;
+      alts.forEach(function (a) { var sc = scoreWords(item.en, a), n = sc.filter(function (x) { return x.ok; }).length; if (!best || n > best.n) best = { sc: sc, n: n, a: a }; });
+      $('repWords').replaceChildren.apply($('repWords'), best.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
+      var all = best.n === best.sc.length;
+      $('repHeard').textContent = (all ? 'Perfeito! ' : 'Entendi: ') + '"' + best.a + '"';
+      if (all) toast('Perfeito!');
+      bumpDay('conversas');
+      queue(function () { return api('registrarRepeticao', TOKEN, { aula: (shownLesson() || {}).id, alvo: item.en, reconhecido: best.a, acertos: best.n, total: best.sc.length, faltaram: best.sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
+    });
+  };
+
+  /* tutor */
+  var HIST = [], tutorBusy = false;
+  function voiceSpeak(text) {
+    // the tutor's replies are new sentences: use the device voice of the chosen gender
+    slow = false; lastText = text; speakSynth(text);
+  }
+  function addBubble(quem, texto, extra) {
+    var b = el('div', 'bub ' + (quem === 'tutor' ? 't' : 'a'));
+    b.append(el('div', null, texto));
+    if (quem === 'tutor') {
+      var row = el('div', 'row'); var sb = sayBtn(texto); sb.onclick = function () { slow = (lastText === texto) ? !slow : false; lastText = texto; speakSynth(texto); };
+      row.append(sb);
+      if (extra && extra.traducao) { var tr = el('div', 'tr', extra.traducao); tr.hidden = true; var lb = el('button', 'linkbtn', 'Ver tradução'); lb.type = 'button'; lb.onclick = function () { tr.hidden = !tr.hidden; lb.textContent = tr.hidden ? 'Ver tradução' : 'Esconder tradução'; }; row.append(lb); b.append(row, tr); }
+      else b.append(row);
+    }
+    $('chat').append(b);
+    if (quem === 'aluno' && extra && extra.correcao) {
+      var c = el('div', 'corr-box'); c.append(el('span', null, 'Melhor dizer: '), el('b', null, extra.correcao));
+      if (extra.explicacao) c.append(el('div', 'small', extra.explicacao));
+      $('chat').append(c);
+    }
+    b.scrollIntoView({ block: 'end', behavior: 'smooth' });
+    return b;
+  }
+  function tutorSay(fala) {
+    if (tutorBusy) return; tutorBusy = true;
+    $('tutorMic').disabled = true; $('tutorSend').disabled = true; $('tutorHeard').textContent = 'O tutor está pensando…';
+    var hist = HIST.slice(-10);
+    var userBubble = fala ? addBubble('aluno', fala) : null;
+    api('conversar', TOKEN, { fala: fala, historico: hist, aula: (shownLesson() || {}).id }).then(function (r) {
+      if (fala) {
+        HIST.push({ quem: 'aluno', texto: fala }); bumpDay('conversas');
+        if (r.correcao && userBubble) {
+          var c = el('div', 'corr-box'); c.append(el('span', null, 'Melhor dizer: '), el('b', null, r.correcao));
+          if (r.explicacao) c.append(el('div', 'small', r.explicacao));
+          userBubble.after(c);
+        }
+      }
+      HIST.push({ quem: 'tutor', texto: r.resposta });
+      addBubble('tutor', r.resposta, r);
+      voiceSpeak(r.resposta);
+      $('tutorHeard').textContent = 'Toque no microfone e responda.';
+    }).catch(function (e) {
+      if (userBubble) userBubble.remove();
+      $('tutorHeard').textContent = msgOf(e);
+    }).then(function () { tutorBusy = false; $('tutorMic').disabled = false; $('tutorSend').disabled = false; });
+  }
+  $('tutorStart').onclick = function () {
+    if (S && S.iaAtiva === false) { toast(S.eu.admin ? 'Ative a conversa colando a chave da API na aba Admin.' : 'A conversa ainda não foi ativada pelo administrador.'); return; }
+    $('tutorStart').hidden = true; $('tutorControls').hidden = false; HIST = []; $('chat').replaceChildren(); tutorSay('');
+  };
+  $('tutorReset').onclick = function () { HIST = []; $('chat').replaceChildren(); tutorSay(''); };
+  $('tutorMic').onclick = function () {
+    $('tutorHeard').textContent = 'Ouvindo…';
+    listen($('tutorMic'), function (t) { $('tutorHeard').textContent = t; }, function (alts) {
+      if (!alts.length) { $('tutorHeard').textContent = 'Não entendi. Toque e fale de novo.'; return; }
+      tutorSay(alts[0]);
+    });
+  };
+  $('tutorSend').onclick = function () { var t = $('tutorText').value.trim(); if (!t) return; $('tutorText').value = ''; tutorSay(t); };
+  $('tutorText').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('tutorSend').onclick(); });
+
+  function renderAll() { renderHeader(); renderPicker(); renderLesson(); renderBoxes(); renderWritings(); }
+
+  if (TOKEN) start(); else showLogin();
+})();
+</script>
+</body>
+</html>
