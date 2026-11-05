@@ -426,13 +426,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     var v = voz();
     var need = texts.map(function (t) { return String(t).trim(); }).filter(function (t, i, a) { return t && !AUD[v][t] && !TRIED[v][t] && a.indexOf(t) === i; });
     var p = Promise.resolve();
-    for (var i = 0; i < need.length; i += 12) {
+    for (var i = 0; i < need.length; i += 6) {
       (function (batch) {
         p = p.then(function () {
           batch.forEach(function (t) { TRIED[v][t] = true; });
           return api('audios', TOKEN, batch, v).then(function (m) { Object.keys(m || {}).forEach(function (k) { AUD[v][k] = m[k]; }); }).catch(function () {});
         });
-      })(need.slice(i, i + 12));
+      })(need.slice(i, i + 6));
     }
     return p;
   }
