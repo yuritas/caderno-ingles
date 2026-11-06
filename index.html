@@ -6,41 +6,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caderno de Inglês</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@500;600&display=swap">
 <style>
 /* Layout: caderno em uma coluna; abas fixas no topo; cartões só no que se toca */
 :root {
-  --bg: #eef3f4; --surface: #ffffff; --ink: #12233d; --muted: #56677a; --line: #d3dde1;
-  --accent: #0d5f6e; --accent-soft: #d8ecee; --ok: #1f7a4a; --ok-soft: #dcf1e4; --bad: #b23a2c; --bad-soft: #f8e1dd;
-  --f-display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
-  --f-body: "Atkinson Hyperlegible", "Segoe UI", system-ui, sans-serif;
-  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+  --bg: #f3f5f9; --surface: #ffffff; --ink: #1b2340; --muted: #5d6684; --line: #dde2ee;
+  --accent: #2e46b8; --accent-soft: #e4e9fb; --on-accent: #ffffff; --amber: #e9a23b; --amber-soft: #fcf0dc; --hero: #2e46b8; --on-hero: #ffffff;
+  --ok: #1d7a4e; --ok-soft: #dff2e7; --bad: #b7392c; --bad-soft: #fae3df;
+  --f-display: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+  --f-mono: "Atkinson Hyperlegible Mono", ui-monospace, Menlo, monospace;
+  --nav-h: 64px;
   color-scheme: light;
 }
 @media (prefers-color-scheme: dark) { :root {
-  --bg: #0b151d; --surface: #13212b; --ink: #e3ebee; --muted: #93a6b2; --line: #24363f;
-  --accent: #5bb8c4; --accent-soft: #163b43; --ok: #5ccf8d; --ok-soft: #12352a; --bad: #f08a7c; --bad-soft: #3d1f1b;
+  --bg: #0f1426; --surface: #171e36; --ink: #e7eaf6; --muted: #9aa3c2; --line: #28304d;
+  --accent: #8ea2ff; --accent-soft: #232d5c; --on-accent: #0f1426; --amber: #f2b45a; --amber-soft: #3a2c14; --hero: #2b3b94; --on-hero: #ffffff;
+  --ok: #6fd39c; --ok-soft: #153526; --bad: #f29486; --bad-soft: #3d1f1b;
   color-scheme: dark } }
 * { box-sizing: border-box }
 html, body { margin: 0 }
 body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--f-body); -webkit-text-size-adjust: 100% }
-.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 56px }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 calc(var(--nav-h) + 40px + env(safe-area-inset-bottom, 0px)) }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0 }
-h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.01em }
+h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em }
 h2 { font-size: 1.3rem; font-weight: 800 }
 h3 { font-size: 1.05rem; font-weight: 600 }
 p { margin: 0 }
 [hidden] { display: none !important }
-.eyebrow { font-size: .75rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); font-weight: 700 }
+.eyebrow { font-size: .85rem; color: var(--accent); font-weight: 700 }
 .muted { color: var(--muted) } .small { font-size: .88rem }
-header.top { padding-block: 20px 4px; display: grid; gap: 2px }
-.scale { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px }
-.scale span { font: 500 .72rem var(--f-mono); color: var(--muted); padding-top: 6px; border-top: 4px solid var(--line) }
-.scale span.on { color: var(--accent); border-color: var(--accent) }
-nav.tabs { position: sticky; top: 0; z-index: 5; background: var(--bg); display: flex; gap: 4px; padding-block: 12px; overflow-x: auto; margin-top: 8px; border-bottom: 1px solid var(--line) }
-nav.tabs button { flex: 1 0 auto; font: 700 .9rem var(--f-body); background: none; border: 0; color: var(--muted); padding: 8px 12px; border-radius: 999px; cursor: pointer }
-nav.tabs button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
-nav.tabs .badge { font: 500 .7rem var(--f-mono); margin-left: 4px; opacity: .85 }
+header.top { padding-block: 18px 6px; display: grid; gap: 14px }
+.bar { display: flex; align-items: center; gap: 12px }
+.brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 }
+.brand svg { width: 34px; height: 34px; flex: none }
+.brand .who { font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.iconbtn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none }
+.iconbtn svg { width: 22px; height: 22px }
+.iconbtn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent) }
+.journey { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px 12px; display: grid; gap: 10px }
+.journey .top2 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
+.journey .lv { font: 800 1.05rem var(--f-display) }
+.journey .goal { font-size: .82rem; color: var(--muted) }
+.wave { display: grid; grid-template-columns: repeat(32, 1fr); gap: 3px; align-items: center; height: 40px }
+.wave i { display: block; border-radius: 2px; background: var(--line) }
+.wave i.on { background: var(--accent) }
+.wave i.now { background: var(--amber) }
+.wlab { display: grid; grid-template-columns: repeat(4, 1fr); font: 600 .75rem var(--f-mono); color: var(--muted) }
+.wlab span.on { color: var(--accent) }
+.today { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--line); padding-top: 10px }
+.today div { display: grid }
+.today b { font: 800 1.15rem var(--f-display); font-variant-numeric: tabular-nums }
+.today span { font-size: .78rem; color: var(--muted) }
+.today .streak b { color: var(--amber) }
+.voice { display: flex; align-items: center; gap: 10px }
+.voice > span { font-size: .85rem; font-weight: 700; color: var(--muted); white-space: nowrap }
+.voice .seg { flex: 1; padding: 3px; border-radius: 12px }
+.voice .seg button { padding: 8px 2px; font-size: .84rem }
+nav.tabs { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(6, 1fr); padding: 6px max(6px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 18px rgba(27, 35, 64, .06) }
+@media (min-width: 680px) { nav.tabs { left: 50%; right: auto; width: 640px; transform: translateX(-50%); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0 } }
+nav.tabs button { position: relative; display: grid; justify-items: center; gap: 2px; font: 700 .7rem var(--f-body); background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 12px; cursor: pointer; min-height: 52px; min-width: 0 }
+nav.tabs button svg { width: 24px; height: 24px }
+nav.tabs button[aria-selected="true"] { color: var(--accent); background: var(--accent-soft) }
+nav.tabs .badge { position: absolute; top: 2px; left: 54%; font: 600 .62rem var(--f-mono); background: var(--amber); color: #1b2340; border-radius: 999px; padding: 1px 5px; min-width: 16px; text-align: center }
+nav.tabs .badge:empty { display: none }
 section.view { display: grid; gap: 20px; padding-top: 20px }
 .stack { display: grid; gap: 12px }
 #lessonBox { display: grid; gap: 22px }
@@ -54,19 +83,22 @@ section.view { display: grid; gap: 20px; padding-top: 20px }
 .ex .pt { color: var(--muted); grid-column: 1; font-size: .92rem }
 .ex .say { grid-row: 1 / span 3; grid-column: 2 }
 button { font: inherit }
-.btn { font: 700 .95rem var(--f-body); border-radius: 10px; padding: 10px 16px; border: 1.5px solid var(--ink); background: var(--ink); color: var(--bg); cursor: pointer; min-height: 44px }
-.btn.ghost { background: transparent; color: var(--ink) }
+.btn { font: 700 .95rem var(--f-body); border-radius: 12px; padding: 10px 18px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent); cursor: pointer; min-height: 46px }
+.btn.ghost { background: var(--surface); color: var(--accent); border-color: var(--line) }
 .btn.ok { background: var(--ok); border-color: var(--ok); color: var(--bg) }
 .btn.bad { background: var(--bad); border-color: var(--bad); color: var(--bg) }
 .btn:disabled { opacity: .45; cursor: default }
 .say { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; display: inline-grid; place-items: center; flex: none }
 .say svg { width: 20px; height: 20px }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
-.task { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: grid; gap: 10px }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 12px }
+.task.hero { background: var(--hero); border-color: var(--hero); color: var(--on-hero) }
+.task.hero .eyebrow, .task.hero .small { color: inherit; opacity: .9 }
+.task.hero .btn { background: var(--on-hero); color: var(--hero); border-color: var(--on-hero) }
 .task .q { font-weight: 700 }
 .hint { font-size: .85rem; color: var(--muted) }
 label.f { display: grid; gap: 4px; font-weight: 700; font-size: .92rem }
-input[type=text], input[type=password], input[type=number], textarea, select { font: 1.05rem var(--f-body); color: var(--ink); background: var(--bg); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 44px }
+input[type=text], input[type=password], input[type=number], textarea, select { font: 1.05rem var(--f-body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 44px }
 textarea { min-height: 110px; resize: vertical }
 textarea.mono { font: .82rem/1.45 var(--f-mono); min-height: 160px }
 input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none }
@@ -111,11 +143,11 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .pill { display: inline-block; font: 500 .72rem var(--f-mono); padding: 2px 8px; border-radius: 999px; background: var(--line); color: var(--muted) }
 .pill.ok { background: var(--ok-soft); color: var(--ok) }
 .empty { border: 1.5px dashed var(--line); border-radius: 14px; padding: 20px; color: var(--muted); display: grid; gap: 6px }
-.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
 .loading { padding-block: 60px; text-align: center; color: var(--muted) }
-.seg { display: flex; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 4px }
-.seg button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 10px 4px; font-size: .86rem; white-space: nowrap; border-radius: 9px; font-weight: 700; color: var(--muted); cursor: pointer }
-.seg button[aria-selected="true"] { background: var(--ink); color: var(--bg) }
+.seg { display: flex; gap: 4px; background: var(--accent-soft); border: 0; border-radius: 14px; padding: 4px }
+.seg button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 10px 4px; font-size: .86rem; white-space: nowrap; border-radius: 11px; font-weight: 700; color: var(--muted); cursor: pointer }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(27, 35, 64, .12) }
 .err { color: var(--bad); font-size: .92rem }
 hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .mic { width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; cursor: pointer; margin: 0 auto; box-shadow: 0 0 0 6px var(--accent-soft) }
@@ -146,14 +178,15 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .dl .pt { grid-column: 2 / 4; font-size: .88rem; color: var(--muted) }
 .dl .veil { color: var(--muted); letter-spacing: .2em }
 .qz { display: grid; gap: 8px }
-.qz .opt { text-align: left; font: 1rem var(--f-body); background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; min-height: 44px }
+.qz .opt { text-align: left; font: 1rem var(--f-body); background: var(--surface); color: var(--ink); border: 1.5px solid var(--line); border-radius: 12px; padding: 12px 14px; cursor: pointer; min-height: 48px }
 .qz .opt.right { border-color: var(--ok); background: var(--ok-soft) }
 .qz .opt.wrong { border-color: var(--bad); background: var(--bad-soft) }
 .qz .opt:disabled { cursor: default }
-#ouvSeg button { font-size: .8rem; padding: 10px 2px }
+#ouvSeg button { font-size: .76rem; padding: 10px 1px }
+.bub.a { background: var(--accent); color: var(--on-accent) }
 .par { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line) }
 .par .w { font-weight: 700 } .par .n { font-weight: 800; color: var(--accent) }
-.soa { font: 600 .9rem var(--f-mono); color: var(--accent); letter-spacing: .01em }
+.soa { font: 600 .9rem var(--f-mono); color: var(--accent) }
 .fr { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--line) }
 .fr .en { font-weight: 700 }
 .blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); margin: 0 3px }
@@ -171,11 +204,30 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 <body>
 <div class="wrap">
   <header class="top">
-    <p class="eyebrow">Do zero ao B2 · fim de 2028</p>
-    <h1>Caderno de Inglês</h1>
-    <p class="muted small" id="whoLine" hidden></p>
-    <div class="scale" id="scale" hidden>
-      <span data-lv="A1">A1</span><span data-lv="A2">A2</span><span data-lv="B1">B1</span><span data-lv="B2">B2</span>
+    <div class="bar">
+      <div class="brand">
+        <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="10" fill="var(--accent)"/><g stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"><path d="M9 14v6M13.5 10v14M18 13v8M22.5 8v18M27 15v4"/></g></svg>
+        <div style="min-width:0"><h1>Caderno de Inglês</h1><p class="who" id="whoLine">Do zero ao B2 até o fim de 2028</p></div>
+      </div>
+      <button class="iconbtn" id="tabAdmin" data-v="admin" type="button" aria-label="Admin" title="Admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+    </div>
+    <div class="journey" id="scale" hidden>
+      <div class="top2"><span class="lv" id="lvNow">Nível A1</span><span class="goal">Meta: B2 até dez/2028</span></div>
+      <div class="wave" id="wave" aria-hidden="true"></div>
+      <div class="wlab" id="wlab"><span data-lv="A1">A1</span><span data-lv="A2">A2</span><span data-lv="B1">B1</span><span data-lv="B2">B2</span></div>
+      <div class="today">
+        <div><b id="tMin">0</b><span>min hoje</span></div>
+        <div><b id="tEx">0</b><span>exercícios hoje</span></div>
+        <div class="streak"><b id="tSeq">0</b><span>dias seguidos</span></div>
+      </div>
+    </div>
+    <div class="voice" id="voiceBar" hidden>
+      <span id="voiceLbl">Voz dos áudios</span>
+      <div class="seg" role="radiogroup" aria-labelledby="voiceLbl">
+        <button type="button" data-voz="feminina" role="radio" aria-selected="true">Feminina</button>
+        <button type="button" data-voz="masculina" role="radio" aria-selected="false">Masculina</button>
+        <button type="button" data-voz="ambas" role="radio" aria-selected="false">Alternar</button>
+      </div>
     </div>
   </header>
 
@@ -209,19 +261,18 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   </section>
 
   <div id="app" hidden>
-    <nav class="tabs" role="tablist">
-      <button role="tab" data-v="ouvido" aria-selected="true">Ouvido</button>
-      <button role="tab" data-v="aula" aria-selected="false">Aula</button>
-      <button role="tab" data-v="conversar" aria-selected="false">Conversar</button>
-      <button role="tab" data-v="revisar" aria-selected="false">Revisar<span class="badge" id="dueBadge"></span></button>
-      <button role="tab" data-v="evolucao" aria-selected="false">Evolução</button>
-      <button role="tab" data-v="escrever" aria-selected="false">Escrever</button>
-      <button role="tab" data-v="admin" aria-selected="false" id="tabAdmin" hidden>Admin</button>
+    <nav class="tabs" role="tablist" aria-label="Seções">
+      <button role="tab" data-v="ouvido" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10a6 6 0 1 1 12 0c0 3-2 4-3 5.5S14 19 12 20.5 8.5 20 8.5 18"/><path d="M10 10a2 2 0 1 1 4 0"/></svg>Ouvido</button>
+      <button role="tab" data-v="aula" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>Aula</button>
+      <button role="tab" data-v="conversar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5 3.5 21l4-1.8A8.5 8.5 0 1 0 5 17.5z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>Conversa</button>
+      <button role="tab" data-v="revisar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/></svg>Revisar<span class="badge" id="dueBadge"></span></button>
+      <button role="tab" data-v="escrever" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 8l3 3"/></svg>Escrita</button>
+      <button role="tab" data-v="evolucao" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progresso</button>
     </nav>
 
     <section class="view" id="v-ouvido" hidden>
-      <div class="task">
-        <p class="eyebrow">Treino do dia · 5 minutos</p>
+      <div class="task hero">
+        <p class="eyebrow">Treino do dia, 5 minutos</p>
         <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
         <button class="btn" id="ouvDia" type="button">Começar o treino do dia</button>
       </div>
@@ -341,8 +392,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
         <div class="meter"><i id="b2bar" style="width:0%"></i></div>
         <p class="hint">Referência: cerca de 600 horas de estudo guiado para sair do zero e chegar ao B2.</p>
       </div>
-      <div class="stack"><p class="eyebrow">Acerto por semana · últimas 12</p><div id="chAcc"></div></div>
-      <div class="stack"><p class="eyebrow">Minutos por semana · meta 420</p><div id="chMin"></div></div>
+      <div class="stack"><p class="eyebrow">Acerto por semana, últimas 12</p><div id="chAcc"></div></div>
+      <div class="stack"><p class="eyebrow">Minutos por semana (meta: 420)</p><div id="chMin"></div></div>
       <div class="stack"><p class="eyebrow">Últimos 14 dias</p><div class="days" id="days"></div></div>
       <div class="task">
         <label class="q" for="minutes">Quantos minutos você estudou hoje?</label>
@@ -360,7 +411,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
           <select id="pTrilha"><option value="contabil">Contabilidade e finanças da saúde</option><option value="direito">Direito</option></select>
         </label>
         <label class="f" for="pVoz">Voz dos áudios
-          <select id="pVoz"><option value="feminina">Feminina</option><option value="masculina">Masculina</option></select>
+          <select id="pVoz"><option value="feminina">Feminina</option><option value="masculina">Masculina</option><option value="ambas">Alternar as duas</option></select>
         </label>
         <div class="row"><button class="btn" id="pSave" type="button">Salvar perfil</button><button class="btn ghost" id="pTest" type="button">Ouvir a voz</button></div>
       </div>
@@ -484,11 +535,14 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     var re = g === 'masculina' ? M : F;
     return pool.find(function (v) { return re.test(v.name) && !(g === 'feminina' && /male/i.test(v.name) && !/female/i.test(v.name)); }) || pool[0] || null;
   }
-  function voz() { return (S && S.eu && S.eu.voz) || 'feminina'; }
+  function pref() { return (S && S.eu && S.eu.voz) || 'feminina'; }
+  function voz() { return pref() === 'masculina' ? 'masculina' : 'feminina'; }
+  /* the voice the person chose wins; "Alternar" keeps the voice planned for each sentence */
+  function vozPara(v) { return pref() === 'ambas' ? (v === 'masculina' ? 'masculina' : 'feminina') : voz(); }
   function speak(text, vozForcada) {
     text = String(text).trim();
     slow = (text === lastText) ? !slow : false; lastText = text;
-    var v = vozForcada || voz(), url = AUD[v][text];
+    var v = vozPara(vozForcada), url = AUD[v][text];
     if (url) {
       try {
         player.pause(); player.src = url; player.playbackRate = slow ? 0.7 : 1;
@@ -510,13 +564,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   function clean(k) { return String(k).replace(/^~(natural|lento)~ /, ''); }
   function speakSynth(text, vozForcada, onEnd) {
     var lento = /^~lento~ /.test(text); text = clean(text);
-    var vv = synth && pickVoice(vozForcada || voz());
+    var vv = synth && pickVoice(vozPara(vozForcada));
     if (!vv) { toast('Este aparelho não tem voz em inglês para ler esta frase. Abra o caderno no Chrome ou no Safari.'); return; }
     try { synth.cancel(); var u = new SpeechSynthesisUtterance(text); u.voice = vv; u.lang = vv.lang; u.rate = slow || lento ? 0.6 : 0.9; if (onEnd) u.onend = onEnd; synth.speak(u); } catch (e) { toast('Não consegui tocar o áudio.'); }
   }
   /* plays one line and calls onEnd when it finishes (used by the dialogue player) */
   function playLine(text, v, onEnd) {
-    text = String(text).trim(); slow = false; lastText = text;
+    text = String(text).trim(); slow = false; lastText = text; v = vozPara(v);
     var url = AUD[v][text];
     if (url) {
       player.onended = function () { player.onended = null; if (onEnd) setTimeout(onEnd, 450); };
@@ -526,7 +580,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     speakSynth(text, v, onEnd ? function () { setTimeout(onEnd, 450); } : null);
   }
   function fetchAudio(texts, vozForcada) {
-    var v = vozForcada || voz();
+    var v = vozPara(vozForcada);
     var need = texts.map(function (t) { return String(t).trim(); }).filter(function (t, i, a) { return t && !AUD[v][t] && !TRIED[v][t] && a.indexOf(t) === i; });
     var p = Promise.resolve();
     for (var i = 0; i < need.length; i += 6) {
@@ -555,6 +609,8 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'ouvido';
     views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
     document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v)); });
+    $('tabAdmin').setAttribute('aria-pressed', String(v === 'admin'));
+    if (S) $('scale').hidden = !(v === 'ouvido' || v === 'evolucao');
     if (v === 'revisar') setRevMode(revOuvido);
     if (v === 'conversar') enterConversa();
     if (v === 'evolucao') renderProgress();
@@ -572,7 +628,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   $('segEntrar').onclick = function () { setSeg(false); };
   $('segCriar').onclick = function () { setSeg(true); };
   function showLogin(msg) {
-    $('loading').hidden = true; $('app').hidden = true; $('v-login').hidden = false; $('whoLine').hidden = true; $('scale').hidden = true;
+    $('loading').hidden = true; $('app').hidden = true; $('v-login').hidden = false; $('whoLine').textContent = 'Do zero ao B2 até o fim de 2028'; $('scale').hidden = true; $('voiceBar').hidden = true; $('tabAdmin').hidden = true;
     if (msg) { $('errEntrar').textContent = msg; $('errEntrar').hidden = false; }
   }
   function logoutLocal(msg) { TOKEN = null; lsSet('caderno_token', null); S = null; showLogin(msg); }
@@ -621,15 +677,48 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   }
 
   /* ---------- render: header ---------- */
+  var WAVE_H = [38, 62, 46, 80, 54, 70, 30, 58, 88, 50, 66, 42, 74, 96, 60, 36, 52, 84, 64, 44, 78, 100, 56, 40, 68, 90, 48, 34, 72, 58, 82, 46];
   function renderHeader() {
     $('whoLine').hidden = false;
-    $('whoLine').textContent = 'Olá, ' + S.eu.nome + ' · ' + (S.eu.trilha === 'direito' ? 'trilha Direito' : 'trilha Contabilidade e saúde') + ' · voz ' + S.eu.voz;
-    $('scale').hidden = false;
-    var order = ['A1', 'A2', 'B1', 'B2'], idx = order.indexOf(S.eu.nivel);
-    document.querySelectorAll('#scale span').forEach(function (s) { s.className = order.indexOf(s.dataset.lv) <= idx ? 'on' : ''; });
+    $('whoLine').textContent = 'Olá, ' + S.eu.nome + '. Trilha ' + (S.eu.trilha === 'direito' ? 'Direito' : 'Contabilidade e saúde');
+    $('scale').hidden = false; $('voiceBar').hidden = false;
+    var order = ['A1', 'A2', 'B1', 'B2'], idx = Math.max(0, order.indexOf(S.eu.nivel));
+    $('lvNow').textContent = 'Nível ' + order[idx];
+    document.querySelectorAll('#wlab span').forEach(function (s) { s.className = order.indexOf(s.dataset.lv) <= idx ? 'on' : ''; });
+    var feitas = Object.keys(S.eu.aulasFeitas || {}).length, inLv = Math.min(7, Math.floor(feitas / 2));
+    var fill = idx * 8 + inLv;
+    $('wave').replaceChildren.apply($('wave'), WAVE_H.map(function (h, i) { var b = el('i', i < fill ? 'on' : (i === fill ? 'now' : '')); b.style.height = h + '%'; return b; }));
+    renderToday(); renderVoice();
     var parts = [S.eu.recado, S.recadoGeral].filter(Boolean);
     $('recado').hidden = !parts.length; $('recadoTxt').textContent = parts.join('\n\n');
   }
+
+  function renderToday() {
+    if (!S) return;
+    var d = S.estudo[S.hoje] || {};
+    $('tMin').textContent = String(d.minutos || 0);
+    $('tEx').textContent = String((d.exercicios || 0) + (d.cartoes || 0) + (d.conversas || 0));
+    var n = 0, day = S.hoje, act = function (x) { return x && ((x.minutos || 0) + (x.exercicios || 0) + (x.cartoes || 0) + (x.conversas || 0) > 0); };
+    if (!act(S.estudo[day])) day = addDays(day, -1);
+    while (act(S.estudo[day]) && n < 999) { n++; day = addDays(day, -1); }
+    $('tSeq').textContent = String(n);
+  }
+  function renderVoice() {
+    var v = (S && S.eu.voz) || 'feminina';
+    document.querySelectorAll('#voiceBar [data-voz]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.voz === v)); b.setAttribute('aria-checked', String(b.dataset.voz === v)); });
+  }
+  document.querySelectorAll('#voiceBar [data-voz]').forEach(function (b) {
+    b.onclick = function () {
+      if (!S || S.eu.voz === b.dataset.voz) return;
+      S.eu.voz = b.dataset.voz; renderVoice();
+      var nomes = { feminina: 'Voz feminina em todos os áudios.', masculina: 'Voz masculina em todos os áudios.', ambas: 'As vozes vão alternar entre feminina e masculina.' };
+      toast(nomes[S.eu.voz]);
+      if ($('pVoz')) $('pVoz').value = S.eu.voz;
+      queue(function () { return api('preferencias', TOKEN, { voz: S.eu.voz }); });
+      preloadAudio(); if (!$('v-ouvido').hidden) preloadSom(somAtual());
+    };
+  });
+  $('tabAdmin').onclick = function () { show('admin'); };
 
   /* ---------- render: lesson ---------- */
   function renderPicker() {
@@ -666,7 +755,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       frag.append(n);
     }
     if ((L.exercises || []).length) {
-      var st2 = el('div', 'stack'); st2.append(el('p', 'eyebrow', (L.dialogue || []).length ? 'Extra · diga em voz alta e depois escreva' : 'Exercícios · escreva em inglês'));
+      var st2 = el('div', 'stack'); st2.append(el('p', 'eyebrow', (L.dialogue || []).length ? 'Extra: diga em voz alta e depois escreva' : 'Exercícios: escreva em inglês'));
       L.exercises.forEach(function (x, i) { st2.append(exerciseCard(L, x, i)); });
       frag.append(st2);
     }
@@ -779,7 +868,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     t.append(lab, inp, row, hint, fb);
     return t;
   }
-  function bumpDay(field) { var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d[field] = (d[field] || 0) + 1; }
+  function bumpDay(field) { var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d[field] = (d[field] || 0) + 1; renderToday(); }
 
   /* ---------- render: cards ---------- */
   var revealed = false, currentCardId = null, revOuvido = lsGet('caderno_rev') !== 'lendo';
@@ -927,7 +1016,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   }
   $('saveMin').onclick = function () {
     var m = Math.max(0, Math.min(300, Number($('minutes').value) || 0));
-    var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d.minutos = m; renderProgress();
+    var d = S.estudo[S.hoje] || (S.estudo[S.hoje] = { minutos: 0, cartoes: 0, exercicios: 0, escritas: 0, conversas: 0 }); d.minutos = m; renderProgress(); renderToday();
     queue(function () { return api('registrarMinutos', TOKEN, m).then(function () { toast(m + ' minutos registrados.'); }); });
   };
   $('pSave').onclick = function () {
@@ -1216,7 +1305,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     var L = sonsList(), sel = $('pickSom');
     if (!L.length) { sel.replaceChildren(); $('ouvBody').replaceChildren(el('p', 'muted', 'As unidades de Ouvido ainda não foram instaladas.')); return; }
     var u = somAtual(); somSel = u.id;
-    sel.replaceChildren.apply(sel, L.map(function (x) { var p = somPct(x.id); var o = el('option', null, pad(x.n) + ' · ' + x.title + (p == null ? '' : ' · ' + p + '%')); o.value = x.id; o.selected = x.id === u.id; return o; }));
+    sel.replaceChildren.apply(sel, L.map(function (x) { var p = somPct(x.id); var o = el('option', null, 'Unidade ' + x.n + ': ' + x.title + (p == null ? '' : ' (' + p + '% de acerto)')); o.value = x.id; o.selected = x.id === u.id; return o; }));
     document.querySelectorAll('#ouvSeg button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.p === ouvPasso)); });
     preloadSom(u);
     RUN = null;
@@ -1285,7 +1374,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       d.append(row); box.append(d); return;
     }
     var t = el('div', 'task'); t.style.gap = '12px';
-    t.append(el('p', 'eyebrow', R.titulo + ' · ' + (R.i + 1) + ' de ' + R.fila.length + (it.repetido ? ' · revendo' : '')));
+    t.append(el('p', 'eyebrow', R.titulo + ': ' + (R.i + 1) + ' de ' + R.fila.length + (it.repetido ? ' (revendo)' : '')));
     if (R.diario) t.append(el('p', 'small muted', it.u.title));
     var play = el('button', 'btn big-play', 'Ouvir'); play.type = 'button'; play.onclick = function () { slow = true; lastText = NAT + it.f.en; speak(NAT + it.f.en, it.f.voice); };
     var sl = el('button', 'linkbtn', 'Mais devagar'); sl.type = 'button'; sl.onclick = function () { slow = false; lastText = NAT + it.f.en; speak(NAT + it.f.en, it.f.voice); };
@@ -1340,7 +1429,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     var box = $('ouvBody'); box.replaceChildren();
     var f = u.frases[idx];
     var t = el('div', 'task'); t.style.cssText = 'justify-items:center;gap:12px';
-    t.append(el('p', 'eyebrow', 'Repita igual ao nativo · ' + (idx + 1) + ' de ' + u.frases.length));
+    t.append(el('p', 'eyebrow', 'Repita igual ao nativo: ' + (idx + 1) + ' de ' + u.frases.length));
     t.append(el('p', 'small muted', 'Ouça o natural e repita no mesmo ritmo, grudando as palavras. Imitar o som é o que mais treina o ouvido.'));
     t.append(el('p', 'target', f.en), el('div', 'soa', f.soa), el('p', 'small muted', f.pt));
     var bs = el('div', 'row'); bs.style.justifyContent = 'center'; bs.append(sayKey(NAT + f.en, f.voice, 'Natural'), sayKey(LEN + f.extenso, f.voice, 'Devagar')); t.append(bs);
