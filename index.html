@@ -440,6 +440,13 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
         <div class="row"><button class="btn ghost" id="btIa" type="button">Salvar chave</button></div>
       </div>
       <div class="task">
+        <h3>Voz Chirp 3 HD (Google Cloud)</h3>
+        <p class="small" id="chirpInfo"></p>
+        <label class="f" for="chirpKey">Chave do Google Cloud<input type="password" id="chirpKey" autocomplete="off" spellcheck="false" placeholder="AIza…"></label>
+        <p class="hint">As mesmas vozes do Gemini (Kore e Charon), com 1 milhão de caracteres grátis por mês. Tem prioridade sobre a chave do Gemini. Crie em console.cloud.google.com com a API Cloud Text-to-Speech ativada.</p>
+        <div class="row"><button class="btn ghost" id="btChirp" type="button">Salvar chave</button></div>
+      </div>
+      <div class="task">
         <h3>Voz do Gemini</h3>
         <p class="small" id="gemInfo"></p>
         <label class="f" for="gemKey">Chave da API do Gemini<input type="password" id="gemKey" autocomplete="off" spellcheck="false" placeholder="AIza… ou AQ.…"></label>
@@ -1044,6 +1051,10 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       $('gemInfo').textContent = !a.vozGemini ? 'Ainda não ativada. Sem ela, as aulas usam os áudios gravados e o tutor usa a voz do aparelho.'
         : (a.gemini && !a.gemini.livres ? 'Chave ativa, mas a cota do Google acabou por agora (plano gratuito: cerca de 10 áudios por dia). Enquanto isso, o app usa as vozes gravadas. Para liberar, ative o faturamento no AI Studio.'
         : 'Ativa. ' + ((a.gemini && a.gemini.geradas) || 0) + ' frases já geradas e guardadas no Drive; cada frase é gerada uma vez só.');
+      var c = a.chirp;
+      $('chirpInfo').textContent = !c ? 'Ainda não ativada.'
+        : c.erro && !c.geradas ? 'Chave salva, mas o Google recusou: ' + c.erro.slice(0, 220)
+        : 'Ativa. ' + c.geradas + ' frases já geradas com a voz Chirp e guardadas no Drive.' + (c.pausa ? ' Pausada por alguns minutos após um erro do Google.' : '');
       $('sheetLink').href = a.planilha;
     }).catch(function (e) { toast(msgOf(e)); });
   }
@@ -1066,6 +1077,10 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   $('btIa').onclick = function () {
     var k = $('iaKey').value.trim(); if (!k) { $('iaKey').focus(); return; }
     api('salvarChaveIA', TOKEN, k).then(function () { $('iaKey').value = ''; if (S) S.iaAtiva = true; toast('Chave salva. A conversa com o tutor está ativa.'); loadAdmin(); }).catch(function (e) { toast(msgOf(e)); });
+  };
+  $('btChirp').onclick = function () {
+    var k = $('chirpKey').value.trim(); if (!k) { $('chirpKey').focus(); return; }
+    api('salvarChaveChirp', TOKEN, k).then(function () { $('chirpKey').value = ''; if (S) S.vozGemini = true; AUD.feminina = {}; AUD.masculina = {}; TRIED.feminina = {}; TRIED.masculina = {}; toast('Chave salva. A voz Chirp 3 HD está ativa.'); loadAdmin(); }).catch(function (e) { toast(msgOf(e)); });
   };
   $('btGem').onclick = function () {
     var k = $('gemKey').value.trim(); if (!k) { $('gemKey').focus(); return; }
