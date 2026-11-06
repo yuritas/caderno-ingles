@@ -1041,7 +1041,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       var sel = $('rUser'); sel.replaceChildren.apply(sel, a.usuarios.map(function (u) { var o = el('option', null, u.nome + ' (' + u.usuario + ')'); o.value = u.usuario; return o; }));
       $('audInfo').textContent = a.audios + ' áudios cadastrados · ' + a.aulas + ' aulas.';
       $('iaInfo').textContent = a.iaAtiva ? 'Ativa. Para trocar a chave, cole uma nova e salve.' : 'Ainda não ativada. Cole a chave abaixo para liberar a conversa com o tutor.';
-      $('gemInfo').textContent = a.vozGemini ? 'Ativa. Cada frase é gerada uma vez e fica guardada no Drive.' : 'Ainda não ativada. Sem ela, as aulas usam os áudios gravados e o tutor usa a voz do aparelho.';
+      $('gemInfo').textContent = !a.vozGemini ? 'Ainda não ativada. Sem ela, as aulas usam os áudios gravados e o tutor usa a voz do aparelho.'
+        : (a.gemini && !a.gemini.livres ? 'Chave ativa, mas a cota do Google acabou por agora (plano gratuito: cerca de 10 áudios por dia). Enquanto isso, o app usa as vozes gravadas. Para liberar, ative o faturamento no AI Studio.'
+        : 'Ativa. ' + ((a.gemini && a.gemini.geradas) || 0) + ' frases já geradas e guardadas no Drive; cada frase é gerada uma vez só.');
       $('sheetLink').href = a.planilha;
     }).catch(function (e) { toast(msgOf(e)); });
   }
