@@ -192,6 +192,16 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); margin: 0 3px }
 .big-play { min-height: 56px; font-size: 1.05rem; width: 100% }
 .lbl { display: grid; grid-template-columns: 5.6em 1fr; gap: 8px; font-size: .92rem; align-items: baseline }
+.lbl.rap > span:last-child { font-size: 1.02rem }
+.porque { font-size: .9rem; background: var(--amber-soft); border-radius: 10px; padding: 8px 10px; line-height: 1.45 }
+.porque b { color: var(--ink) }
+.vel { display: grid; gap: 6px; margin-top: 4px }
+.vel .v { display: grid; grid-template-columns: 5.6em 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 6px 6px 6px 10px; background: var(--surface) }
+.vel .v.on { border-color: var(--accent); background: var(--accent-soft) }
+.vel .v > span:first-child { font-weight: 800; font-size: .82rem; color: var(--muted) }
+.vel .v.on > span:first-child { color: var(--accent) }
+.vel .v .t { font-size: .9rem; min-width: 0 }
+.vel .v .btn { min-height: 36px; padding: 4px 14px; font-size: .85rem }
 .lbl > span:first-child { color: var(--muted); font-weight: 700; font-size: .82rem }
 details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 12px; background: var(--bg) }
 details.conv[open] { padding-bottom: 12px }
@@ -561,7 +571,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function vozPara(v) { if (v && String(v).indexOf('fix:') === 0) return v.slice(4); return pref() === 'ambas' ? (v === 'masculina' ? 'masculina' : 'feminina') : voz(); }
   function speak(text, vozForcada) {
     text = String(text).trim();
-    slow = (text === lastText) ? !slow : false; lastText = text;
+    slow = (text === lastText && text.charAt(0) !== '~') ? !slow : false; lastText = text;
     var v = vozPara(vozForcada), url = AUD[v][text];
     if (url) {
       try {
@@ -1271,7 +1281,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (key !== REP.map(function (x) { return x.en; }).join('|')) { REP = list; repIdx = 0; }
   }
   function tokens(s) { return norm(s).replace(/'/g, "'").split(' ').filter(Boolean); }
-  var CONTR = { gonna: 'going to', wanna: 'want to', gotta: 'got to', kinda: 'kind of', lemme: 'let me', gimme: 'give me', "what's": 'what is', "where's": 'where is', "that's": 'that is', "how's": 'how is', "doesn't": 'does not', "didn't": 'did not', "aren't": 'are not', "won't": 'will not', "i'll": 'i will', "i'm": 'i am', "he's": 'he is', "she's": 'she is', "it's": 'it is', "you're": 'you are', "we're": 'we are', "they're": 'they are', "name's": 'name is', "don't": 'do not', "can't": 'can not', "isn't": 'is not' };
+  var CONTR = { dunno: 'do not know', whatcha: 'what are you', wouldja: 'would you', didja: 'did you', hafta: 'have to', gonna: 'going to', wanna: 'want to', gotta: 'got to', kinda: 'kind of', lemme: 'let me', gimme: 'give me', "what's": 'what is', "where's": 'where is', "that's": 'that is', "how's": 'how is', "doesn't": 'does not', "didn't": 'did not', "aren't": 'are not', "won't": 'will not', "i'll": 'i will', "i'm": 'i am', "he's": 'he is', "she's": 'she is', "it's": 'it is', "you're": 'you are', "we're": 'we are', "they're": 'they are', "name's": 'name is', "don't": 'do not', "can't": 'can not', "isn't": 'is not' };
   function expand(arr) { var o = []; arr.forEach(function (w) { (CONTR[w] || w).split(' ').forEach(function (x) { o.push(x); }); }); return o; }
   function scoreWords(target, heard) {
     var t = tokens(target), h = expand(tokens(heard)), used = {};
@@ -1311,7 +1321,10 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 
 
   /* ---------- ouvido: fala ligada ---------- */
-  var NAT = '~natural~ ', LEN = '~lento~ ';
+  var NAT = '~natural~ ', LEN = '~lento~ ', RAPK = '~rapida~ ', CUIK = '~cuidadosa~ ';
+  function kR(f) { return RAPK + (f.rapida || f.en); }
+  function kN(f) { return NAT + f.en; }
+  function kC(f) { return CUIK + (f.extenso || f.en); }
   var somSel = null, ouvPasso = 'regra', RUN = null;
   try { somSel = lsGet('caderno_som'); ouvPasso = lsGet('caderno_ouvpasso') || 'regra'; } catch (e) {}
   function sonsList() { return (S && S.sons) || []; }
@@ -1324,7 +1337,21 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function linhaFr(rotulo, conteudo, cls) { var d = el('div', 'lbl'); d.append(el('span', null, rotulo), el('span', cls || null, conteudo)); return d; }
   function blocoFrase(f) {
     var d = el('div', 'stack'); d.style.gap = '4px';
-    d.append(el('div', 'en', f.en), linhaFr('Falado', f.soa, 'soa'), linhaFr('Tradução', f.pt));
+    var rp = linhaFr('Falado', f.soaRapida || f.soa, 'soa'); rp.classList.add('rap');
+    d.append(el('div', 'en', f.en), rp, linhaFr('Tradução', f.pt));
+    if (f.porque) { var q = el('div', 'porque'); q.innerHTML = '<b>O que acontece no som:</b> ' + esc(f.porque); d.append(q); }
+    return d;
+  }
+  /* the three speeds: fast (default), normal and careful, each with its own audio */
+  function velocidadesEl(f) {
+    var d = el('div', 'vel');
+    [['Rápida', f.soaRapida || f.soa, kR(f), true], ['Normal', f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
+      var r = el('div', 'v' + (x[3] ? ' on' : ''));
+      var b = el('button', 'btn' + (x[3] ? '' : ' ghost'), 'Ouvir'); b.type = 'button'; b.setAttribute('aria-label', 'Ouvir ' + x[0].toLowerCase());
+      b.onclick = function () { speak(x[2], f.voice); };
+      r.append(el('span', null, x[0]), el('span', 't' + (x[0] === 'Cuidadosa' ? '' : ' soa'), x[1]), b);
+      d.append(r);
+    });
     return d;
   }
   function conversaEl(f, aberta) {
@@ -1352,10 +1379,10 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function preloadSom(u) {
     if (!u) return;
     var byV = { feminina: [], masculina: [] };
-    u.frases.forEach(function (f) { byV[f.voice].push(NAT + f.en); });
-    (u.pares || []).forEach(function (p) { var v = p.voice || 'feminina'; byV[v].push(LEN + p.lento, NAT + p.natural); });
+    u.frases.forEach(function (f) { byV[f.voice].push(kR(f)); });
+    (u.pares || []).forEach(function (p) { var v = p.voice || 'feminina'; byV[v].push(CUIK + p.lento, RAPK + p.natural); });
     fetchAudio(byV.feminina, 'feminina').then(function () { return fetchAudio(byV.masculina, 'masculina'); }).then(function () {
-      var l2 = { feminina: [], masculina: [] }; u.frases.forEach(function (f) { l2[f.voice].push(LEN + f.extenso); });
+      var l2 = { feminina: [], masculina: [] }; u.frases.forEach(function (f) { l2[f.voice].push(kN(f), kC(f)); });
       return fetchAudio(l2.feminina, 'feminina').then(function () { return fetchAudio(l2.masculina, 'masculina'); });
     });
   }
@@ -1381,24 +1408,23 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var t = el('div', 'task'); t.append(el('h2', null, u.title), el('p', 'muted', u.resumo));
     u.regra.forEach(function (r) { var p = el('p'); p.innerHTML = bolds(r); t.append(p); });
     box.append(t);
-    var pt = el('div', 'task'); pt.append(el('h3', null, 'Escrito devagar × falado de verdade'), el('p', 'small muted', 'Toque em "Devagar" e depois em "Natural". Repare no que muda: o que encolhe, o que gruda e o que some.'));
+    var pt = el('div', 'task'); pt.append(el('h3', null, 'Por extenso × falado rápido'), el('p', 'small muted', 'Toque em "Cuidadosa" e depois em "Rápida". Repare no que muda: o que encolhe, o que gruda e o que some.'));
     (u.pares || []).forEach(function (p) {
       var v = p.voice || 'feminina', r = el('div', 'par');
       var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + p.natural), el('div', 'soa', p.soa));
-      var bs = el('div', 'stack'); bs.style.gap = '6px'; bs.append(sayKey(LEN + p.lento, v, 'Devagar'), sayKey(NAT + p.natural, v, 'Natural'));
+      var bs = el('div', 'stack'); bs.style.gap = '6px'; bs.append(sayKey(CUIK + p.lento, v, 'Cuidadosa'), sayKey(RAPK + p.natural, v, 'Rápida'));
       r.append(l, bs); pt.append(r);
     });
     var all = el('button', 'btn', 'Ouvir todos em sequência'); all.type = 'button';
     all.onclick = function () {
-      var seq = []; (u.pares || []).forEach(function (p) { seq.push([LEN + p.lento, p.voice || 'feminina'], [NAT + p.natural, p.voice || 'feminina']); });
+      var seq = []; (u.pares || []).forEach(function (p) { seq.push([CUIK + p.lento, p.voice || 'feminina'], [RAPK + p.natural, p.voice || 'feminina']); });
       var i = 0; (function nx() { if (i >= seq.length) return; var s2 = seq[i++]; playLine(s2[0], s2[1], nx); })();
     };
     pt.append(all); box.append(pt);
-    var ft = el('div', 'task'); ft.append(el('h3', null, 'As ' + u.frases.length + ' frases da unidade'), el('p', 'small muted', 'Para cada frase: o inglês, como ela soa e a tradução. Ouça no natural e devagar, depois abra a conversa curta para ver a frase em uso.'));
+    var ft = el('div', 'task'); ft.append(el('h3', null, 'As ' + u.frases.length + ' frases da unidade'), el('p', 'small muted', 'Para cada frase: o inglês, como soa na fala rápida, a tradução e o que acontece no som. Ouça a rápida, compare com a normal e a cuidadosa, e depois abra a conversa curta.'));
     u.frases.forEach(function (f) {
-      var r = el('div', 'fr'); r.append(blocoFrase(f));
-      var bs = el('div', 'row'); bs.append(sayKey(NAT + f.en, f.voice, 'Natural'), sayKey(LEN + f.extenso, f.voice, 'Devagar' + (f.extenso !== f.en ? ' e por extenso' : '')));
-      r.append(bs); var cv = conversaEl(f); if (cv) r.append(cv); ft.append(r);
+      var r = el('div', 'fr'); r.append(blocoFrase(f), velocidadesEl(f));
+      var cv = conversaEl(f); if (cv) r.append(cv); ft.append(r);
     });
     var go = el('button', 'btn', 'Agora treine o ouvido →'); go.type = 'button'; go.onclick = function () { irPasso('escolha'); };
     ft.append(go); box.append(ft);
@@ -1434,9 +1460,12 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var t = el('div', 'task'); t.style.gap = '12px';
     t.append(el('p', 'eyebrow', R.titulo + ': ' + (R.i + 1) + ' de ' + R.fila.length + (it.repetido ? ' (revendo)' : '')));
     if (R.diario) t.append(el('p', 'small muted', it.u.title));
-    var play = el('button', 'btn big-play', 'Ouvir'); play.type = 'button'; play.onclick = function () { slow = true; lastText = NAT + it.f.en; speak(NAT + it.f.en, it.f.voice); };
-    var sl = el('button', 'linkbtn', 'Mais devagar'); sl.type = 'button'; sl.onclick = function () { slow = false; lastText = NAT + it.f.en; speak(NAT + it.f.en, it.f.voice); };
-    t.append(play, sl);
+    var play = el('button', 'btn big-play', 'Ouvir (rápida)'); play.type = 'button'; play.onclick = function () { speak(kR(it.f), it.f.voice); };
+    var outras = el('div', 'row'); outras.style.justifyContent = 'center';
+    var bn = el('button', 'linkbtn', 'Ouvir normal'); bn.type = 'button'; bn.onclick = function () { speak(kN(it.f), it.f.voice); };
+    var bc = el('button', 'linkbtn', 'Ouvir cuidadosa'); bc.type = 'button'; bc.onclick = function () { speak(kC(it.f), it.f.voice); };
+    outras.append(bn, bc);
+    t.append(play, outras);
     var fb = el('div', 'stack');
     function feedback(ok, resp) {
       if (!it.respondido) { it.respondido = true; registrarSom(it, ok, resp); if (ok && !it.repetido) R.primeira++; if (!ok && !it.repetido) R.fila.push({ f: it.f, u: it.u, modo: it.modo, repetido: true }); }
@@ -1445,8 +1474,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       b.append(el('b', null, ok ? 'Isso! Você ouviu certo.' : 'Não foi isso. Ouça de novo comparando com o texto:'));
       var bf = blocoFrase(it.f); bf.firstChild.className = 'target'; b.append(bf);
       if (it.f.extenso !== it.f.en) b.append(el('div', 'small', 'Por extenso: ' + it.f.extenso));
-      var bs = el('div', 'row'); bs.append(sayKey(NAT + it.f.en, it.f.voice, 'Natural'), sayKey(LEN + it.f.extenso, it.f.voice, 'Devagar'));
-      b.append(bs);
+      b.append(velocidadesEl(it.f));
       if (!ok) b.append(el('p', 'small', 'Dica: ' + it.u.resumo + (it.repetido ? '' : ' Esta frase volta no fim da rodada.')));
       var cv = conversaEl(it.f); if (cv) b.append(cv);
       var nx = el('button', 'btn', 'Próxima'); nx.type = 'button'; nx.onclick = function () { R.i++; renderRun(); setTimeout(function () { var p2 = document.querySelector('#ouvBody .big-play'); if (p2) p2.click(); }, 120); };
@@ -1489,9 +1517,9 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var f = u.frases[idx];
     var t = el('div', 'task'); t.style.cssText = 'justify-items:center;gap:12px';
     t.append(el('p', 'eyebrow', 'Repita igual ao nativo: ' + (idx + 1) + ' de ' + u.frases.length));
-    t.append(el('p', 'small muted', 'Ouça o natural e repita no mesmo ritmo, grudando as palavras. Imitar o som é o que mais treina o ouvido.'));
+    t.append(el('p', 'small muted', 'Ouça a rápida e repita no mesmo ritmo, grudando as palavras. Se travar, ouça a normal e depois volte para a rápida.'));
     var bf = blocoFrase(f); bf.firstChild.className = 'target'; bf.style.justifySelf = 'stretch'; t.append(bf);
-    var bs = el('div', 'row'); bs.style.justifyContent = 'center'; bs.append(sayKey(NAT + f.en, f.voice, 'Natural'), sayKey(LEN + f.extenso, f.voice, 'Devagar')); t.append(bs);
+    var vl = velocidadesEl(f); vl.style.justifySelf = 'stretch'; t.append(vl);
     var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Falar');
     var words = el('div', 'words'), heard = el('p', 'heard', SR ? 'Toque no microfone e repita.' : 'Seu navegador não reconhece voz: repita em voz alta mesmo assim.');
     mic.onclick = function () {
@@ -1511,7 +1539,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var nav = el('div', 'row'); nav.style.justifyContent = 'center';
     var pv = el('button', 'btn ghost', 'Anterior'); pv.type = 'button'; pv.disabled = idx === 0; pv.onclick = function () { renderRepetirSom(u, idx - 1); };
     var nx = el('button', 'btn', idx < u.frases.length - 1 ? 'Próxima frase' : 'Próximo passo: Responder →'); nx.type = 'button';
-    nx.onclick = function () { if (idx < u.frases.length - 1) { renderRepetirSom(u, idx + 1); setTimeout(function () { speak(NAT + u.frases[idx + 1].en, u.frases[idx + 1].voice); }, 120); } else irPasso('responder'); };
+    nx.onclick = function () { if (idx < u.frases.length - 1) { renderRepetirSom(u, idx + 1); setTimeout(function () { speak(kR(u.frases[idx + 1]), u.frases[idx + 1].voice); }, 120); } else irPasso('responder'); };
     nav.append(pv, nx); t.append(nav); box.append(t);
   }
 
