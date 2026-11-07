@@ -191,6 +191,19 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .fr .en { font-weight: 700 }
 .blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); margin: 0 3px }
 .big-play { min-height: 56px; font-size: 1.05rem; width: 100% }
+.lbl { display: grid; grid-template-columns: 5.6em 1fr; gap: 8px; font-size: .92rem; align-items: baseline }
+.lbl > span:first-child { color: var(--muted); font-weight: 700; font-size: .82rem }
+details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 12px; background: var(--bg) }
+details.conv[open] { padding-bottom: 12px }
+details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 10px 0; list-style-position: inside }
+.cl { display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start }
+.cl .lbl { grid-template-columns: 4.8em 1fr; gap: 6px }
+.cl .who { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 800 .8rem var(--f-display); background: var(--accent-soft); color: var(--accent) }
+.cl .who.b { background: var(--amber-soft); color: var(--ink) }
+.cl.alvo .en { color: var(--accent) }
+.cl .txt { display: grid; gap: 3px; min-width: 0 }
+.cl .en { font-weight: 700 }
+.cl .play { justify-self: start; min-height: 34px; padding: 4px 14px; font-size: .85rem; margin-top: 4px }
 .ouv-fb { border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px }
 .ouv-fb.ok { background: var(--ok-soft) } .ouv-fb.bad { background: var(--bad-soft) }
 .stepn { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg); font: 700 .8rem var(--f-mono); margin-right: 6px }
@@ -545,7 +558,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   function pref() { return (S && S.eu && S.eu.voz) || 'feminina'; }
   function voz() { return pref() === 'masculina' ? 'masculina' : 'feminina'; }
   /* the voice the person chose wins; "Alternar" keeps the voice planned for each sentence */
-  function vozPara(v) { return pref() === 'ambas' ? (v === 'masculina' ? 'masculina' : 'feminina') : voz(); }
+  function vozPara(v) { if (v && String(v).indexOf('fix:') === 0) return v.slice(4); return pref() === 'ambas' ? (v === 'masculina' ? 'masculina' : 'feminina') : voz(); }
   function speak(text, vozForcada) {
     text = String(text).trim();
     slow = (text === lastText) ? !slow : false; lastText = text;
@@ -560,7 +573,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     }
     if (!TRIED[v][text]) {
       if (S && S.vozGemini) toast('Gerando o áudio…');
-      fetchAudio([text], v).then(function () { if (AUD[v][text]) playUrl(AUD[v][text]); else speakSynth(text, v); });
+      fetchAudio([text], vozForcada).then(function () { if (AUD[v][text]) playUrl(AUD[v][text]); else speakSynth(text, vozForcada); });
       return;
     }
     speakSynth(text, v);
@@ -1308,6 +1321,34 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
   function somProg(id) { return ((S.sonsProg || {})[id]) || { t: {}, f: {} }; }
   function somPct(id) { var t = somProg(id).t, a = 0, n = 0; ['escolha', 'completar'].forEach(function (k) { if (t[k]) { a += t[k][0]; n += t[k][1]; } }); return n ? Math.round(100 * a / n) : null; }
   function sayKey(key, v, label) { var b = el('button', 'btn ghost', label); b.type = 'button'; b.onclick = function () { speak(key, v); }; return b; }
+  function linhaFr(rotulo, conteudo, cls) { var d = el('div', 'lbl'); d.append(el('span', null, rotulo), el('span', cls || null, conteudo)); return d; }
+  function blocoFrase(f) {
+    var d = el('div', 'stack'); d.style.gap = '4px';
+    d.append(el('div', 'en', f.en), linhaFr('Falado', f.soa, 'soa'), linhaFr('Tradução', f.pt));
+    return d;
+  }
+  function conversaEl(f, aberta) {
+    if (!f.conversa || !f.conversa.length) return null;
+    var d = el('details', 'conv'); if (aberta) d.open = true;
+    d.append(el('summary', null, 'Conversa curta (' + f.conversa.length + ' falas)'));
+    f.conversa.forEach(function (l) {
+      var r = el('div', 'cl' + (l.alvo ? ' alvo' : ''));
+      var w = el('span', 'who' + (l.who === 'B' ? ' b' : ''), l.who);
+      var tx = el('div', 'txt'); tx.append(el('div', 'en', l.en), linhaFr('Falado', l.soa, 'soa'), linhaFr('Tradução', l.pt));
+      var pb = el('button', 'btn ghost play', 'Ouvir'); pb.type = 'button'; pb.onclick = function () { speak(NAT + l.en, 'fix:' + l.voice); };
+      tx.append(pb); r.append(w, tx); d.append(r);
+    });
+    var all = el('button', 'btn', 'Ouvir a conversa inteira'); all.type = 'button'; all.style.marginTop = '10px';
+    all.onclick = function () { var i = 0; (function nx() { var l = f.conversa[i++]; if (!l) return; playLine(NAT + l.en, 'fix:' + l.voice, nx); })(); };
+    d.append(all);
+    d.addEventListener('toggle', function () { if (d.open) preloadConversa(f); });
+    return d;
+  }
+  function preloadConversa(f) {
+    var byV = { feminina: [], masculina: [] };
+    (f.conversa || []).forEach(function (l) { byV[l.voice].push(NAT + l.en); });
+    return fetchAudio(byV.feminina, 'fix:feminina').then(function () { return fetchAudio(byV.masculina, 'fix:masculina'); });
+  }
   function preloadSom(u) {
     if (!u) return;
     var byV = { feminina: [], masculina: [] };
@@ -1353,11 +1394,11 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       var i = 0; (function nx() { if (i >= seq.length) return; var s2 = seq[i++]; playLine(s2[0], s2[1], nx); })();
     };
     pt.append(all); box.append(pt);
-    var ft = el('div', 'task'); ft.append(el('h3', null, 'As 10 frases da unidade'), el('p', 'small muted', 'Ouça cada uma no natural e por extenso. Leia a pronúncia junto. Depois você vai reconhecê-las só de ouvido.'));
+    var ft = el('div', 'task'); ft.append(el('h3', null, 'As ' + u.frases.length + ' frases da unidade'), el('p', 'small muted', 'Para cada frase: o inglês, como ela soa e a tradução. Ouça no natural e devagar, depois abra a conversa curta para ver a frase em uso.'));
     u.frases.forEach(function (f) {
-      var r = el('div', 'fr'); r.append(el('div', 'en', f.en), el('div', 'soa', f.soa), el('div', 'small muted', f.pt));
+      var r = el('div', 'fr'); r.append(blocoFrase(f));
       var bs = el('div', 'row'); bs.append(sayKey(NAT + f.en, f.voice, 'Natural'), sayKey(LEN + f.extenso, f.voice, 'Devagar' + (f.extenso !== f.en ? ' e por extenso' : '')));
-      r.append(bs); ft.append(r);
+      r.append(bs); var cv = conversaEl(f); if (cv) r.append(cv); ft.append(r);
     });
     var go = el('button', 'btn', 'Agora treine o ouvido →'); go.type = 'button'; go.onclick = function () { irPasso('escolha'); };
     ft.append(go); box.append(ft);
@@ -1402,11 +1443,12 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       fb.replaceChildren();
       var b = el('div', 'ouv-fb ' + (ok ? 'ok' : 'bad'));
       b.append(el('b', null, ok ? 'Isso! Você ouviu certo.' : 'Não foi isso. Ouça de novo comparando com o texto:'));
-      b.append(el('div', 'target', it.f.en), el('div', 'soa', it.f.soa), el('div', 'small muted', it.f.pt));
+      var bf = blocoFrase(it.f); bf.firstChild.className = 'target'; b.append(bf);
       if (it.f.extenso !== it.f.en) b.append(el('div', 'small', 'Por extenso: ' + it.f.extenso));
       var bs = el('div', 'row'); bs.append(sayKey(NAT + it.f.en, it.f.voice, 'Natural'), sayKey(LEN + it.f.extenso, it.f.voice, 'Devagar'));
       b.append(bs);
       if (!ok) b.append(el('p', 'small', 'Dica: ' + it.u.resumo + (it.repetido ? '' : ' Esta frase volta no fim da rodada.')));
+      var cv = conversaEl(it.f); if (cv) b.append(cv);
       var nx = el('button', 'btn', 'Próxima'); nx.type = 'button'; nx.onclick = function () { R.i++; renderRun(); setTimeout(function () { var p2 = document.querySelector('#ouvBody .big-play'); if (p2) p2.click(); }, 120); };
       fb.append(b, nx);
     }
@@ -1448,7 +1490,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
     var t = el('div', 'task'); t.style.cssText = 'justify-items:center;gap:12px';
     t.append(el('p', 'eyebrow', 'Repita igual ao nativo: ' + (idx + 1) + ' de ' + u.frases.length));
     t.append(el('p', 'small muted', 'Ouça o natural e repita no mesmo ritmo, grudando as palavras. Imitar o som é o que mais treina o ouvido.'));
-    t.append(el('p', 'target', f.en), el('div', 'soa', f.soa), el('p', 'small muted', f.pt));
+    var bf = blocoFrase(f); bf.firstChild.className = 'target'; bf.style.justifySelf = 'stretch'; t.append(bf);
     var bs = el('div', 'row'); bs.style.justifyContent = 'center'; bs.append(sayKey(NAT + f.en, f.voice, 'Natural'), sayKey(LEN + f.extenso, f.voice, 'Devagar')); t.append(bs);
     var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Falar');
     var words = el('div', 'words'), heard = el('p', 'heard', SR ? 'Toque no microfone e repita.' : 'Seu navegador não reconhece voz: repita em voz alta mesmo assim.');
@@ -1465,6 +1507,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
       });
     };
     t.append(mic, words, heard);
+    var cvr = conversaEl(f); if (cvr) { cvr.style.justifySelf = 'stretch'; t.append(cvr); }
     var nav = el('div', 'row'); nav.style.justifyContent = 'center';
     var pv = el('button', 'btn ghost', 'Anterior'); pv.type = 'button'; pv.disabled = idx === 0; pv.onclick = function () { renderRepetirSom(u, idx - 1); };
     var nx = el('button', 'btn', idx < u.frases.length - 1 ? 'Próxima frase' : 'Próximo passo: Responder →'); nx.type = 'button';
