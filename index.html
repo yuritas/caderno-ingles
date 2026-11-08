@@ -191,6 +191,12 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .fr .en { font-weight: 700 }
 .blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); margin: 0 3px }
 .big-play { min-height: 56px; font-size: 1.05rem; width: 100% }
+.hf-bar { display: flex; align-items: center; gap: 10px; background: var(--accent-soft); border-radius: 14px; padding: 8px 8px 8px 14px; font-weight: 700; font-size: .9rem }
+.hf-bar #hfState { flex: 1 }
+.hf-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); flex: none }
+.hf-bar.ouvindo .hf-dot { background: var(--bad); animation: hfp 1s ease-in-out infinite }
+@keyframes hfp { 50% { opacity: .3 } }
+@media (prefers-reduced-motion: reduce) { .hf-bar.ouvindo .hf-dot { animation: none } }
 .lbl { display: grid; grid-template-columns: 5.6em 1fr; gap: 8px; font-size: .92rem; align-items: baseline }
 .lbl.rap > span:last-child { font-size: 1.02rem }
 .porque { font-size: .9rem; background: var(--amber-soft); border-radius: 10px; padding: 8px 10px; line-height: 1.45 }
@@ -378,12 +384,14 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       <div id="tutorBox" class="stack" hidden>
         <p class="muted small">Converse por voz com o tutor sobre o tema da aula. Ele responde em inglês simples e corrige você em português.</p>
         <label class="toggle" for="hideTutor"><input type="checkbox" id="hideTutor" checked> Ouvir primeiro: esconder o texto do tutor</label>
+        <label class="toggle" for="handsFree"><input type="checkbox" id="handsFree" checked> Mãos livres: o microfone abre sozinho quando o tutor termina de falar</label>
         <div class="result" id="nivResult" hidden></div>
         <div class="chat" id="chat"></div>
         <div class="row"><button class="btn" id="tutorStart" type="button">Conversar sobre a aula</button><button class="btn ghost" id="nivStart" type="button">Teste de nível (10 min)</button></div>
         <div class="stack" id="tutorControls" hidden>
           <button class="mic" id="tutorMic" type="button" aria-label="Falar com o tutor"></button>
           <p class="heard" id="tutorHeard">Toque no microfone e fale em inglês.</p>
+          <div class="hf-bar" id="hfBar" hidden><span class="hf-dot" aria-hidden="true"></span><span id="hfState">Conversa contínua ligada</span><button class="btn ghost" id="hfStop" type="button">Parar</button></div>
           <div class="row"><input type="text" id="tutorText" placeholder="Ou digite aqui" style="flex:1" autocomplete="off"><button class="btn ghost" id="tutorSend" type="button">Enviar</button></div>
           <div class="row"><button class="linkbtn" id="tutorReset" type="button">Começar outra conversa</button></div>
         </div>
@@ -595,7 +603,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function speakSynth(text, vozForcada, onEnd) {
     var lento = /^~lento~ /.test(text); text = clean(text);
     var vv = synth && pickVoice(vozPara(vozForcada));
-    if (!vv) { toast('Este aparelho não tem voz em inglês para ler esta frase. Abra o caderno no Chrome ou no Safari.'); return; }
+    if (!vv) { toast('Este aparelho não tem voz em inglês para ler esta frase. Abra o caderno no Chrome ou no Safari.'); if (onEnd) onEnd(); return; }
     try { synth.cancel(); var u = new SpeechSynthesisUtterance(text); u.voice = vv; u.lang = vv.lang; u.rate = slow || lento ? 0.6 : 0.9; if (onEnd) u.onend = onEnd; synth.speak(u); } catch (e) { toast('Não consegui tocar o áudio.'); }
   }
   /* plays one line and calls onEnd when it finishes (used by the dialogue player) */
@@ -604,7 +612,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var url = AUD[v][text];
     if (url) {
       player.onended = function () { player.onended = null; if (onEnd) setTimeout(onEnd, 450); };
-      try { player.pause(); player.src = url; player.playbackRate = 1; var pr = player.play(); if (pr && pr.catch) pr.catch(function () { player.onended = null; toast('Toque de novo para ouvir.'); }); } catch (e) { if (onEnd) onEnd(); }
+      try { player.pause(); player.src = url; player.playbackRate = 1; var pr = player.play(); if (pr && pr.catch) pr.catch(function () { player.onended = null; toast('Toque de novo para ouvir.'); if (onEnd) onEnd(); }); } catch (e) { if (onEnd) onEnd(); }
       return;
     }
     speakSynth(text, v, onEnd ? function () { setTimeout(onEnd, 450); } : null);
@@ -1142,6 +1150,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     };
     r.onerror = function (ev) {
       var m = ev.error === 'not-allowed' || ev.error === 'service-not-allowed' ? 'Permita o uso do microfone para este site nas configurações do navegador.' : ev.error === 'no-speech' ? 'Não ouvi nada. Toque e fale de novo.' : ev.error === 'network' ? 'O reconhecimento de voz precisa de internet.' : '';
+      if (ev.error === 'no-speech' && HF.on) m = '';
+      if ((ev.error === 'not-allowed' || ev.error === 'service-not-allowed') && HF.on) { HF.pausado = true; m = 'Para a conversa contínua, toque no microfone uma vez para responder.'; }
       if (m) toast(m);
     };
     r.onend = function () {
@@ -1572,6 +1582,42 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 
   /* tutor */
   var HIST = [], tutorBusy = false, MODO = 'aula';
+  /* hands-free conversation: tutor speaks, mic opens by itself, and so on until Stop */
+  var HF = { on: false, faltas: 0, pausado: false };
+  try { $('handsFree').checked = lsGet('caderno_hf') !== '0'; } catch (e) {}
+  $('handsFree').onchange = function () { lsSet('caderno_hf', $('handsFree').checked ? '1' : '0'); if (!$('handsFree').checked) pararHF(); };
+  function hfEstado(txt, ouvindo) { $('hfBar').hidden = !HF.on; $('hfState').textContent = txt; $('hfBar').classList.toggle('ouvindo', !!ouvindo); }
+  function ligarHF() { HF.on = $('handsFree').checked; HF.faltas = 0; HF.pausado = false; if (HF.on) hfEstado('Conversa contínua ligada'); }
+  function pararHF() {
+    HF.on = false; $('hfBar').hidden = true;
+    if (rec) { try { rec.abort(); } catch (e) {} }
+    try { player.pause(); if (synth) synth.cancel(); } catch (e) {}
+    $('tutorHeard').textContent = 'Conversa pausada. Toque no microfone para falar.';
+  }
+  $('hfStop').onclick = pararHF;
+  function falarDepois(text, cb) {
+    // plays the tutor's line and calls cb when the audio ends
+    if (S && S.vozGemini) {
+      fetchAudio([text]).then(function () { playLine(text, undefined, cb); });
+    } else { slow = false; speakSynth(text, null, cb); }
+  }
+  function ouvirSozinho() {
+    if (!HF.on || HF.pausado || tutorBusy) return;
+    hfEstado('Sua vez: pode falar…', true);
+    $('tutorHeard').textContent = 'Ouvindo…';
+    listen($('tutorMic'), function (t) { $('tutorHeard').textContent = t; }, function (alts) {
+      if (!HF.on) return;
+      if (HF.pausado) { hfEstado('Toque no microfone para responder'); return; }
+      if (!alts.length) {
+        HF.faltas++;
+        if (HF.faltas < 3) { hfEstado('Não ouvi. Pode falar de novo…'); setTimeout(ouvirSozinho, 500); }
+        else { HF.pausado = true; hfEstado('Pausado. Toque no microfone para continuar'); $('tutorHeard').textContent = 'Não ouvi nada por um tempo. Toque no microfone quando quiser continuar.'; }
+        return;
+      }
+      HF.faltas = 0; hfEstado('O tutor está pensando…');
+      tutorSay(alts[0]);
+    });
+  }
   try { $('hideTutor').checked = lsGet('caderno_hide') !== '0'; } catch (e) {}
   $('hideTutor').onchange = function () { lsSet('caderno_hide', $('hideTutor').checked ? '1' : '0'); };
   function voiceSpeak(text) {
@@ -1619,31 +1665,36 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       }
       HIST.push({ quem: 'tutor', texto: r.resposta });
       addBubble('tutor', r.resposta, r);
-      voiceSpeak(r.resposta);
+      if (HF.on) { hfEstado('O tutor está falando…'); falarDepois(r.resposta, function () { setTimeout(ouvirSozinho, 250); }); }
+      else voiceSpeak(r.resposta);
       if (r.nivelEstimado) {
         var box = $('nivResult'); box.hidden = false; box.replaceChildren();
         box.append(el('p', 'eyebrow', 'Resultado do teste de nível'), el('b', 'lv', r.nivelEstimado), el('p', null, r.resumo || ''), el('p', 'small muted', 'Seu nível no caderno foi atualizado. As próximas aulas vão seguir esse nível.'));
         S.eu.nivel = r.nivelEstimado; renderHeader(); MODO = 'aula';
         box.scrollIntoView({ block: 'start', behavior: 'smooth' });
       }
-      $('tutorHeard').textContent = 'Toque no microfone e responda.';
+      if (!HF.on) $('tutorHeard').textContent = 'Toque no microfone e responda.';
     }).catch(function (e) {
+      if (HF.on) { HF.pausado = true; hfEstado('Pausado por um erro. Toque no microfone para continuar'); }
       if (userBubble) userBubble.remove();
       $('tutorHeard').textContent = msgOf(e);
     }).then(function () { tutorBusy = false; $('tutorMic').disabled = false; $('tutorSend').disabled = false; });
   }
   $('tutorStart').onclick = function () {
     if (S && S.iaAtiva === false) { toast(S.eu.admin ? 'Ative a conversa colando a chave da API na aba Admin.' : 'A conversa ainda não foi ativada pelo administrador.'); return; }
-    MODO = 'aula'; $('tutorStart').parentNode.hidden = true; $('tutorControls').hidden = false; HIST = []; $('chat').replaceChildren(); tutorSay('');
+    MODO = 'aula'; $('tutorStart').parentNode.hidden = true; $('tutorControls').hidden = false; HIST = []; $('chat').replaceChildren(); ligarHF(); tutorSay('');
   };
   $('nivStart').onclick = function () {
     if (S && S.iaAtiva === false) { toast(S.eu.admin ? 'Ative a conversa colando a chave da API na aba Admin.' : 'A conversa ainda não foi ativada pelo administrador.'); return; }
     MODO = 'nivelamento'; $('nivResult').hidden = true; $('tutorStart').parentNode.hidden = true; $('tutorControls').hidden = false; HIST = []; $('chat').replaceChildren();
     toast('Teste de nível: responda falando. São umas 8 perguntas, das mais fáceis às mais difíceis.');
-    tutorSay('');
+    ligarHF(); tutorSay('');
   };
-  $('tutorReset').onclick = function () { MODO = 'aula'; HIST = []; $('chat').replaceChildren(); $('tutorControls').hidden = true; $('tutorStart').parentNode.hidden = false; };
+  $('tutorReset').onclick = function () { pararHF(); MODO = 'aula'; HIST = []; $('chat').replaceChildren(); $('tutorControls').hidden = true; $('tutorStart').parentNode.hidden = false; };
   $('tutorMic').onclick = function () {
+    if (HF.on && HF.pausado) { HF.pausado = false; HF.faltas = 0; if (rec) { try { rec.stop(); } catch (e) {} return; } ouvirSozinho(); return; }
+    if (HF.on && rec) { try { rec.stop(); } catch (e) {} return; }
+    if (!HF.on && $('handsFree').checked && HIST.length) { ligarHF(); ouvirSozinho(); return; }
     $('tutorHeard').textContent = 'Ouvindo…';
     listen($('tutorMic'), function (t) { $('tutorHeard').textContent = t; }, function (alts) {
       if (!alts.length) { $('tutorHeard').textContent = 'Não entendi. Toque e fale de novo.'; return; }
