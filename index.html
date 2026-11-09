@@ -197,6 +197,11 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .hf-bar.ouvindo .hf-dot { background: var(--bad); animation: hfp 1s ease-in-out infinite }
 @keyframes hfp { 50% { opacity: .3 } }
 @media (prefers-reduced-motion: reduce) { .hf-bar.ouvindo .hf-dot { animation: none } }
+.ref { font-size: .8rem; font-weight: 700; color: var(--muted) }
+#versoDia .en { font-size: 1.08rem }
+.corr-fala { display: grid; gap: 6px; border-radius: 14px; background: var(--amber-soft); padding: 12px 14px }
+.corr-fala .lbl { grid-template-columns: 7.4em 1fr }
+.corr-fala .st { font-size: .85rem; font-weight: 700; color: var(--accent) }
 .lbl { display: grid; grid-template-columns: 5.6em 1fr; gap: 8px; font-size: .92rem; align-items: baseline }
 .lbl.rap > span:last-child { font-size: 1.02rem }
 .porque { font-size: .9rem; background: var(--amber-soft); border-radius: 10px; padding: 8px 10px; line-height: 1.45 }
@@ -300,6 +305,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     </nav>
 
     <section class="view" id="v-ouvido" hidden>
+      <div class="task" id="versoDia" hidden></div>
       <div class="task hero">
         <p class="eyebrow">Treino do dia, 5 minutos</p>
         <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
@@ -599,10 +605,11 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function playUrl(url) {
     try { player.pause(); player.src = url; player.playbackRate = slow ? 0.7 : 1; var p = player.play(); if (p && p.catch) p.catch(function () { toast('Áudio pronto. Toque de novo para ouvir.'); }); } catch (e) { toast('Toque de novo para ouvir.'); }
   }
-  function clean(k) { return String(k).replace(/^~(natural|lento)~ /, ''); }
+  function clean(k) { return String(k).replace(/^~[a-z]+~ /, ''); }
   function speakSynth(text, vozForcada, onEnd) {
-    var lento = /^~lento~ /.test(text); text = clean(text);
-    var vv = synth && pickVoice(vozPara(vozForcada));
+    var lento = /^~lento~ /.test(text), emPt = /^~pt~ /.test(text); text = clean(text);
+    var vv = synth && (emPt ? voices.find(function (x) { return /^pt/i.test(x.lang); }) : pickVoice(vozPara(vozForcada)));
+    if (!vv && emPt) { if (onEnd) onEnd(); return; }
     if (!vv) { toast('Este aparelho não tem voz em inglês para ler esta frase. Abra o caderno no Chrome ou no Safari.'); if (onEnd) onEnd(); return; }
     try { synth.cancel(); var u = new SpeechSynthesisUtterance(text); u.voice = vv; u.lang = vv.lang; u.rate = slow || lento ? 0.6 : 0.9; if (onEnd) u.onend = onEnd; synth.speak(u); } catch (e) { toast('Não consegui tocar o áudio.'); }
   }
@@ -1213,7 +1220,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     return (item.ok || []).some(function (k) { return a.indexOf(String(k).toLowerCase()) >= 0; });
   }
   function showRespResult(item, ans, r) {
-    var out = $('respOut'); out.hidden = false; out.replaceChildren();
+    var out = $('respOut'); out.hidden = false; out.replaceChildren(); out.cartao = null;
     var good = r.entendeu && r.adequada;
     var v = el('div', 'fb ' + (good ? 'ok' : 'bad'));
     v.append(el('span', null, good ? 'Você entendeu e respondeu bem!' : (r.entendeu ? 'Você entendeu, mas a resposta pode melhorar.' : 'Parece que a pergunta não foi entendida. Ouça de novo.')));
@@ -1221,7 +1228,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (r.comentario) out.append(el('p', 'small', r.comentario));
     out.append(el('p', 'small muted', 'Você disse: "' + ans + '"'));
     var better = r.melhor || '';
-    if (better) { var b = el('div', 'row'); b.append(el('span', 'small', 'Melhor dizer: '), el('b', null, better)); out.append(b); }
+    if (better) { var cc = cartaoCorrecao({ normal: better, falado: r.faladoRapido, explicacao: r.explicacaoCurta }); out.append(cc); out.cartao = cc; }
     var m = el('div', 'row'); m.append(el('span', 'small', 'Resposta-modelo: '), el('b', null, item.model));
     if (item.modelAudio !== false) m.append(sayBtn(item.model));
     out.append(m);
@@ -1238,7 +1245,11 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var aula = (respFonte || shownLesson() || {}).id, idxAtual = respIdx;
     api('avaliarResposta', TOKEN, { aula: aula, pergunta: clean(item.q), resposta: ans, modelo: item.model, okLocal: ok }).then(function (r) {
       sw.exercicios++; if (r.entendeu && r.adequada) sw.exAcertos++;
-      if (respIdx === idxAtual) showRespResult(item, ans, r.ia ? r : { entendeu: ok, adequada: ok, comentario: '' });
+      if (respIdx === idxAtual) {
+        showRespResult(item, ans, r.ia ? r : { entendeu: ok, adequada: ok, comentario: '' });
+        var cc = $('respOut').cartao;
+        if (r.ia && r.melhor && cc) correcaoFalada({ normal: r.melhor, rapida: r.melhorRapida, porque: r.explicacaoCurta || '' }, $('respMic'), cc, function () {});
+      }
     }).catch(function (e) { if (respIdx === idxAtual) showRespResult(item, ans, { entendeu: ok, adequada: ok, comentario: '' }); });
   }
   $('respMic').onclick = function () {
@@ -1348,6 +1359,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function blocoFrase(f) {
     var d = el('div', 'stack'); d.style.gap = '4px';
     var rp = linhaFr('Falado', f.soaRapida || f.soa, 'soa'); rp.classList.add('rap');
+    if (f.ref) d.append(el('div', 'ref', f.ref));
     d.append(el('div', 'en', f.en), rp, linhaFr('Tradução', f.pt));
     if (f.porque) { var q = el('div', 'porque'); q.innerHTML = '<b>O que acontece no som:</b> ' + esc(f.porque); d.append(q); }
     return d;
@@ -1400,7 +1412,13 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var L = sonsList(), sel = $('pickSom');
     if (!L.length) { sel.replaceChildren(); $('ouvBody').replaceChildren(el('p', 'muted', 'As unidades de Ouvido ainda não foram instaladas.')); return; }
     var u = somAtual(); somSel = u.id;
-    sel.replaceChildren.apply(sel, L.map(function (x) { var p = somPct(x.id); var o = el('option', null, 'Unidade ' + x.n + ': ' + x.title + (p == null ? '' : ' (' + p + '% de acerto)')); o.value = x.id; o.selected = x.id === u.id; return o; }));
+    var grupos = [['Fala ligada', L.filter(function (x) { return x.trilha !== 'fe'; })], ['Fé e Bíblia', L.filter(function (x) { return x.trilha === 'fe'; })]];
+    sel.replaceChildren.apply(sel, grupos.filter(function (g) { return g[1].length; }).map(function (g) {
+      var og = el('optgroup'); og.label = g[0];
+      g[1].forEach(function (x) { var p = somPct(x.id); var o = el('option', null, (x.trilha === 'fe' ? '' : 'Unidade ' + x.n + ': ') + x.title + (p == null ? '' : ' (' + p + '% de acerto)')); o.value = x.id; o.selected = x.id === u.id; og.append(o); });
+      return og;
+    }));
+    renderVersoDia();
     document.querySelectorAll('#ouvSeg button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.p === ouvPasso)); });
     preloadSom(u);
     RUN = null;
@@ -1408,6 +1426,19 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     else if (ouvPasso === 'escolha' || ouvPasso === 'completar') startRun(shuffle(u.frases).map(function (f) { return { f: f, u: u, modo: ouvPasso }; }), ouvPasso === 'escolha' ? 'Ouça e escolha o que foi dito' : 'Ouça e complete o pedaço que falta');
     else if (ouvPasso === 'repetir') renderRepetirSom(u, 0);
     else renderResponderSom(u);
+  }
+  /* verse of the day: one Bible verse per day, the same for the whole day */
+  function renderVersoDia() {
+    var box = $('versoDia'), vs = [];
+    sonsList().forEach(function (u) { if (u.trilha === 'fe') u.frases.forEach(function (f) { if (/^(Salmo|João)/.test(f.ref || '')) vs.push(f); }); });
+    if (!vs.length) { box.hidden = true; return; }
+    var dia = Math.floor(Date.parse(S.hoje + 'T12:00:00') / 86400000), f = vs[((dia % vs.length) + vs.length) % vs.length];
+    box.hidden = false; box.replaceChildren();
+    box.append(el('p', 'eyebrow', 'Versículo do dia'), blocoFrase(f));
+    var row = el('div', 'row');
+    var br = el('button', 'btn', 'Ouvir rápida'); br.type = 'button'; br.onclick = function () { speak(kR(f), f.voice); };
+    var bn = el('button', 'btn ghost', 'Ouvir normal'); bn.type = 'button'; bn.onclick = function () { speak(kN(f), f.voice); };
+    row.append(br, bn); box.append(row);
   }
   $('pickSom').onchange = function () { somSel = $('pickSom').value; lsSet('caderno_som', somSel); ouvPasso = 'regra'; lsSet('caderno_ouvpasso', ouvPasso); renderOuvido(); window.scrollTo(0, 0); };
   document.querySelectorAll('#ouvSeg button').forEach(function (b) { b.onclick = function () { ouvPasso = b.dataset.p; lsSet('caderno_ouvpasso', ouvPasso); renderOuvido(); }; });
@@ -1417,6 +1448,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var box = $('ouvBody'); box.replaceChildren();
     var t = el('div', 'task'); t.append(el('h2', null, u.title), el('p', 'muted', u.resumo));
     u.regra.forEach(function (r) { var p = el('p'); p.innerHTML = bolds(r); t.append(p); });
+    if (u.ouvir) { var yt = el('a', 'btn', 'Ouvir o hino cantado (YouTube)'); yt.href = u.ouvir; yt.target = '_blank'; yt.rel = 'noopener'; yt.style.textAlign = 'center'; yt.style.textDecoration = 'none'; t.append(yt); }
+    if (u.fonte) t.append(el('p', 'small muted', 'Fonte: ' + u.fonte));
     box.append(t);
     var pt = el('div', 'task'); pt.append(el('h3', null, 'Por extenso × falado rápido'), el('p', 'small muted', 'Toque em "Cuidadosa" e depois em "Rápida". Repare no que muda: o que encolhe, o que gruda e o que some.'));
     (u.pares || []).forEach(function (p) {
@@ -1582,6 +1615,41 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 
   /* tutor */
   var HIST = [], tutorBusy = false, MODO = 'aula';
+  /* spoken correction: right sentence (normal) → how it sounds fast → why (pt-BR, another voice) → you repeat */
+  function vozTutor() { return pref() === 'masculina' ? 'masculina' : 'feminina'; }
+  function cartaoCorrecao(c) {
+    var d = el('div', 'corr-fala');
+    var a = el('div', 'lbl'); a.append(el('span', null, 'Melhor dizer'), el('b', null, c.normal)); d.append(a);
+    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Na fala rápida'), el('span', 'soa', c.falado)); d.append(b); }
+    if (c.porque || c.explicacao) d.append(el('div', 'small', c.explicacao || c.porque));
+    var st = el('div', 'st'); d.append(st); d.status = st;
+    return d;
+  }
+  function correcaoFalada(c, micBtn, card, done) {
+    var vt = vozTutor(), vp = vt === 'feminina' ? 'masculina' : 'feminina';
+    var seq = [['~pt~ Melhor dizer:', vp], [NAT + c.normal, vt]];
+    if (c.rapida) seq.push(['~pt~ Na fala rápida, soa assim:', vp], ['~rapida~ ' + c.rapida, vt]);
+    if (c.porque) seq.push(['~pt~ ' + c.porque, vp]);
+    seq.push(['~pt~ Sua vez, repita.', vp]);
+    var byV = { feminina: [], masculina: [] }; seq.forEach(function (x) { byV[x[1]].push(x[0]); });
+    card.status.textContent = 'Ouça a correção…';
+    fetchAudio(byV.feminina, 'fix:feminina').then(function () { return fetchAudio(byV.masculina, 'fix:masculina'); }).then(function () {
+      var i = 0; (function nx() { var x = seq[i++]; if (!x) return repetir(); playLine(x[0], 'fix:' + x[1], nx); })();
+    });
+    function repetir() {
+      if (!SR) { card.status.textContent = 'Repita em voz alta: ' + c.normal; setTimeout(function () { if (done) done(); }, 1500); return; }
+      card.status.textContent = 'Sua vez: repita a frase…';
+      listen(micBtn, function (t) { card.status.textContent = 'Ouvindo: ' + t; }, function (alts) {
+        var best = null;
+        alts.forEach(function (a) { var sc = scoreWords(c.normal, a), n = sc.filter(function (x) { return x.ok; }).length; if (!best || n > best.n) best = { sc: sc, n: n, a: a }; });
+        var ok = best && best.n >= Math.ceil(best.sc.length * 0.6);
+        card.status.textContent = !best ? 'Não ouvi a repetição. Seguindo a conversa.' : ok ? 'Boa repetição! (' + best.n + ' de ' + best.sc.length + ' palavras)' : 'Quase: entendi "' + best.a + '". Seguindo a conversa.';
+        if (best) queue(function () { return api('registrarRepeticao', TOKEN, { aula: (shownLesson() || {}).id, alvo: c.normal, reconhecido: best.a, acertos: best.n, total: best.sc.length, faltaram: best.sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
+        setTimeout(function () { if (done) done(); }, 700);
+      });
+    }
+  }
+
   /* hands-free conversation: tutor speaks, mic opens by itself, and so on until Stop */
   var HF = { on: false, faltas: 0, pausado: false };
   try { $('handsFree').checked = lsGet('caderno_hf') !== '0'; } catch (e) {}
@@ -1655,18 +1723,25 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var hist = HIST.slice(-10);
     var userBubble = fala ? addBubble('aluno', fala) : null;
     api('conversar', TOKEN, { fala: fala, historico: hist, aula: (shownLesson() || {}).id, modo: MODO }).then(function (r) {
+      var cartao = null;
       if (fala) {
         HIST.push({ quem: 'aluno', texto: fala }); bumpDay('conversas');
         if (r.correcao && userBubble) {
-          var c = el('div', 'corr-box'); c.append(el('span', null, 'Melhor dizer: '), el('b', null, r.correcao));
-          if (r.explicacao) c.append(el('div', 'small', r.explicacao));
-          userBubble.after(c);
+          cartao = cartaoCorrecao({ normal: r.correcao, falado: r.faladoRapido, explicacao: r.explicacao || r.explicacaoCurta });
+          userBubble.after(cartao);
         }
       }
       HIST.push({ quem: 'tutor', texto: r.resposta });
       addBubble('tutor', r.resposta, r);
-      if (HF.on) { hfEstado('O tutor está falando…'); falarDepois(r.resposta, function () { setTimeout(ouvirSozinho, 250); }); }
-      else voiceSpeak(r.resposta);
+      function falaDoTutor() {
+        if (HF.on) { hfEstado('O tutor está falando…'); falarDepois(r.resposta, function () { setTimeout(ouvirSozinho, 250); }); }
+        else voiceSpeak(r.resposta);
+      }
+      if (cartao) {
+        if (HF.on) hfEstado('Correção…');
+        cartao.scrollIntoView({ block: 'center', behavior: 'smooth' });
+        correcaoFalada({ normal: r.correcao, rapida: r.correcaoRapida, porque: r.explicacaoCurta || '' }, $('tutorMic'), cartao, falaDoTutor);
+      } else falaDoTutor();
       if (r.nivelEstimado) {
         var box = $('nivResult'); box.hidden = false; box.replaceChildren();
         box.append(el('p', 'eyebrow', 'Resultado do teste de nível'), el('b', 'lv', r.nivelEstimado), el('p', null, r.resumo || ''), el('p', 'small muted', 'Seu nível no caderno foi atualizado. As próximas aulas vão seguir esse nível.'));
