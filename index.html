@@ -218,7 +218,11 @@ details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 
 details.conv[open] { padding-bottom: 12px }
 details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 10px 0; list-style-position: inside }
 .cl { display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start }
-.cl .lbl { grid-template-columns: 4.8em 1fr; gap: 6px }
+.cl .lbl { grid-template-columns: 5.6em 1fr; gap: 6px }
+.lbl .en { font-weight: 700; font-size: 1rem }
+.alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
+.lbl > span:last-child { min-width: 0; overflow-wrap: anywhere }
+.fal { font-weight: 600; color: var(--ink, inherit); letter-spacing: .01em }
 .cl .who { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 800 .8rem var(--f-display); background: var(--accent-soft); color: var(--accent) }
 .cl .who.b { background: var(--amber-soft); color: var(--ink) }
 .cl.alvo .en { color: var(--accent) }
@@ -1228,7 +1232,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (r.comentario) out.append(el('p', 'small', r.comentario));
     out.append(el('p', 'small muted', 'Você disse: "' + ans + '"'));
     var better = r.melhor || '';
-    if (better) { var cc = cartaoCorrecao({ normal: better, falado: r.faladoRapido, explicacao: r.explicacaoCurta }); out.append(cc); out.cartao = cc; }
+    if (better) { var cc = cartaoCorrecao({ normal: better, falada: r.falada, falado: r.faladoRapido, explicacao: r.explicacaoCurta }); out.append(cc); out.cartao = cc; }
     var m = el('div', 'row'); m.append(el('span', 'small', 'Resposta-modelo: '), el('b', null, item.model));
     if (item.modelAudio !== false) m.append(sayBtn(item.model));
     out.append(m);
@@ -1356,18 +1360,25 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function somPct(id) { var t = somProg(id).t, a = 0, n = 0; ['escolha', 'completar'].forEach(function (k) { if (t[k]) { a += t[k][0]; n += t[k][1]; } }); return n ? Math.round(100 * a / n) : null; }
   function sayKey(key, v, label) { var b = el('button', 'btn ghost', label); b.type = 'button'; b.onclick = function () { speak(key, v); }; return b; }
   function linhaFr(rotulo, conteudo, cls) { var d = el('div', 'lbl'); d.append(el('span', null, rotulo), el('span', cls || null, conteudo)); return d; }
+  /* three versions: Escrita (written) / Falada (English with ' at the joins) / Pronúncia (Brazilian letters) */
+  function tresVersoes(en, fal, pron, pt) {
+    var out = [linhaFr('Escrita', en, 'en')];
+    if (fal && fal !== en) out.push(linhaFr('Falada', fal, 'fal'));
+    if (pron) { var p = linhaFr('Pronúncia', pron, 'soa'); p.classList.add('rap'); out.push(p); }
+    if (pt) out.push(linhaFr('Tradução', pt));
+    return out;
+  }
   function blocoFrase(f) {
     var d = el('div', 'stack'); d.style.gap = '4px';
-    var rp = linhaFr('Falado', f.soaRapida || f.soa, 'soa'); rp.classList.add('rap');
     if (f.ref) d.append(el('div', 'ref', f.ref));
-    d.append(el('div', 'en', f.en), rp, linhaFr('Tradução', f.pt));
+    d.append.apply(d, tresVersoes(f.en, f.falada, f.pron || f.soaRapida || f.soa, f.pt));
     if (f.porque) { var q = el('div', 'porque'); q.innerHTML = '<b>O que acontece no som:</b> ' + esc(f.porque); d.append(q); }
     return d;
   }
   /* the three speeds: fast (default), normal and careful, each with its own audio */
   function velocidadesEl(f) {
     var d = el('div', 'vel');
-    [['Rápida', f.soaRapida || f.soa, kR(f), true], ['Normal', f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
+    [['Rápida', f.pron || f.soaRapida || f.soa, kR(f), true], ['Normal', f.pronNormal || f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
       var r = el('div', 'v' + (x[3] ? ' on' : ''));
       var b = el('button', 'btn' + (x[3] ? '' : ' ghost'), 'Ouvir'); b.type = 'button'; b.setAttribute('aria-label', 'Ouvir ' + x[0].toLowerCase());
       b.onclick = function () { speak(x[2], f.voice); };
@@ -1383,7 +1394,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     f.conversa.forEach(function (l) {
       var r = el('div', 'cl' + (l.alvo ? ' alvo' : ''));
       var w = el('span', 'who' + (l.who === 'B' ? ' b' : ''), l.who);
-      var tx = el('div', 'txt'); tx.append(el('div', 'en', l.en), linhaFr('Falado', l.soa, 'soa'), linhaFr('Tradução', l.pt));
+      var tx = el('div', 'txt'); tx.append.apply(tx, tresVersoes(l.en, l.falada, l.pron || l.soa, l.pt));
       var pb = el('button', 'btn ghost play', 'Ouvir'); pb.type = 'button'; pb.onclick = function () { speak(NAT + l.en, 'fix:' + l.voice); };
       tx.append(pb); r.append(w, tx); d.append(r);
     });
@@ -1454,7 +1465,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var pt = el('div', 'task'); pt.append(el('h3', null, 'Por extenso × falado rápido'), el('p', 'small muted', 'Toque em "Cuidadosa" e depois em "Rápida". Repare no que muda: o que encolhe, o que gruda e o que some.'));
     (u.pares || []).forEach(function (p) {
       var v = p.voice || 'feminina', r = el('div', 'par');
-      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + p.natural), el('div', 'soa', p.soa));
+      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + (p.falada || p.natural)), el('div', 'soa', p.pron || p.soa));
       var bs = el('div', 'stack'); bs.style.gap = '6px'; bs.append(sayKey(CUIK + p.lento, v, 'Cuidadosa'), sayKey(RAPK + p.natural, v, 'Rápida'));
       r.append(l, bs); pt.append(r);
     });
@@ -1515,7 +1526,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       fb.replaceChildren();
       var b = el('div', 'ouv-fb ' + (ok ? 'ok' : 'bad'));
       b.append(el('b', null, ok ? 'Isso! Você ouviu certo.' : 'Não foi isso. Ouça de novo comparando com o texto:'));
-      var bf = blocoFrase(it.f); bf.firstChild.className = 'target'; b.append(bf);
+      var bf = blocoFrase(it.f); bf.classList.add('alvo-fr'); b.append(bf);
       if (it.f.extenso !== it.f.en) b.append(el('div', 'small', 'Por extenso: ' + it.f.extenso));
       b.append(velocidadesEl(it.f));
       if (!ok) b.append(el('p', 'small', 'Dica: ' + it.u.resumo + (it.repetido ? '' : ' Esta frase volta no fim da rodada.')));
@@ -1561,7 +1572,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var t = el('div', 'task'); t.style.cssText = 'justify-items:center;gap:12px';
     t.append(el('p', 'eyebrow', 'Repita igual ao nativo: ' + (idx + 1) + ' de ' + u.frases.length));
     t.append(el('p', 'small muted', 'Ouça a rápida e repita no mesmo ritmo, grudando as palavras. Se travar, ouça a normal e depois volte para a rápida.'));
-    var bf = blocoFrase(f); bf.firstChild.className = 'target'; bf.style.justifySelf = 'stretch'; t.append(bf);
+    var bf = blocoFrase(f); bf.classList.add('alvo-fr'); bf.style.justifySelf = 'stretch'; t.append(bf);
     var vl = velocidadesEl(f); vl.style.justifySelf = 'stretch'; t.append(vl);
     var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Falar');
     var words = el('div', 'words'), heard = el('p', 'heard', SR ? 'Toque no microfone e repita.' : 'Seu navegador não reconhece voz: repita em voz alta mesmo assim.');
@@ -1620,7 +1631,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function cartaoCorrecao(c) {
     var d = el('div', 'corr-fala');
     var a = el('div', 'lbl'); a.append(el('span', null, 'Melhor dizer'), el('b', null, c.normal)); d.append(a);
-    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Na fala rápida'), el('span', 'soa', c.falado)); d.append(b); }
+    if (c.falada && c.falada !== c.normal) { var f2 = el('div', 'lbl'); f2.append(el('span', null, 'Falada'), el('span', 'fal', c.falada)); d.append(f2); }
+    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Pronúncia'), el('span', 'soa', c.falado)); d.append(b); }
     if (c.porque || c.explicacao) d.append(el('div', 'small', c.explicacao || c.porque));
     var st = el('div', 'st'); d.append(st); d.status = st;
     return d;
@@ -1727,7 +1739,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       if (fala) {
         HIST.push({ quem: 'aluno', texto: fala }); bumpDay('conversas');
         if (r.correcao && userBubble) {
-          cartao = cartaoCorrecao({ normal: r.correcao, falado: r.faladoRapido, explicacao: r.explicacao || r.explicacaoCurta });
+          cartao = cartaoCorrecao({ normal: r.correcao, falada: r.falada, falado: r.faladoRapido, explicacao: r.explicacao || r.explicacaoCurta });
           userBubble.after(cartao);
         }
       }
