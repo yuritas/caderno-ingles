@@ -227,6 +227,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .mf-item[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft) }
 .mf-item .o { font-size: .85rem; color: var(--muted) }
 .mf-item .e { font-weight: 700 }
+.refs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
+.refs .btn { font-size: .88rem; padding-inline: 8px }
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
@@ -1511,6 +1513,20 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     a.style.textAlign = 'center'; a.style.textDecoration = 'none';
     return a;
   }
+  /* Reverso Context: the phrase in real texts (films, sites, documents) with the Portuguese side by side */
+  function rvBtn(texto, rotulo) {
+    var q = String(texto || '').replace(/[.!?,;:"“”]+/g, ' ').replace(/\s+/g, ' ').trim();
+    var a = el('a', 'btn ghost', rotulo || 'Ver em textos reais (Reverso)');
+    a.href = 'https://context.reverso.net/traducao/ingles-portugues/' + encodeURIComponent(q).replace(/%20/g, '+'); a.target = '_blank'; a.rel = 'noopener';
+    a.style.textAlign = 'center'; a.style.textDecoration = 'none';
+    return a;
+  }
+  /* both references side by side */
+  function refsEl(texto, curto) {
+    var d = el('div', 'refs');
+    d.append(ygBtn(texto, curto ? 'YouGlish' : 'Vídeos (YouGlish)'), rvBtn(texto, curto ? 'Reverso' : 'Textos (Reverso)'));
+    return d;
+  }
   function estudoFrase(f) {
     var t = el('div', 'task'); t.style.gap = '12px';
     t.append(el('p', 'eyebrow', 'Você escreveu: "' + f.texto + '"'));
@@ -1531,14 +1547,14 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         queue(function () { return api('registrarRepeticao', TOKEN, { aula: 'minhas', alvo: f.en, reconhecido: best.a, acertos: best.n, total: best.sc.length, faltaram: best.sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
       });
     };
-    t.append(mic, words, heard, ygBtn(f.en));
+    t.append(mic, words, heard, refsEl(f.en));
     if ((f.alternativas || []).length) {
       var al = el('details', 'conv'); al.append(el('summary', null, 'Outras formas de dizer (' + f.alternativas.length + ')'));
       f.alternativas.forEach(function (a) {
         var d = el('div', 'mf-alt'); d.append.apply(d, tresVersoes(a.en, a.falada, a.pron, ''));
         if (a.quando) d.append(linhaFr('Quando', a.quando));
         var pb = el('button', 'btn ghost play', 'Ouvir'); pb.type = 'button'; pb.style.justifySelf = 'start'; pb.onclick = function () { speak(NAT + a.en, f.voice); };
-        var rw = el('div', 'row'); rw.append(pb, ygBtn(a.en, 'Ver em vídeos')); d.append(rw); al.append(d);
+        var rw = el('div', 'row'); rw.append(pb, ygBtn(a.en, 'YouGlish'), rvBtn(a.en, 'Reverso')); d.append(rw); al.append(d);
       });
       t.append(al);
     }
@@ -1707,7 +1723,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         registrarSom({ f: f, u: u, modo: 'repetir' }, all, best.a);
       });
     };
-    var yg = ygBtn(f.en); yg.style.justifySelf = 'stretch';
+    var yg = refsEl(f.en); yg.style.justifySelf = 'stretch';
     t.append(mic, words, heard, yg);
     var cvr = conversaEl(f); if (cvr) { cvr.style.justifySelf = 'stretch'; t.append(cvr); }
     var nav = el('div', 'row'); nav.style.justifyContent = 'center';
