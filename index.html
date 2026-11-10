@@ -6,46 +6,70 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Caderno de Inglês</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Atkinson+Hyperlegible+Next:wght@400;500;700;800&family=Atkinson+Hyperlegible+Mono:wght@500;600&display=swap">
+<meta name="theme-color" content="#0F2A44">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Caderno">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<script>try { if (localStorage.getItem('caderno_tema') === 'escuro') document.documentElement.setAttribute('data-theme', 'dark'); } catch (e) {}</script>
 <style>
 /* Layout: caderno em uma coluna; abas fixas no topo; cartões só no que se toca */
+/* Identidade Yuritas: azul-marinho #0F2A44, azul-petróleo #0E7C86, âmbar só para destaques. Tema claro (padrão) e escuro (data-theme="dark"). */
 :root {
-  --bg: #f3f5f9; --surface: #ffffff; --ink: #1b2340; --muted: #5d6684; --line: #dde2ee;
-  --accent: #2e46b8; --accent-soft: #e4e9fb; --on-accent: #ffffff; --amber: #e9a23b; --amber-soft: #fcf0dc; --hero: #2e46b8; --on-hero: #ffffff;
-  --ok: #1d7a4e; --ok-soft: #dff2e7; --bad: #b7392c; --bad-soft: #fae3df;
-  --f-display: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
+  --navy: #0F2A44; --on-navy: #ffffff; --petrol: #0E7C86;
+  --bg: #F2F5F8; --surface: #ffffff; --surface-2: #F7F9FB; --ink: #0F2A44; --muted: #5A6B7D; --line: #DDE4EB;
+  --accent: #0E7C86; --accent-strong: #0B6870; --accent-soft: #E0F0F1; --on-accent: #ffffff;
+  --amber: #E9A23B; --amber-soft: #FCF1DE; --hero: #0F2A44; --on-hero: #ffffff;
+  --ok: #1B7A4C; --ok-soft: #DFF2E7; --bad: #B4382B; --bad-soft: #FAE3DF;
+  --shadow: 0 1px 2px rgba(15, 42, 68, .05), 0 4px 14px rgba(15, 42, 68, .05);
+  --f-display: "Manrope", "Segoe UI", system-ui, sans-serif;
   --f-body: "Atkinson Hyperlegible Next", "Segoe UI", system-ui, sans-serif;
   --f-mono: "Atkinson Hyperlegible Mono", ui-monospace, Menlo, monospace;
-  --nav-h: 64px;
+  --nav-h: 66px; --top-h: 60px;
   color-scheme: light;
 }
-@media (prefers-color-scheme: dark) { :root {
-  --bg: #0f1426; --surface: #171e36; --ink: #e7eaf6; --muted: #9aa3c2; --line: #28304d;
-  --accent: #8ea2ff; --accent-soft: #232d5c; --on-accent: #0f1426; --amber: #f2b45a; --amber-soft: #3a2c14; --hero: #2b3b94; --on-hero: #ffffff;
-  --ok: #6fd39c; --ok-soft: #153526; --bad: #f29486; --bad-soft: #3d1f1b;
-  color-scheme: dark } }
+:root[data-theme="dark"] {
+  --navy: #0A1A2A; --on-navy: #E6EEF4;
+  --bg: #0B1B2C; --surface: #12263A; --surface-2: #0F2133; --ink: #E6EEF4; --muted: #93A6B8; --line: #22394F;
+  --accent: #45C3CC; --accent-strong: #6FD3DA; --accent-soft: #113A44; --on-accent: #05212A;
+  --amber: #F2B45A; --amber-soft: #3A2C14; --hero: #0E5F68; --on-hero: #ffffff;
+  --ok: #6FD39C; --ok-soft: #133426; --bad: #F29486; --bad-soft: #3D1F1B;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+}
 * { box-sizing: border-box }
 html, body { margin: 0 }
-body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--f-body); -webkit-text-size-adjust: 100% }
-.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 calc(var(--nav-h) + 40px + env(safe-area-inset-bottom, 0px)) }
+body { background: var(--bg); color: var(--ink); font: 17px/1.55 var(--f-body); -webkit-text-size-adjust: 100%; -webkit-tap-highlight-color: transparent; transition: background-color .2s }
+.wrap { max-width: 640px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 0 calc(var(--nav-h) + 32px + env(safe-area-inset-bottom, 0px)) }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0 }
 h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.01em }
-h2 { font-size: 1.3rem; font-weight: 800 }
-h3 { font-size: 1.05rem; font-weight: 600 }
+h2 { font-size: 1.28rem; font-weight: 800; letter-spacing: -0.015em }
+h3 { font-size: 1.05rem; font-weight: 700; letter-spacing: -0.01em }
 p { margin: 0 }
 [hidden] { display: none !important }
-.eyebrow { font-size: .85rem; color: var(--accent); font-weight: 700 }
+.eyebrow { font: 800 .74rem var(--f-display); color: var(--accent); letter-spacing: .06em; text-transform: uppercase }
 .muted { color: var(--muted) } .small { font-size: .88rem }
-header.top { padding-block: 18px 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px }
-.bar { display: flex; align-items: center; gap: 12px }
-.bar > *, .voice { min-width: 0 }
+header.top { position: sticky; top: 0; z-index: 12; background: var(--navy); color: var(--on-navy); padding-top: env(safe-area-inset-top, 0px); box-shadow: 0 1px 0 rgba(255, 255, 255, .06), 0 6px 18px rgba(15, 42, 68, .14) }
+.top-in { max-width: 640px; margin: 0 auto; min-height: var(--top-h); display: flex; align-items: center; gap: 8px; padding: 8px max(16px, env(safe-area-inset-right, 0px)) 8px max(16px, env(safe-area-inset-left, 0px)) }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 }
 .brand svg { width: 34px; height: 34px; flex: none }
-.brand .who { font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
+.brand h1 { font-size: 1.02rem; font-weight: 800; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--on-navy) }
+.brand .who { font-size: .78rem; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3 }
+.chip-lv { flex: none; font: 800 .78rem var(--f-display); letter-spacing: .02em; padding: 5px 9px; border-radius: 999px; background: rgba(255, 255, 255, .12); color: var(--on-navy); border: 1px solid rgba(255, 255, 255, .18) }
+.topbtn { flex: none; width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(255, 255, 255, .16); background: rgba(255, 255, 255, .08); color: var(--on-navy); display: grid; place-items: center; cursor: pointer; position: relative; padding: 0 }
+.topbtn svg { width: 21px; height: 21px }
+.topbtn .vl { position: absolute; right: -3px; bottom: -3px; font: 800 .6rem var(--f-display); background: var(--amber); color: #0F2A44; border-radius: 999px; min-width: 16px; height: 16px; display: grid; place-items: center; padding: 0 3px; border: 2px solid var(--navy) }
+.topbtn:active { transform: scale(.96) }
+.topbtn .i-sol { display: none } :root[data-theme="dark"] .topbtn .i-sol { display: block } :root[data-theme="dark"] .topbtn .i-lua { display: none }
+@media (max-width: 359px) { .brand .who { display: none } }
+@media (max-width: 400px) { .h1x { display: none } }
 .iconbtn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; cursor: pointer; flex: none }
 .iconbtn svg { width: 22px; height: 22px }
-.iconbtn[aria-pressed="true"] { border-color: var(--accent); color: var(--accent) }
-.journey { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px 12px; display: grid; gap: 10px }
+.journey { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 14px 16px 12px; display: grid; gap: 10px; box-shadow: var(--shadow) }
 .journey .top2 { display: flex; justify-content: space-between; align-items: baseline; gap: 8px }
 .journey .lv { font: 800 1.05rem var(--f-display) }
 .journey .goal { font-size: .82rem; color: var(--muted) }
@@ -53,26 +77,39 @@ header.top { padding-block: 18px 6px; display: grid; grid-template-columns: minm
 .wave i { display: block; border-radius: 2px; background: var(--line) }
 .wave i.on { background: var(--accent) }
 .wave i.now { background: var(--amber) }
-.wlab { display: grid; grid-template-columns: repeat(4, 1fr); font: 600 .75rem var(--f-mono); color: var(--muted) }
+.wlab { display: grid; grid-template-columns: repeat(4, 1fr); font: 700 .75rem var(--f-display); color: var(--muted) }
 .wlab span.on { color: var(--accent) }
 .today { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border-top: 1px solid var(--line); padding-top: 10px }
 .today div { display: grid }
 .today b { font: 800 1.15rem var(--f-display); font-variant-numeric: tabular-nums }
 .today span { font-size: .78rem; color: var(--muted) }
 .today .streak b { color: var(--amber) }
-.voice { display: flex; align-items: center; gap: 10px }
-.voice > span { font-size: .85rem; font-weight: 700; color: var(--muted); white-space: nowrap }
-.voice .seg { flex: 1; padding: 3px; border-radius: 12px }
-.voice .seg button { padding: 8px 2px; font-size: .84rem; min-width: 0 }
-@media (max-width: 370px) { .voice > span { display: none } }
-nav.tabs { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(7, 1fr); padding: 6px max(6px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 18px rgba(27, 35, 64, .06) }
+nav.tabs { position: fixed; z-index: 14; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; padding: 6px max(8px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -4px 18px rgba(15, 42, 68, .07) }
 @media (min-width: 680px) { nav.tabs { left: 50%; right: auto; width: 640px; transform: translateX(-50%); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0 } }
-nav.tabs button { position: relative; display: grid; justify-items: center; gap: 2px; font: 700 .64rem var(--f-body); letter-spacing: -.01em; background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 12px; cursor: pointer; min-height: 52px; min-width: 0 }
-nav.tabs button svg { width: 24px; height: 24px }
-nav.tabs button[aria-selected="true"] { color: var(--accent); background: var(--accent-soft) }
-nav.tabs .badge { position: absolute; top: 2px; left: 54%; font: 600 .62rem var(--f-mono); background: var(--amber); color: #1b2340; border-radius: 999px; padding: 1px 5px; min-width: 16px; text-align: center }
+nav.tabs button { position: relative; display: grid; justify-items: center; align-content: center; gap: 3px; font: 700 .72rem var(--f-display); background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 14px; cursor: pointer; min-height: 54px; min-width: 0 }
+nav.tabs button svg { width: 56px; height: 30px; padding: 3px 16px; border-radius: 999px; transition: background-color .15s }
+nav.tabs button[aria-selected="true"] { color: var(--accent) }
+nav.tabs button[aria-selected="true"] svg { background: var(--accent-soft) }
+nav.tabs .badge { position: absolute; top: 0; left: 55%; font: 800 .62rem var(--f-display); background: var(--amber); color: #0F2A44; border-radius: 999px; padding: 1px 5px; min-width: 18px; text-align: center; border: 2px solid var(--surface) }
 nav.tabs .badge:empty { display: none }
-section.view { display: grid; gap: 20px; padding-top: 20px }
+#tabMais .i-x { display: none } #tabMais[aria-expanded="true"] .i-x { display: inline } #tabMais[aria-expanded="true"] .i-mais { display: none }
+/* floating "Mais" menu */
+.mais { position: fixed; inset: 0; z-index: 13 }
+.mais-bg { position: absolute; inset: 0; background: rgba(8, 20, 33, .45); backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px) }
+.mais-list { position: absolute; right: max(14px, calc(50% - 306px)); bottom: calc(var(--nav-h) + 14px + env(safe-area-inset-bottom, 0px)); display: grid; gap: 12px; justify-items: end }
+.fab-item { display: flex; align-items: center; gap: 12px; background: none; border: 0; padding: 0; cursor: pointer; color: inherit }
+.fab-item .lb { font: 700 .92rem var(--f-display); background: var(--surface); color: var(--ink); padding: 7px 12px; border-radius: 10px; box-shadow: 0 4px 14px rgba(8, 20, 33, .22) }
+.fab-item .ic { width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: var(--surface); color: var(--accent); box-shadow: 0 6px 18px rgba(8, 20, 33, .28); border: 1px solid var(--line) }
+.fab-item .ic svg { width: 24px; height: 24px }
+.fab-item[aria-current="true"] .ic { background: var(--accent); color: var(--on-accent); border-color: var(--accent) }
+@media (prefers-reduced-motion: no-preference) {
+  .mais:not([hidden]) .mais-bg { animation: fadeIn .18s ease-out }
+  .mais:not([hidden]) .fab-item { animation: fabIn .22s cubic-bezier(.2, .8, .3, 1.2) both }
+  .mais:not([hidden]) .fab-item:nth-last-child(2) { animation-delay: .03s } .mais:not([hidden]) .fab-item:nth-last-child(3) { animation-delay: .06s } .mais:not([hidden]) .fab-item:nth-last-child(4) { animation-delay: .09s }
+  @keyframes fadeIn { from { opacity: 0 } } @keyframes fabIn { from { opacity: 0; transform: translateY(14px) scale(.9) } }
+}
+section.view { display: grid; gap: 16px; padding-top: 16px }
+html { scroll-padding-top: calc(var(--top-h) + env(safe-area-inset-top, 0px) + 12px) }
 .stack { display: grid; gap: 12px }
 #lessonBox { display: grid; gap: 22px }
 .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center }
@@ -81,42 +118,44 @@ section.view { display: grid; gap: 20px; padding-top: 20px }
 .prose b { color: var(--accent) }
 .ex { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding-block: 12px; border-bottom: 1px solid var(--line); align-items: center }
 .ex .en { font-weight: 700; font-size: 1.1rem; min-width: 0 }
-.ex .pron { font: 500 .85rem var(--f-mono); color: var(--accent); grid-column: 1 }
+.ex .pron { font: 700 .95rem var(--f-body); color: var(--accent); grid-column: 1 }
 .ex .pt { color: var(--muted); grid-column: 1; font-size: .92rem }
 .ex .say { grid-row: 1 / span 3; grid-column: 2 }
 button { font: inherit }
-.btn { font: 700 .95rem var(--f-body); border-radius: 12px; padding: 10px 18px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent); cursor: pointer; min-height: 46px }
+.btn { font: 700 .95rem var(--f-display); letter-spacing: -.005em; border-radius: 12px; padding: 10px 18px; border: 1.5px solid var(--accent); background: var(--accent); color: var(--on-accent); cursor: pointer; min-height: 46px; transition: transform .08s, background-color .15s }
+.btn:active:not(:disabled) { transform: scale(.98) }
 .btn.ghost { background: var(--surface); color: var(--accent); border-color: var(--line) }
+.btn.ghost:hover { border-color: var(--accent) }
 .btn.ok { background: var(--ok); border-color: var(--ok); color: var(--bg) }
 .btn.bad { background: var(--bad); border-color: var(--bad); color: var(--bg) }
 .btn:disabled { opacity: .45; cursor: default }
 .say { width: 44px; height: 44px; border-radius: 50%; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); cursor: pointer; display: inline-grid; place-items: center; flex: none }
 .say svg { width: 20px; height: 20px }
 :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px }
-.task { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 12px }
-.task.hero { background: var(--hero); border-color: var(--hero); color: var(--on-hero) }
+.task { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 18px; display: grid; gap: 12px; box-shadow: var(--shadow) }
+.task.hero { background: linear-gradient(135deg, var(--hero) 0%, var(--hero) 55%, var(--petrol) 160%); border-color: transparent; color: var(--on-hero) }
 .task.hero .eyebrow, .task.hero .small { color: inherit; opacity: .9 }
 .task.hero .btn { background: var(--on-hero); color: var(--hero); border-color: var(--on-hero) }
 .task .q { font-weight: 700 }
 .hint { font-size: .85rem; color: var(--muted) }
 label.f { display: grid; gap: 4px; font-weight: 700; font-size: .92rem }
-input[type=text], input[type=password], input[type=number], textarea, select { font: 1.05rem var(--f-body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 44px }
+input[type=text], input[type=password], input[type=number], textarea, select { font: 1.05rem var(--f-body); color: var(--ink); background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; width: 100%; min-width: 0; min-height: 44px }
 textarea { min-height: 110px; resize: vertical }
 textarea.mono { font: .82rem/1.45 var(--f-mono); min-height: 160px }
-input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none }
+input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px var(--accent-soft) }
 .fb { border-radius: 10px; padding: 10px 12px; font-size: .95rem; display: flex; gap: 8px; align-items: center; flex-wrap: wrap }
 .fb.ok { background: var(--ok-soft); color: var(--ok) }
 .fb.bad { background: var(--bad-soft); color: var(--bad) }
 .fb .ans { font-weight: 700; color: var(--ink) }
-.card { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 28px 20px; display: grid; gap: 14px; justify-items: center; text-align: center; min-height: 240px; align-content: center }
+.card { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 18px; padding: 28px 20px; display: grid; gap: 14px; justify-items: center; text-align: center; min-height: 240px; align-content: center }
 .card .big { font-family: var(--f-display); font-weight: 800; font-size: 1.7rem; line-height: 1.2 }
-.card .pron { font: 500 .95rem var(--f-mono); color: var(--accent) }
+.card .pron { font: 700 1.05rem var(--f-body); color: var(--accent) }
 .boxes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px }
-.boxes div { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 4px; text-align: center }
+.boxes div { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 12px; padding: 8px 4px; text-align: center }
 .boxes b { display: block; font: 700 1.2rem var(--f-display); font-variant-numeric: tabular-nums }
 .boxes span { font-size: .72rem; color: var(--muted) }
 .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px }
-.stat { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px }
+.stat { background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow); border-radius: 14px; padding: 12px 14px }
 .stat b { display: block; font: 800 1.6rem var(--f-display); font-variant-numeric: tabular-nums }
 .stat span { font-size: .82rem; color: var(--muted) }
 .days { display: grid; grid-template-columns: repeat(14, 1fr); gap: 4px }
@@ -126,7 +165,7 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .meter { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden }
 .meter i { display: block; height: 100%; background: var(--accent) }
 .chart { width: 100%; height: auto; display: block }
-.chart text { font: 500 11px var(--f-mono); fill: var(--muted) }
+.chart text { font: 700 11px var(--f-display); fill: var(--muted) }
 .chart .grid { stroke: var(--line); stroke-width: 1 }
 .chart .lineA { fill: none; stroke: var(--accent); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round }
 .chart .areaA { fill: var(--accent-soft) }
@@ -136,23 +175,23 @@ input:focus, textarea:focus, select:focus { border-color: var(--accent); outline
 .chart .goalt { fill: var(--ok) }
 .list { display: grid }
 .li { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding-block: 10px; border-bottom: 1px solid var(--line); align-items: baseline }
-.li .tag { font: 500 .75rem var(--f-mono); color: var(--muted); text-align: right }
+.li .tag { font: 700 .75rem var(--f-display); color: var(--muted); text-align: right }
 .li.done .tag { color: var(--ok) } .li.now .tag { color: var(--accent) }
 .bad-t { color: var(--bad) } .ok-t { color: var(--ok) }
 .writing { display: grid; gap: 8px; padding-block: 12px; border-bottom: 1px solid var(--line) }
 .writing .txt { white-space: pre-wrap }
 .writing .corr { white-space: pre-wrap; background: var(--ok-soft); border-radius: 10px; padding: 10px 12px }
-.pill { display: inline-block; font: 500 .72rem var(--f-mono); padding: 2px 8px; border-radius: 999px; background: var(--line); color: var(--muted) }
+.pill { display: inline-block; font: 700 .72rem var(--f-display); padding: 2px 8px; border-radius: 999px; background: var(--line); color: var(--muted) }
 .pill.ok { background: var(--ok-soft); color: var(--ok) }
 .empty { border: 1.5px dashed var(--line); border-radius: 14px; padding: 20px; color: var(--muted); display: grid; gap: 6px }
-.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
+.toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(var(--nav-h) + 18px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; box-shadow: 0 8px 24px rgba(8, 20, 33, .25); font-size: .9rem; z-index: 20; max-width: calc(100% - 32px) }
 .loading { padding-block: 60px; text-align: center; color: var(--muted) }
 .seg { display: flex; gap: 4px; background: var(--accent-soft); border: 0; border-radius: 14px; padding: 4px }
-.seg button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 10px 4px; font-size: .86rem; white-space: nowrap; border-radius: 11px; font-weight: 700; color: var(--muted); cursor: pointer }
-.seg button[aria-selected="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(27, 35, 64, .12) }
+.seg button { flex: 1 1 0; min-width: 0; border: 0; background: none; padding: 10px 4px; font: 700 .86rem var(--f-display); white-space: nowrap; border-radius: 11px; color: var(--muted); cursor: pointer }
+.seg button[aria-selected="true"] { background: var(--surface); color: var(--accent); box-shadow: 0 1px 3px rgba(15, 42, 68, .14) }
 .err { color: var(--bad); font-size: .92rem }
 hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
-.mic { width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; cursor: pointer; margin: 0 auto; box-shadow: 0 0 0 6px var(--accent-soft) }
+.mic { width: 76px; height: 76px; border-radius: 50%; border: 0; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; cursor: pointer; margin: 0 auto; box-shadow: 0 0 0 6px var(--accent-soft) }
 .mic svg { width: 32px; height: 32px }
 .mic.on { background: var(--bad); box-shadow: 0 0 0 10px var(--bad-soft) }
 @media (prefers-reduced-motion: no-preference) { .mic.on { animation: pulse 1.2s ease-in-out infinite } @keyframes pulse { 50% { box-shadow: 0 0 0 16px var(--bad-soft) } } }
@@ -174,7 +213,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .dlg { display: grid; gap: 8px }
 .dl { display: grid; grid-template-columns: auto 1fr auto; gap: 4px 10px; align-items: center; padding: 8px 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line) }
 .dl.playing { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-soft) }
-.dl .who { font: 700 .75rem var(--f-mono); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent) }
+.dl .who { font: 800 .75rem var(--f-display); width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent) }
 .dl .who.m { background: var(--ink); color: var(--bg) }
 .dl .en { font-weight: 700; min-width: 0 }
 .dl .pt { grid-column: 2 / 4; font-size: .88rem; color: var(--muted) }
@@ -184,11 +223,11 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .qz .opt.right { border-color: var(--ok); background: var(--ok-soft) }
 .qz .opt.wrong { border-color: var(--bad); background: var(--bad-soft) }
 .qz .opt:disabled { cursor: default }
-#ouvSeg button { font-size: .76rem; padding: 10px 1px }
+#ouvSeg button { font-size: .78rem; padding: 10px 1px; letter-spacing: -.01em }
 .bub.a { background: var(--accent); color: var(--on-accent) }
 .par { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line) }
 .par .w { font-weight: 700 } .par .n { font-weight: 800; color: var(--accent) }
-.soa { font: 600 .9rem var(--f-mono); color: var(--accent) }
+.soa { font: 700 1rem var(--f-body); color: var(--accent); letter-spacing: .01em }
 .fr { display: grid; gap: 4px; padding: 10px 0; border-bottom: 1px solid var(--line) }
 .fr .en { font-weight: 700 }
 .blank { display: inline-block; min-width: 4.5em; border-bottom: 2px solid var(--ink); margin: 0 3px }
@@ -209,14 +248,18 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .porque { font-size: .9rem; background: var(--amber-soft); border-radius: 10px; padding: 8px 10px; line-height: 1.45 }
 .porque b { color: var(--ink) }
 .vel { display: grid; gap: 6px; margin-top: 4px }
-.vel .v { display: grid; grid-template-columns: 5.6em 1fr auto; gap: 8px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 6px 6px 6px 10px; background: var(--surface) }
+.vel .v { display: grid; grid-template-columns: 1fr auto; gap: 0 10px; align-items: center; border: 1px solid var(--line); border-radius: 12px; padding: 8px 8px 8px 12px; background: var(--surface) }
+.vel .v > span:first-child { grid-row: 1; grid-column: 1; font: 800 .68rem var(--f-display) !important; letter-spacing: .06em; text-transform: uppercase; line-height: 1.4 }
+.vel .v > .t { grid-row: 2; grid-column: 1 }
+.vel .v > .btn { grid-row: 1 / span 2; grid-column: 2 }
 .vel .v.on { border-color: var(--accent); background: var(--accent-soft) }
 .vel .v > span:first-child { font-weight: 800; font-size: .82rem; color: var(--muted) }
 .vel .v.on > span:first-child { color: var(--accent) }
-.vel .v .t { font-size: .9rem; min-width: 0; overflow-wrap: anywhere }
+.vel .v .t { font-size: .9rem; min-width: 0; overflow-wrap: break-word }
+.lbl .soa, .par .soa { overflow-wrap: break-word }
 .vel .v .btn { min-height: 36px; padding: 4px 14px; font-size: .85rem }
 .lbl > span:first-child { color: var(--muted); font-weight: 700; font-size: .82rem }
-details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 12px; background: var(--bg) }
+details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 12px; background: var(--surface-2) }
 details.conv[open] { padding-bottom: 12px }
 details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); padding: 10px 0; list-style-position: inside }
 .cl { display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start }
@@ -232,7 +275,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
-.lbl > span:last-child { min-width: 0; overflow-wrap: anywhere }
+.lbl > span:last-child { min-width: 0; overflow-wrap: break-word }
 .fal { font-weight: 600; color: var(--ink, inherit); letter-spacing: .01em }
 .cl .who { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 800 .8rem var(--f-display); background: var(--accent-soft); color: var(--accent) }
 .cl .who.b { background: var(--amber-soft); color: var(--ink) }
@@ -242,7 +285,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .cl .play { justify-self: start; min-height: 34px; padding: 4px 14px; font-size: .85rem; margin-top: 4px }
 .ouv-fb { border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px }
 .ouv-fb.ok { background: var(--ok-soft) } .ouv-fb.bad { background: var(--bad-soft) }
-.stepn { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--bg); font: 700 .8rem var(--f-mono); margin-right: 6px }
+.stepn { display: inline-grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--on-accent); font: 800 .8rem var(--f-display); margin-right: 6px }
 .toggle { display: flex; gap: 8px; align-items: center; font-size: .9rem; color: var(--muted) }
 .toggle input { width: 20px; height: 20px; accent-color: var(--accent) }
 .result { background: var(--ok-soft); border-radius: 14px; padding: 14px 16px; display: grid; gap: 6px }
@@ -251,34 +294,19 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 </style>
 </head>
 <body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="10" fill="#0E7C86"/><g stroke="#ffffff" stroke-width="2.6" stroke-linecap="round"><path d="M9 14v6M13.5 10v14M18 13v8M22.5 8v18M27 15v4"/></g></svg>
+      <div style="min-width:0"><h1>Caderno<span class="h1x"> de Inglês</span></h1><p class="who" id="whoLine">Do zero ao B2 até o fim de 2028</p></div>
+    </div>
+    <span class="chip-lv" id="lvChip" hidden>A1</span>
+    <button class="topbtn" id="voiceBtn" type="button" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg><span class="vl" id="voiceTag">F</span></button>
+    <button class="topbtn" id="themeBtn" type="button" aria-label="Mudar para tema escuro"><svg class="i-lua" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg><svg class="i-sol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+      <button class="topbtn" id="tabAdmin" data-v="admin" type="button" aria-label="Admin" title="Admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  </div>
+</header>
 <div class="wrap">
-  <header class="top">
-    <div class="bar">
-      <div class="brand">
-        <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="10" fill="var(--accent)"/><g stroke="var(--on-accent)" stroke-width="2.6" stroke-linecap="round"><path d="M9 14v6M13.5 10v14M18 13v8M22.5 8v18M27 15v4"/></g></svg>
-        <div style="min-width:0"><h1>Caderno de Inglês</h1><p class="who" id="whoLine">Do zero ao B2 até o fim de 2028</p></div>
-      </div>
-      <button class="iconbtn" id="tabAdmin" data-v="admin" type="button" aria-label="Admin" title="Admin" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
-    </div>
-    <div class="journey" id="scale" hidden>
-      <div class="top2"><span class="lv" id="lvNow">Nível A1</span><span class="goal">Meta: B2 até dez/2028</span></div>
-      <div class="wave" id="wave" aria-hidden="true"></div>
-      <div class="wlab" id="wlab"><span data-lv="A1">A1</span><span data-lv="A2">A2</span><span data-lv="B1">B1</span><span data-lv="B2">B2</span></div>
-      <div class="today">
-        <div><b id="tMin">0</b><span>min hoje</span></div>
-        <div><b id="tEx">0</b><span>exercícios hoje</span></div>
-        <div class="streak"><b id="tSeq">0</b><span>dias seguidos</span></div>
-      </div>
-    </div>
-    <div class="voice" id="voiceBar" hidden>
-      <span id="voiceLbl">Voz dos áudios</span>
-      <div class="seg" role="radiogroup" aria-labelledby="voiceLbl">
-        <button type="button" data-voz="feminina" role="radio" aria-selected="true">Feminina</button>
-        <button type="button" data-voz="masculina" role="radio" aria-selected="false">Masculina</button>
-        <button type="button" data-voz="ambas" role="radio" aria-selected="false">Alternar</button>
-      </div>
-    </div>
-  </header>
 
   <!-- LOGIN -->
   <section class="view" id="v-login" hidden>
@@ -313,12 +341,19 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     <nav class="tabs" role="tablist" aria-label="Seções">
       <button role="tab" data-v="ouvido" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10a6 6 0 1 1 12 0c0 3-2 4-3 5.5S14 19 12 20.5 8.5 20 8.5 18"/><path d="M10 10a2 2 0 1 1 4 0"/></svg>Ouvido</button>
       <button role="tab" data-v="frases" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>Frases</button>
-      <button role="tab" data-v="aula" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>Aula</button>
       <button role="tab" data-v="conversar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5 3.5 21l4-1.8A8.5 8.5 0 1 0 5 17.5z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>Conversa</button>
       <button role="tab" data-v="revisar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/></svg>Revisar<span class="badge" id="dueBadge"></span></button>
-      <button role="tab" data-v="escrever" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 8l3 3"/></svg>Escrita</button>
-      <button role="tab" data-v="evolucao" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progresso</button>
+      <button role="tab" data-v="mais" id="tabMais" aria-selected="false" aria-expanded="false" aria-controls="maisMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="i-mais"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></g><path class="i-x" d="M6 6l12 12M18 6 6 18"/></svg><span id="maisLbl">Mais</span></button>
     </nav>
+    <div class="mais" id="maisMenu" hidden>
+      <div class="mais-bg" id="maisBg"></div>
+      <div class="mais-list" role="menu" aria-label="Mais seções">
+        <button class="fab-item" type="button" role="menuitem" data-v="aula"><span class="lb">Aula</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></span></button>
+        <button class="fab-item" type="button" role="menuitem" data-v="escrever"><span class="lb">Escrita</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 8l3 3"/></svg></span></button>
+        <button class="fab-item" type="button" role="menuitem" data-v="evolucao"><span class="lb">Progresso</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span></button>
+        <button class="fab-item" type="button" role="menuitem" data-v="admin" id="fabAdmin" hidden><span class="lb">Admin</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span></button>
+      </div>
+    </div>
 
     <section class="view" id="v-ouvido" hidden>
       <div class="task" id="versoDia" hidden></div>
@@ -455,6 +490,16 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     </section>
 
     <section class="view" id="v-evolucao" hidden>
+    <div class="journey" id="scale" hidden>
+      <div class="top2"><span class="lv" id="lvNow">Nível A1</span><span class="goal">Meta: B2 até dez/2028</span></div>
+      <div class="wave" id="wave" aria-hidden="true"></div>
+      <div class="wlab" id="wlab"><span data-lv="A1">A1</span><span data-lv="A2">A2</span><span data-lv="B1">B1</span><span data-lv="B2">B2</span></div>
+      <div class="today">
+        <div><b id="tMin">0</b><span>min hoje</span></div>
+        <div><b id="tEx">0</b><span>exercícios hoje</span></div>
+        <div class="streak"><b id="tSeq">0</b><span>dias seguidos</span></div>
+      </div>
+    </div>
       <div class="stats">
         <div class="stat"><b id="stStreak">0</b><span>dias seguidos</span></div>
         <div class="stat"><b id="stHours">0 h</b><span>de estudo no total</span></div>
@@ -690,9 +735,10 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function show(v) {
     if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'ouvido';
     views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
-    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v)); });
-    $('tabAdmin').setAttribute('aria-pressed', String(v === 'admin'));
-    if (S) $('scale').hidden = !(v === 'ouvido' || v === 'evolucao');
+    var noMais = ['aula', 'escrever', 'evolucao', 'admin'].indexOf(v) >= 0;
+    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v || (b.dataset.v === 'mais' && noMais))); });
+    document.querySelectorAll('.fab-item').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.v === v)); });
+    fecharMais();
     if (v === 'revisar') setRevMode(revOuvido);
     if (v === 'conversar') enterConversa();
     if (v === 'evolucao') renderProgress();
@@ -701,7 +747,32 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (v === 'frases') renderFrases();
     window.scrollTo(0, 0);
   }
-  document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { show(b.dataset.v); }; });
+  document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { if (b.dataset.v === 'mais') toggleMais(); else show(b.dataset.v); }; });
+  /* floating "Mais" menu: Aula, Escrita, Progresso (and Admin) */
+  function fecharMais() { $('maisMenu').hidden = true; $('tabMais').setAttribute('aria-expanded', 'false'); $('maisLbl').textContent = 'Mais'; }
+  function toggleMais() {
+    if (!$('maisMenu').hidden) return fecharMais();
+    $('fabAdmin').hidden = !(S && S.eu.admin);
+    $('maisMenu').hidden = false; $('tabMais').setAttribute('aria-expanded', 'true'); $('maisLbl').textContent = 'Fechar';
+    var first = document.querySelector('.fab-item:not([hidden])'); if (first) first.focus({ preventScroll: true });
+  }
+  $('maisBg').onclick = fecharMais;
+  document.querySelectorAll('.fab-item').forEach(function (b) { b.onclick = function () { show(b.dataset.v); }; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !$('maisMenu').hidden) { fecharMais(); $('tabMais').focus(); } });
+
+  /* theme: light by default, dark when chosen; saved per device */
+  function aplicarTema(t) {
+    var esc = t === 'escuro';
+    if (esc) document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme');
+    var m = document.querySelector('meta[name=theme-color]'); if (m) m.setAttribute('content', esc ? '#0A1A2A' : '#0F2A44');
+    $('themeBtn').setAttribute('aria-label', esc ? 'Mudar para tema claro' : 'Mudar para tema escuro');
+    $('themeBtn').title = esc ? 'Tema claro' : 'Tema escuro';
+  }
+  aplicarTema(lsGet('caderno_tema') === 'escuro' ? 'escuro' : 'claro');
+  $('themeBtn').onclick = function () {
+    var novo = document.documentElement.getAttribute('data-theme') === 'dark' ? 'claro' : 'escuro';
+    lsSet('caderno_tema', novo); aplicarTema(novo);
+  };
 
   /* ---------- login ---------- */
   function setSeg(criar) {
@@ -711,7 +782,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   $('segEntrar').onclick = function () { setSeg(false); };
   $('segCriar').onclick = function () { setSeg(true); };
   function showLogin(msg) {
-    $('loading').hidden = true; $('app').hidden = true; $('v-login').hidden = false; $('whoLine').textContent = 'Do zero ao B2 até o fim de 2028'; $('scale').hidden = true; $('voiceBar').hidden = true; $('tabAdmin').hidden = true;
+    $('loading').hidden = true; $('app').hidden = true; $('v-login').hidden = false; $('whoLine').textContent = 'Do zero ao B2 até o fim de 2028'; $('lvChip').hidden = true; $('voiceBtn').hidden = true; $('tabAdmin').hidden = true; fecharMais();
     if (msg) { $('errEntrar').textContent = msg; $('errEntrar').hidden = false; }
   }
   function logoutLocal(msg) { TOKEN = null; lsSet('caderno_token', null); S = null; showLogin(msg); }
@@ -735,7 +806,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     return api('carregar', TOKEN).then(function (st) {
       S = st; selectedLesson = null;
       $('loading').hidden = true; $('app').hidden = false;
-      $('tabAdmin').hidden = !S.eu.admin;
+      $('tabAdmin').hidden = true;
       renderAll();
       show(S.sons && S.sons.length ? 'ouvido' : 'aula');
       preloadAudio();
@@ -763,10 +834,10 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   var WAVE_H = [38, 62, 46, 80, 54, 70, 30, 58, 88, 50, 66, 42, 74, 96, 60, 36, 52, 84, 64, 44, 78, 100, 56, 40, 68, 90, 48, 34, 72, 58, 82, 46];
   function renderHeader() {
     $('whoLine').hidden = false;
-    $('whoLine').textContent = 'Olá, ' + S.eu.nome + '. Trilha ' + (S.eu.trilha === 'direito' ? 'Direito' : 'Contabilidade e saúde');
-    $('scale').hidden = false; $('voiceBar').hidden = false;
+    $('whoLine').textContent = 'Olá, ' + S.eu.nome + ' · ' + (S.eu.trilha === 'direito' ? 'Direito' : 'Contabilidade e saúde');
+    $('scale').hidden = false; $('voiceBtn').hidden = false; $('lvChip').hidden = false;
     var order = ['A1', 'A2', 'B1', 'B2'], idx = Math.max(0, order.indexOf(S.eu.nivel));
-    $('lvNow').textContent = 'Nível ' + order[idx];
+    $('lvNow').textContent = 'Nível ' + order[idx]; $('lvChip').textContent = order[idx]; $('lvChip').title = 'Nível ' + order[idx] + ' · meta B2';
     document.querySelectorAll('#wlab span').forEach(function (s) { s.className = order.indexOf(s.dataset.lv) <= idx ? 'on' : ''; });
     var feitas = Object.keys(S.eu.aulasFeitas || {}).length, inLv = Math.min(7, Math.floor(feitas / 2));
     var fill = idx * 8 + inLv;
@@ -786,21 +857,21 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     while (act(S.estudo[day]) && n < 999) { n++; day = addDays(day, -1); }
     $('tSeq').textContent = String(n);
   }
+  var VOZES = ['feminina', 'masculina', 'ambas'], VOZ_TAG = { feminina: 'F', masculina: 'M', ambas: 'F/M' }, VOZ_NOME = { feminina: 'feminina', masculina: 'masculina', ambas: 'alternando feminina e masculina' };
   function renderVoice() {
     var v = (S && S.eu.voz) || 'feminina';
-    document.querySelectorAll('#voiceBar [data-voz]').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.voz === v)); b.setAttribute('aria-checked', String(b.dataset.voz === v)); });
+    $('voiceTag').textContent = VOZ_TAG[v] || 'F';
+    $('voiceBtn').setAttribute('aria-label', 'Voz dos áudios: ' + VOZ_NOME[v] + '. Toque para trocar.'); $('voiceBtn').title = 'Voz: ' + VOZ_NOME[v];
   }
-  document.querySelectorAll('#voiceBar [data-voz]').forEach(function (b) {
-    b.onclick = function () {
-      if (!S || S.eu.voz === b.dataset.voz) return;
-      S.eu.voz = b.dataset.voz; renderVoice();
-      var nomes = { feminina: 'Voz feminina em todos os áudios.', masculina: 'Voz masculina em todos os áudios.', ambas: 'As vozes vão alternar entre feminina e masculina.' };
-      toast(nomes[S.eu.voz]);
-      if ($('pVoz')) $('pVoz').value = S.eu.voz;
-      queue(function () { return api('preferencias', TOKEN, { voz: S.eu.voz }); });
-      preloadAudio(); if (!$('v-ouvido').hidden) preloadSom(somAtual());
-    };
-  });
+  $('voiceBtn').onclick = function () {
+    if (!S) return;
+    S.eu.voz = VOZES[(VOZES.indexOf(S.eu.voz) + 1) % VOZES.length]; renderVoice();
+    var nomes = { feminina: 'Voz feminina em todos os áudios.', masculina: 'Voz masculina em todos os áudios.', ambas: 'As vozes vão alternar entre feminina e masculina.' };
+    toast(nomes[S.eu.voz]);
+    if ($('pVoz')) $('pVoz').value = S.eu.voz;
+    queue(function () { return api('preferencias', TOKEN, { voz: S.eu.voz }); });
+    preloadAudio(); if (!$('v-ouvido').hidden) preloadSom(somAtual());
+  };
   $('tabAdmin').onclick = function () { show('admin'); };
 
   /* ---------- render: lesson ---------- */
@@ -1395,10 +1466,12 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function sayKey(key, v, label) { var b = el('button', 'btn ghost', label); b.type = 'button'; b.onclick = function () { speak(key, v); }; return b; }
   function linhaFr(rotulo, conteudo, cls) { var d = el('div', 'lbl'); d.append(el('span', null, rotulo), el('span', cls || null, conteudo)); return d; }
   /* three versions: Escrita (written) / Falada (English with ' at the joins) / Pronúncia (Brazilian letters) */
+  /* lets long pronunciations wrap only between blocks (after each ') */
+  function quebra(s) { return String(s || '').replace(/'/g, "'\u200B"); }
   function tresVersoes(en, fal, pron, pt) {
     var out = [linhaFr('Escrita', en, 'en')];
     if (fal && fal !== en) out.push(linhaFr('Falada', fal, 'fal'));
-    if (pron) { var p = linhaFr('Pronúncia', pron, 'soa'); p.classList.add('rap'); out.push(p); }
+    if (pron) { var p = linhaFr('Pronúncia', quebra(pron), 'soa'); p.classList.add('rap'); out.push(p); }
     if (pt) out.push(linhaFr('Tradução', pt));
     return out;
   }
@@ -1416,7 +1489,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       var r = el('div', 'v' + (x[3] ? ' on' : ''));
       var b = el('button', 'btn' + (x[3] ? '' : ' ghost'), 'Ouvir'); b.type = 'button'; b.setAttribute('aria-label', 'Ouvir ' + x[0].toLowerCase());
       b.onclick = function () { speak(x[2], f.voice); };
-      r.append(el('span', null, x[0]), el('span', 't' + (x[0] === 'Cuidadosa' ? '' : ' soa'), x[1]), b);
+      r.append(el('span', null, x[0]), el('span', 't' + (x[0] === 'Cuidadosa' ? '' : ' soa'), x[0] === 'Cuidadosa' ? x[1] : quebra(x[1])), b);
       d.append(r);
     });
     return d;
@@ -1600,7 +1673,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var pt = el('div', 'task'); pt.append(el('h3', null, 'Por extenso × falado rápido'), el('p', 'small muted', 'Toque em "Cuidadosa" e depois em "Rápida". Repare no que muda: o que encolhe, o que gruda e o que some.'));
     (u.pares || []).forEach(function (p) {
       var v = p.voice || 'feminina', r = el('div', 'par');
-      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + (p.falada || p.natural)), el('div', 'soa', p.pron || p.soa));
+      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + (p.falada || p.natural)), el('div', 'soa', quebra(p.pron || p.soa)));
       var bs = el('div', 'stack'); bs.style.gap = '6px'; bs.append(sayKey(CUIK + p.lento, v, 'Cuidadosa'), sayKey(RAPK + p.natural, v, 'Rápida'));
       r.append(l, bs); pt.append(r);
     });
@@ -1768,7 +1841,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var d = el('div', 'corr-fala');
     var a = el('div', 'lbl'); a.append(el('span', null, 'Melhor dizer'), el('b', null, c.normal)); d.append(a);
     if (c.falada && c.falada !== c.normal) { var f2 = el('div', 'lbl'); f2.append(el('span', null, 'Falada'), el('span', 'fal', c.falada)); d.append(f2); }
-    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Pronúncia'), el('span', 'soa', c.falado)); d.append(b); }
+    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Pronúncia'), el('span', 'soa', quebra(c.falado))); d.append(b); }
     if (c.porque || c.explicacao) d.append(el('div', 'small', c.explicacao || c.porque));
     var st = el('div', 'st'); d.append(st); d.status = st;
     return d;
