@@ -36,8 +36,9 @@ p { margin: 0 }
 [hidden] { display: none !important }
 .eyebrow { font-size: .85rem; color: var(--accent); font-weight: 700 }
 .muted { color: var(--muted) } .small { font-size: .88rem }
-header.top { padding-block: 18px 6px; display: grid; gap: 14px }
+header.top { padding-block: 18px 6px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px }
 .bar { display: flex; align-items: center; gap: 12px }
+.bar > *, .voice { min-width: 0 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 1 }
 .brand svg { width: 34px; height: 34px; flex: none }
 .brand .who { font-size: .85rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis }
@@ -62,10 +63,11 @@ header.top { padding-block: 18px 6px; display: grid; gap: 14px }
 .voice { display: flex; align-items: center; gap: 10px }
 .voice > span { font-size: .85rem; font-weight: 700; color: var(--muted); white-space: nowrap }
 .voice .seg { flex: 1; padding: 3px; border-radius: 12px }
-.voice .seg button { padding: 8px 2px; font-size: .84rem }
-nav.tabs { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(6, 1fr); padding: 6px max(6px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 18px rgba(27, 35, 64, .06) }
+.voice .seg button { padding: 8px 2px; font-size: .84rem; min-width: 0 }
+@media (max-width: 370px) { .voice > span { display: none } }
+nav.tabs { position: fixed; z-index: 10; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(7, 1fr); padding: 6px max(6px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -6px 18px rgba(27, 35, 64, .06) }
 @media (min-width: 680px) { nav.tabs { left: 50%; right: auto; width: 640px; transform: translateX(-50%); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0 } }
-nav.tabs button { position: relative; display: grid; justify-items: center; gap: 2px; font: 700 .7rem var(--f-body); background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 12px; cursor: pointer; min-height: 52px; min-width: 0 }
+nav.tabs button { position: relative; display: grid; justify-items: center; gap: 2px; font: 700 .64rem var(--f-body); letter-spacing: -.01em; background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 12px; cursor: pointer; min-height: 52px; min-width: 0 }
 nav.tabs button svg { width: 24px; height: 24px }
 nav.tabs button[aria-selected="true"] { color: var(--accent); background: var(--accent-soft) }
 nav.tabs .badge { position: absolute; top: 2px; left: 54%; font: 600 .62rem var(--f-mono); background: var(--amber); color: #1b2340; border-radius: 999px; padding: 1px 5px; min-width: 16px; text-align: center }
@@ -211,7 +213,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 0 }
 .vel .v.on { border-color: var(--accent); background: var(--accent-soft) }
 .vel .v > span:first-child { font-weight: 800; font-size: .82rem; color: var(--muted) }
 .vel .v.on > span:first-child { color: var(--accent) }
-.vel .v .t { font-size: .9rem; min-width: 0 }
+.vel .v .t { font-size: .9rem; min-width: 0; overflow-wrap: anywhere }
 .vel .v .btn { min-height: 36px; padding: 4px 14px; font-size: .85rem }
 .lbl > span:first-child { color: var(--muted); font-weight: 700; font-size: .82rem }
 details.conv { border: 1px solid var(--line); border-radius: 14px; padding: 2px 12px; background: var(--bg) }
@@ -220,6 +222,13 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .cl { display: grid; grid-template-columns: 28px 1fr; gap: 4px 10px; padding: 10px 0; border-top: 1px solid var(--line); align-items: start }
 .cl .lbl { grid-template-columns: 5.6em 1fr; gap: 6px }
 .lbl .en { font-weight: 700; font-size: 1rem }
+.mf-lista { display: grid; gap: 6px }
+.mf-item { display: grid; gap: 2px; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; font: inherit; color: inherit; width: 100% }
+.mf-item[aria-current="true"] { border-color: var(--accent); background: var(--accent-soft) }
+.mf-item .o { font-size: .85rem; color: var(--muted) }
+.mf-item .e { font-weight: 700 }
+.mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
+.mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
 .lbl > span:last-child { min-width: 0; overflow-wrap: anywhere }
 .fal { font-weight: 600; color: var(--ink, inherit); letter-spacing: .01em }
@@ -301,6 +310,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   <div id="app" hidden>
     <nav class="tabs" role="tablist" aria-label="Seções">
       <button role="tab" data-v="ouvido" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10a6 6 0 1 1 12 0c0 3-2 4-3 5.5S14 19 12 20.5 8.5 20 8.5 18"/><path d="M10 10a2 2 0 1 1 4 0"/></svg>Ouvido</button>
+      <button role="tab" data-v="frases" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>Frases</button>
       <button role="tab" data-v="aula" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg>Aula</button>
       <button role="tab" data-v="conversar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5 3.5 21l4-1.8A8.5 8.5 0 1 0 5 17.5z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>Conversa</button>
       <button role="tab" data-v="revisar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/></svg>Revisar<span class="badge" id="dueBadge"></span></button>
@@ -324,6 +334,27 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <button type="button" data-p="responder" aria-selected="false">Responder</button>
       </div>
       <div id="ouvBody" class="stack"></div>
+    </section>
+
+    <section class="view" id="v-frases" hidden>
+      <form class="task" id="mfForm">
+        <h2>Minhas frases</h2>
+        <p class="small muted">Escreva uma frase do seu dia, em português ou em inglês: uma mensagem do WhatsApp, algo que você quis dizer ou ouviu. O tutor mostra como um americano diria, com áudio, conversa curta e treino.</p>
+        <label class="f" for="mfTexto">Sua frase<textarea id="mfTexto" rows="2" maxlength="300" placeholder="Ex.: saindo, amor" style="min-height:70px"></textarea></label>
+        <div class="seg" id="mfIdioma" role="tablist" aria-label="Idioma da frase">
+          <button type="button" data-i="auto" aria-selected="true">Detectar</button>
+          <button type="button" data-i="pt" aria-selected="false">Português</button>
+          <button type="button" data-i="en" aria-selected="false">Inglês</button>
+        </div>
+        <label class="f" for="mfViu">O tradutor mostrou (opcional)<input type="text" id="mfViu" maxlength="300" placeholder="Ex.: going out, baby"></label>
+        <button class="btn" id="mfIr" type="submit">Estudar esta frase</button>
+      </form>
+      <div id="mfAtual" class="stack"></div>
+      <div class="task" id="mfListaBox" hidden>
+        <h3 id="mfListaTit">Frases guardadas</h3>
+        <p class="small muted">Elas também entram no Revisar, junto com as palavras das aulas.</p>
+        <div id="mfLista" class="mf-lista"></div>
+      </div>
     </section>
 
     <section class="view" id="v-aula" hidden>
@@ -653,7 +684,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function shownLesson() { return S.aulas.find(function (l) { return l.id === selectedLesson; }) || currentLesson(); }
 
   /* ---------- views ---------- */
-  var views = ['ouvido', 'aula', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
+  var views = ['ouvido', 'frases', 'aula', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
   function show(v) {
     if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'ouvido';
     views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
@@ -665,6 +696,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (v === 'evolucao') renderProgress();
     if (v === 'admin') loadAdmin();
     if (v === 'ouvido') renderOuvido();
+    if (v === 'frases') renderFrases();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { show(b.dataset.v); }; });
@@ -1438,6 +1470,85 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     else if (ouvPasso === 'repetir') renderRepetirSom(u, 0);
     else renderResponderSom(u);
   }
+  /* ---------- Minhas frases: the student's own sentences, studied in the 3 versions ---------- */
+  var mfIdioma = 'auto', mfSel = null;
+  document.querySelectorAll('#mfIdioma button').forEach(function (b) { b.onclick = function () { mfIdioma = b.dataset.i; document.querySelectorAll('#mfIdioma button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); }); }; });
+  $('mfForm').onsubmit = function (e) {
+    e.preventDefault();
+    var texto = $('mfTexto').value.trim(); if (!texto) { $('mfTexto').focus(); return; }
+    if (!S.iaAtiva) { toast('O tutor ainda não está ativado (chave da API na engrenagem).'); return; }
+    var b = $('mfIr'); b.disabled = true; b.textContent = 'Montando o estudo…';
+    $('mfAtual').replaceChildren(el('div', 'task', 'O tutor está preparando a frase… (uns 10 segundos)'));
+    api('estudarFrase', TOKEN, { texto: texto, idioma: mfIdioma, viu: $('mfViu').value.trim() }).then(function (r) {
+      S.frases = [r.frase].concat(S.frases || []); S.cartoes.push(r.cartao); renderBoxes();
+      $('mfTexto').value = ''; $('mfViu').value = ''; mfSel = r.frase.id;
+      renderFrases(); preloadFrase(r.frase, true); bumpDay('conversas');
+    }).catch(function (err) { $('mfAtual').replaceChildren(); toast(msgOf(err)); }).then(function () { b.disabled = false; b.textContent = 'Estudar esta frase'; });
+  };
+  function preloadFrase(f, tocar) {
+    var v = f.voice || 'feminina';
+    fetchAudio([kR(f), kN(f)], v).then(function () { if (tocar) speak(kR(f), v); return fetchAudio([kC(f)].concat((f.alternativas || []).map(function (a) { return NAT + a.en; })), v); });
+  }
+  function renderFrases() {
+    var L = S.frases || [];
+    if (mfSel && !L.some(function (f) { return f.id === mfSel; })) mfSel = null;
+    $('mfListaBox').hidden = !L.length;
+    $('mfListaTit').textContent = 'Frases guardadas (' + L.length + ')';
+    $('mfLista').replaceChildren.apply($('mfLista'), L.map(function (f) {
+      var b = el('button', 'mf-item'); b.type = 'button'; b.setAttribute('aria-current', String(f.id === mfSel));
+      b.append(el('span', 'o', f.texto), el('span', 'e', f.en));
+      b.onclick = function () { mfSel = f.id; renderFrases(); preloadFrase(f, true); $('mfAtual').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      return b;
+    }));
+    var f = L.find(function (x) { return x.id === mfSel; });
+    $('mfAtual').replaceChildren.apply($('mfAtual'), f ? [estudoFrase(f)] : []);
+  }
+  function estudoFrase(f) {
+    var t = el('div', 'task'); t.style.gap = '12px';
+    t.append(el('p', 'eyebrow', 'Você escreveu: "' + f.texto + '"'));
+    if (f.viu) t.append(el('p', 'small muted', 'O tradutor mostrou: "' + f.viu + '"'));
+    var bf = blocoFrase(f); bf.classList.add('alvo-fr'); t.append(bf);
+    if (f.nota) { var n = el('div', 'mf-nota'); n.innerHTML = '<b>Dica de uso:</b> ' + esc(f.nota); t.append(n); }
+    t.append(velocidadesEl(f));
+    var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Repetir a frase'); mic.style.justifySelf = 'center';
+    var words = el('div', 'words'), heard = el('p', 'heard', SR ? 'Ouça a rápida e repita no mesmo ritmo.' : 'Repita em voz alta, no ritmo da rápida.');
+    mic.onclick = function () {
+      words.replaceChildren(); heard.textContent = 'Ouvindo…';
+      listen(mic, function (x) { heard.textContent = x; }, function (alts) {
+        if (!alts.length) { heard.textContent = 'Não ouvi. Toque e repita de novo.'; return; }
+        var best = null;
+        alts.forEach(function (a) { var sc = scoreWords(f.en, a), k = sc.filter(function (x) { return x.ok; }).length; if (!best || k > best.n) best = { sc: sc, n: k, a: a }; });
+        words.replaceChildren.apply(words, best.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
+        heard.textContent = (best.n === best.sc.length ? 'Perfeito! ' : 'Entendi: ') + '"' + best.a + '"';
+        queue(function () { return api('registrarRepeticao', TOKEN, { aula: 'minhas', alvo: f.en, reconhecido: best.a, acertos: best.n, total: best.sc.length, faltaram: best.sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
+      });
+    };
+    t.append(mic, words, heard);
+    if ((f.alternativas || []).length) {
+      var al = el('details', 'conv'); al.append(el('summary', null, 'Outras formas de dizer (' + f.alternativas.length + ')'));
+      f.alternativas.forEach(function (a) {
+        var d = el('div', 'mf-alt'); d.append.apply(d, tresVersoes(a.en, a.falada, a.pron, ''));
+        if (a.quando) d.append(linhaFr('Quando', a.quando));
+        var pb = el('button', 'btn ghost play', 'Ouvir'); pb.type = 'button'; pb.style.justifySelf = 'start'; pb.onclick = function () { speak(NAT + a.en, f.voice); };
+        d.append(pb); al.append(d);
+      });
+      t.append(al);
+    }
+    var cv = conversaEl(f, true); if (cv) t.append(cv);
+    var row = el('div', 'row');
+    var del = el('button', 'btn ghost', 'Apagar esta frase'); del.type = 'button';
+    del.onclick = function () {
+      if (!del.dataset.ok) { del.dataset.ok = '1'; del.textContent = 'Toque de novo para apagar'; setTimeout(function () { delete del.dataset.ok; del.textContent = 'Apagar esta frase'; }, 4000); return; }
+      del.disabled = true;
+      api('apagarFrase', TOKEN, f.id).then(function () {
+        S.frases = S.frases.filter(function (x) { return x.id !== f.id; }); S.cartoes = S.cartoes.filter(function (c) { return c.id !== f.id; });
+        mfSel = null; renderBoxes(); renderFrases(); toast('Frase apagada.');
+      }).catch(function (err) { del.disabled = false; toast(msgOf(err)); });
+    };
+    row.append(del); t.append(row);
+    return t;
+  }
+
   /* verse of the day: one Bible verse per day, the same for the whole day */
   function renderVersoDia() {
     var box = $('versoDia'), vs = [];
