@@ -272,6 +272,16 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .mf-item .e { font-weight: 700 }
 .refs { display: grid; grid-template-columns: 1fr 1fr; gap: 8px }
 .refs .btn { font-size: .88rem; padding-inline: 8px }
+.mont { display: grid; gap: 6px; min-width: 0 }
+.wcards { display: flex; flex-wrap: wrap; gap: 5px }
+.wc { display: grid; justify-items: center; gap: 0; background: var(--surface-2); border: 1px solid var(--line); border-radius: 10px; padding: 4px 9px 3px; cursor: pointer; font: inherit; color: inherit; line-height: 1.25 }
+.wc b { font: 800 .9rem var(--f-display); color: var(--ink) }
+.wc span { font-size: .8rem; color: var(--muted) }
+.wc:active { transform: scale(.97) }
+.mont-line { font: 700 1.08rem var(--f-body); color: var(--accent); letter-spacing: .01em; overflow-wrap: break-word }
+.mont-line .jx { color: var(--bad); background: var(--amber-soft); border-radius: 5px; padding: 0 2px; box-shadow: inset 0 -2px 0 var(--amber) }
+.mont-regras { display: grid; gap: 2px; font-size: .82rem; color: var(--muted) }
+.mont-regras div::before { content: "↳ "; color: var(--amber) }
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
@@ -361,6 +371,18 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <p class="eyebrow">Treino do dia, 5 minutos</p>
         <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
         <button class="btn" id="ouvDia" type="button">Começar o treino do dia</button>
+      </div>
+      <div class="task" id="audioDia">
+        <p class="eyebrow">Áudio do dia · sem tela</p>
+        <p class="small">Um MP3 com as frases de hoje. Para cada uma: você ouve em português, tenta dizer em inglês, ouve a rápida e a normal e repete junto. Toca com a tela apagada, no carro ou no fone.</p>
+        <div class="seg" id="adTam" role="tablist" aria-label="Duração">
+          <button type="button" data-n="20" aria-selected="false">≈ 5 min</button>
+          <button type="button" data-n="38" aria-selected="true">≈ 10 min</button>
+          <button type="button" data-n="56" aria-selected="false">≈ 15 min</button>
+        </div>
+        <button class="btn ghost" id="adIr" type="button">Montar o áudio de hoje</button>
+        <p class="small muted" id="adInfo" hidden></p>
+        <div id="adPronto" class="stack" hidden></div>
       </div>
       <label class="f" for="pickSom">Unidade<select id="pickSom"></select></label>
       <div class="seg" id="ouvSeg" role="tablist">
@@ -1468,10 +1490,61 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   /* three versions: Escrita (written) / Falada (English with ' at the joins) / Pronúncia (Brazilian letters) */
   /* lets long pronunciations wrap only between blocks (after each ') */
   function quebra(s) { return String(s || '').replace(/'/g, "'\u200B"); }
+  /* ---------- Montar a fala: word cards (each word alone) + the joined pronunciation with the changed part highlighted ---------- */
+  function chaveMont(en) { return String(en || '').trim().toLowerCase().replace(/[\s​]+/g, ' '); }
+  var MONT_FILA = [], MONT_PEDIDO = {}, MONT_T = null;
+  function pedirMontagem(en, pron, cb) {
+    var k = chaveMont(en);
+    (MONT_PEDIDO[k] = MONT_PEDIDO[k] || []).push(cb);
+    if (MONT_PEDIDO[k].length > 1) return;
+    MONT_FILA.push({ en: String(en), pron: String(pron || '').replace(/​/g, '') });
+    clearTimeout(MONT_T); MONT_T = setTimeout(enviarMontagens, 120);
+  }
+  function enviarMontagens() {
+    var lote = MONT_FILA.splice(0, 30); if (!lote.length) return;
+    api('montagem', TOKEN, lote).then(function (r) {
+      S.montagens = S.montagens || {};
+      Object.keys(r || {}).forEach(function (k) { S.montagens[k] = r[k]; });
+    }).catch(function () {}).then(function () {
+      lote.forEach(function (x) { var k = chaveMont(x.en), cbs = MONT_PEDIDO[k] || []; delete MONT_PEDIDO[k]; cbs.forEach(function (cb) { cb(); }); });
+      if (MONT_FILA.length) enviarMontagens();
+    });
+  }
+  function linhaMarcada(marcada) {
+    var d = el('div', 'mont-line');
+    String(marcada || '').split(/(\[[^\]]*\])/).forEach(function (part) {
+      if (!part) return;
+      if (part.charAt(0) === '[') d.append(el('span', 'jx', quebra(part.slice(1, -1))));
+      else d.append(document.createTextNode(quebra(part)));
+    });
+    return d;
+  }
+  function falarPalavra(w) {
+    var t = String(w).replace(/[^A-Za-z']/g, ''); if (!t) return;
+    fetchAudio([t]).then(function () { speak(t); }).catch(function () { speak(t); });
+  }
+  function montagemEl(en, pron) {
+    var box = el('div', 'mont');
+    function desenhar() {
+      var m = S && S.montagens && S.montagens[chaveMont(en)];
+      if (!m) { box.replaceChildren(el('div', 'mont-line', quebra(pron))); return false; }
+      var cards = el('div', 'wcards');
+      (m.palavras || []).forEach(function (w) {
+        var c = el('button', 'wc'); c.type = 'button'; c.setAttribute('aria-label', 'Ouvir ' + w.w);
+        c.append(el('b', null, w.w), el('span', null, w.p)); c.onclick = function () { falarPalavra(w.w); };
+        cards.append(c);
+      });
+      box.replaceChildren(cards, linhaMarcada(m.marcada || pron));
+      if ((m.regras || []).length) { var rg = el('div', 'mont-regras'); m.regras.forEach(function (r) { rg.append(el('div', null, r)); }); box.append(rg); }
+      return true;
+    }
+    if (!desenhar() && en && S && S.iaAtiva) pedirMontagem(en, pron, desenhar);
+    return box;
+  }
   function tresVersoes(en, fal, pron, pt) {
     var out = [linhaFr('Escrita', en, 'en')];
     if (fal && fal !== en) out.push(linhaFr('Falada', fal, 'fal'));
-    if (pron) { var p = linhaFr('Pronúncia', quebra(pron), 'soa'); p.classList.add('rap'); out.push(p); }
+    if (pron) { var p = el('div', 'lbl rap'); p.append(el('span', null, 'Pronúncia'), montagemEl(en, pron)); out.push(p); }
     if (pt) out.push(linhaFr('Tradução', pt));
     return out;
   }
@@ -1485,7 +1558,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   /* the three speeds: fast (default), normal and careful, each with its own audio */
   function velocidadesEl(f) {
     var d = el('div', 'vel');
-    [['Rápida', f.pron || f.soaRapida || f.soa, kR(f), true], ['Normal', f.pronNormal || f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
+    var mjr = S && S.montagens && S.montagens[chaveMont(f.en)];
+    [['Rápida', mjr ? String(mjr.marcada).replace(/[\[\]]/g, '') : (f.pron || f.soaRapida || f.soa), kR(f), true], ['Normal', f.pronNormal || f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
       var r = el('div', 'v' + (x[3] ? ' on' : ''));
       var b = el('button', 'btn' + (x[3] ? '' : ' ghost'), 'Ouvir'); b.type = 'button'; b.setAttribute('aria-label', 'Ouvir ' + x[0].toLowerCase());
       b.onclick = function () { speak(x[2], f.voice); };
@@ -1673,7 +1747,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var pt = el('div', 'task'); pt.append(el('h3', null, 'Por extenso × falado rápido'), el('p', 'small muted', 'Toque em "Cuidadosa" e depois em "Rápida". Repare no que muda: o que encolhe, o que gruda e o que some.'));
     (u.pares || []).forEach(function (p) {
       var v = p.voice || 'feminina', r = el('div', 'par');
-      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + (p.falada || p.natural)), el('div', 'soa', quebra(p.pron || p.soa)));
+      var l = el('div'); l.append(el('div', 'w', p.lento), el('div', 'n', '→ ' + (p.falada || p.natural)), montagemEl(p.natural, p.pron || p.soa));
       var bs = el('div', 'stack'); bs.style.gap = '6px'; bs.append(sayKey(CUIK + p.lento, v, 'Cuidadosa'), sayKey(RAPK + p.natural, v, 'Rápida'));
       r.append(l, bs); pt.append(r);
     });
@@ -1819,6 +1893,112 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     box.append(d);
   }
 
+  /* MP3 joiner: concatenates MP3 clips frame by frame (drops ID3 and Xing/Info frames) and inserts silent frames */
+  function mp3Juntar() {
+    var BR1 = [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320], BR2 = [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160];
+    var SR = { 3: [44100, 48000, 32000], 2: [22050, 24000, 16000], 0: [11025, 12000, 8000] };
+    function hdr(b, i) {
+      if (b[i] !== 0xFF || (b[i + 1] & 0xE0) !== 0xE0) return null;
+      var ver = (b[i + 1] >> 3) & 3, layer = (b[i + 1] >> 1) & 3, bri = b[i + 2] >> 4, sri = (b[i + 2] >> 2) & 3, pad = (b[i + 2] >> 1) & 1;
+      if (ver === 1 || layer !== 1 || bri === 0 || bri === 15 || sri === 3) return null;
+      var sr = SR[ver][sri], br = (ver === 3 ? BR1 : BR2)[bri] * 1000;
+      var len = Math.floor((ver === 3 ? 144 : 72) * br / sr) + pad;
+      return { ver: ver, sr: sr, len: len, mono: ((b[i + 3] >> 6) & 3) === 3, amostras: ver === 3 ? 1152 : 576 };
+    }
+    function quadros(bytes) {
+      var b = new Uint8Array(bytes), i = 0, out = [], first = true;
+      if (b[0] === 0x49 && b[1] === 0x44 && b[2] === 0x33) i = 10 + ((b[6] & 127) << 21 | (b[7] & 127) << 14 | (b[8] & 127) << 7 | (b[9] & 127));
+      while (i + 4 <= b.length) {
+        var h = hdr(b, i);
+        if (!h) { i++; continue; }
+        if (i + h.len > b.length) break;
+        var q = b.subarray(i, i + h.len);
+        var txt = first ? String.fromCharCode.apply(null, q.subarray(0, Math.min(q.length, 64))) : '';
+        if (!(first && /Xing|Info|VBRI/.test(txt))) out.push({ q: q, h: h });
+        first = false; i += h.len;
+      }
+      return out;
+    }
+    var partes = [], ref = null, segundos = 0;
+    return {
+      clipe: function (bytes) {
+        var qs = quadros(bytes); if (!qs.length) return false;
+        if (!ref) ref = qs[0];
+        if (qs[0].h.sr !== ref.h.sr || qs[0].h.mono !== ref.h.mono) return false;
+        qs.forEach(function (x) { partes.push(x.q); segundos += x.h.amostras / x.h.sr; });
+        return true;
+      },
+      pausa: function (s) {
+        if (!ref) return;
+        var r = ref.q, h = ref.h;
+        var z = new Uint8Array(h.len); z[0] = r[0]; z[1] = r[1] | 1; z[2] = r[2] & ~2; z[3] = r[3];
+        var n = Math.round(s * h.sr / h.amostras);
+        for (var k = 0; k < n; k++) partes.push(z);
+        segundos += n * h.amostras / h.sr;
+      },
+      partes: function () { return partes; },
+      segundos: function () { return segundos; }
+    };
+  }
+
+  /* ---------- Áudio do dia: one MP3 to listen without the screen ---------- */
+  var adN = 38, adUrl = null;
+  document.querySelectorAll('#adTam button').forEach(function (b) { b.onclick = function () { adN = +b.dataset.n; document.querySelectorAll('#adTam button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); }); }; });
+  function adItens(n) {
+    var L = sonsList(), prog = S.sonsProg || {}, cur = somAtual(), vistos = {}, out = [];
+    function add(f) { var k = String(f.en || '').trim().toLowerCase(); if (!k || !f.pt || vistos[k] || out.length >= n) return; vistos[k] = 1; out.push(f); }
+    var vs = []; L.forEach(function (u) { if (u.trilha === 'fe') u.frases.forEach(function (f) { if (/^(Salmo|João)/.test(f.ref || '')) vs.push(f); }); });
+    if (vs.length) { var dia = Math.floor(Date.parse(S.hoje + 'T12:00:00') / 86400000); add(vs[((dia % vs.length) + vs.length) % vs.length]); }
+    (S.frases || []).slice(0, 4).forEach(add);
+    dueCards().slice(0, Math.round(n * 0.3)).forEach(function (c) { add({ en: c.en, pt: c.pt }); });
+    var pool = [];
+    L.filter(function (u) { return u.trilha !== 'fe' && (prog[u.id] || u === cur); }).forEach(function (u) { u.frases.forEach(function (f) { var r = ((prog[u.id] || {}).f || {})[f.en] || [0, 0]; pool.push({ f: f, peso: 1 + (r[1] - r[0]) * 3 + (r[1] === 0 ? 1 : 0) + Math.random() * 2 }); }); });
+    pool.sort(function (a, b) { return b.peso - a.peso; }).forEach(function (x) { add(x.f); });
+    return out;
+  }
+  function bytesDe(dataUrl) {
+    var m = /^data:audio\/mpeg;base64,(.*)$/.exec(dataUrl || ''); if (!m) return null;
+    var s = atob(m[1]), b = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) b[i] = s.charCodeAt(i); return b;
+  }
+  $('adIr').onclick = function () {
+    var btn = $('adIr'), info = $('adInfo'), itens = adItens(adN);
+    if (!itens.length) { toast('Comece uma unidade do Ouvido para ter frases no áudio.'); return; }
+    btn.disabled = true; info.hidden = false; $('adPronto').hidden = true;
+    var pref0 = pref(), INTRO = '~pt~ Áudio do dia. Ouça a frase em português e tente dizer em inglês. Depois, ouça e repita junto.', FIM = '~pt~ Fim do áudio de hoje. Até amanhã!';
+    var vozItem = function (i) { return pref0 === 'ambas' ? (i % 2 ? 'masculina' : 'feminina') : voz(); };
+    var cadeia = Promise.resolve(), feitos = 0;
+    cadeia = cadeia.then(function () { info.textContent = 'Preparando a abertura…'; return fetchAudio([INTRO, FIM], 'fix:' + vozItem(0)); });
+    itens.forEach(function (f, i) {
+      cadeia = cadeia.then(function () {
+        info.textContent = 'Preparando a frase ' + (i + 1) + ' de ' + itens.length + '…';
+        return fetchAudio(['~pt~ ' + f.pt, kR(f), kN(f)], 'fix:' + vozItem(i));
+      });
+    });
+    cadeia.then(function () {
+      info.textContent = 'Juntando o áudio…';
+      var j = mp3Juntar(), v0 = vozItem(0), usadas = 0;
+      var clip = function (t, v) { var b = bytesDe(AUD[v][String(t).trim()]); return b ? j.clipe(b) : false; };
+      clip(INTRO, v0); j.pausa(1.2);
+      itens.forEach(function (f, i) {
+        var v = vozItem(i);
+        if (!AUD[v][kR(f)] || !AUD[v][kN(f)]) return;
+        if (clip('~pt~ ' + f.pt, v)) j.pausa(3); else return;
+        clip(kR(f), v); j.pausa(0.9); clip(kN(f), v); j.pausa(3.5); clip(kR(f), v); j.pausa(1.8);
+        usadas++;
+      });
+      clip(FIM, v0);
+      if (!usadas) throw new Error('Não consegui os áudios agora. Tente de novo em instantes.');
+      if (adUrl) URL.revokeObjectURL(adUrl);
+      adUrl = URL.createObjectURL(new Blob(j.partes(), { type: 'audio/mpeg' }));
+      var min = Math.max(1, Math.round(j.segundos() / 60));
+      var au = document.createElement('audio'); au.controls = true; au.preload = 'auto'; au.src = adUrl; au.style.width = '100%';
+      au.onplay = function () { try { if ('mediaSession' in navigator) navigator.mediaSession.metadata = new MediaMetadata({ title: 'Áudio do dia', artist: 'Caderno de Inglês', album: S.hoje }); } catch (e) {} };
+      var dl = el('a', 'btn', 'Baixar o MP3'); dl.href = adUrl; dl.download = 'caderno-audio-' + S.hoje + '.mp3'; dl.style.textAlign = 'center'; dl.style.textDecoration = 'none';
+      $('adPronto').replaceChildren(au, dl, el('p', 'small muted', usadas + ' frases, cerca de ' + min + ' min. Baixe para ouvir com a tela apagada ou sem internet.'));
+      $('adPronto').hidden = false; info.hidden = true;
+    }).catch(function (err) { info.textContent = msgOf(err); }).then(function () { btn.disabled = false; btn.textContent = 'Montar de novo'; });
+  };
+
   $('ouvDia').onclick = function () {
     var L = sonsList(); if (!L.length) return;
     var prog = S.sonsProg || {}, cur = somAtual();
@@ -1841,7 +2021,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var d = el('div', 'corr-fala');
     var a = el('div', 'lbl'); a.append(el('span', null, 'Melhor dizer'), el('b', null, c.normal)); d.append(a);
     if (c.falada && c.falada !== c.normal) { var f2 = el('div', 'lbl'); f2.append(el('span', null, 'Falada'), el('span', 'fal', c.falada)); d.append(f2); }
-    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Pronúncia'), el('span', 'soa', quebra(c.falado))); d.append(b); }
+    if (c.falado) { var b = el('div', 'lbl'); b.append(el('span', null, 'Pronúncia'), montagemEl(c.rapida || c.normal, c.falado)); d.append(b); }
     if (c.porque || c.explicacao) d.append(el('div', 'small', c.explicacao || c.porque));
     var st = el('div', 'st'); d.append(st); d.status = st;
     return d;
