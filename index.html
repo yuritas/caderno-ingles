@@ -282,6 +282,24 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .mont-line .jx { color: var(--bad); background: var(--amber-soft); border-radius: 5px; padding: 0 2px; box-shadow: inset 0 -2px 0 var(--amber) }
 .mont-regras { display: grid; gap: 2px; font-size: .82rem; color: var(--muted) }
 .mont-regras div::before { content: "↳ "; color: var(--amber) }
+.cur-lista { display: grid; gap: 6px }
+.cur-it { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface) }
+.cur-it .num { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 800 .82rem var(--f-display); background: var(--surface-2); color: var(--muted); border: 1px solid var(--line) }
+.cur-it.ok .num { background: var(--accent); color: var(--on-accent); border-color: var(--accent) }
+.cur-it.atual .num { background: var(--amber); color: #0F2A44; border-color: var(--amber) }
+.cur-it.fut { opacity: .55 }
+.cur-it .tm { font-size: .9rem; line-height: 1.3 }
+.cur-it .st { font: 700 .74rem var(--f-display); color: var(--muted) }
+.palco { display: grid; gap: 12px }
+.palco .pt-big { font: 800 1.35rem var(--f-display); letter-spacing: -.01em; line-height: 1.3 }
+.palco .passo { display: flex; justify-content: space-between; align-items: center; gap: 8px }
+.palco .barra { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden }
+.palco .barra i { display: block; height: 100%; background: var(--accent); transition: width .3s }
+.palco .ok-msg { font: 800 1rem var(--f-display); color: var(--ok) }
+.palco .no-msg { font: 800 1rem var(--f-display); color: var(--bad) }
+.cur-atalho { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; font: inherit; color: inherit; cursor: pointer }
+.cur-atalho > span:first-child { display: grid; gap: 2px }
+.cur-atalho > span:last-child { font: 800 1.3rem var(--f-display); color: var(--accent) }
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
@@ -372,6 +390,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
         <button class="btn" id="ouvDia" type="button">Começar o treino do dia</button>
       </div>
+      <button class="task cur-atalho" id="curAtalho" type="button"><span><b>Aula falada de hoje</b><span class="small muted" id="curAtalhoTxt">Recapitulação, frases novas e conversa com o tutor · 15 a 20 min</span></span><span aria-hidden="true">→</span></button>
       <div class="task" id="audioDia">
         <p class="eyebrow">Áudio do dia · sem tela</p>
         <p class="small">Um MP3 com as frases de hoje. Para cada uma: você ouve em português, tenta dizer em inglês, ouve a rápida e a normal e repete junto. Toca com a tela apagada, no carro ou no fone.</p>
@@ -417,9 +436,26 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     </section>
 
     <section class="view" id="v-aula" hidden>
-      <div class="note" id="recado" hidden><p class="eyebrow">Recado do professor</p><p id="recadoTxt"></p></div>
-      <label class="f" for="pickAula" id="pickWrap" hidden>Aula<select id="pickAula"></select></label>
-      <div id="lessonBox"></div>
+      <div class="task hero" id="cursoHero">
+        <p class="eyebrow" id="cursoEyebrow">Aula falada</p>
+        <h2 id="cursoTit">Carregando…</h2>
+        <p class="small" id="cursoTxt"></p>
+        <div class="row"><button class="btn" id="cursoIr" type="button" hidden>Começar</button><button class="btn ghost" id="cursoParar" type="button" hidden>Parar a aula</button></div>
+      </div>
+      <div id="cursoPalco" class="stack"></div>
+      <div class="task" id="cursoCaminho" hidden>
+        <h3>Seu caminho</h3>
+        <p class="small muted">Uma aula nova por dia. A partir da segunda, o dia começa pela recapitulação, e a aula nova só abre com 80% de acerto.</p>
+        <div id="cursoLista" class="cur-lista"></div>
+      </div>
+      <details class="conv" id="aulaAntiga">
+        <summary>Lições escritas (as aulas antigas)</summary>
+        <div class="stack" style="padding:8px 0 12px">
+          <div class="note" id="recado" hidden><p class="eyebrow">Recado do professor</p><p id="recadoTxt"></p></div>
+          <label class="f" for="pickAula" id="pickWrap" hidden>Aula<select id="pickAula"></select></label>
+          <div id="lessonBox"></div>
+        </div>
+      </details>
     </section>
 
     <section class="view" id="v-revisar" hidden>
@@ -767,6 +803,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (v === 'admin') loadAdmin();
     if (v === 'ouvido') renderOuvido();
     if (v === 'frases') renderFrases();
+    if (v === 'aula') renderCurso();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { if (b.dataset.v === 'mais') toggleMais(); else show(b.dataset.v); }; });
@@ -1270,12 +1307,12 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   var micSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>';
   $('repMic').innerHTML = micSvg; $('tutorMic').innerHTML = micSvg; $('respMic').innerHTML = micSvg;
   var rec = null, recBtn = null;
-  function listen(btn, onInterim, onFinal) {
+  function listen(btn, onInterim, onFinal, lang) {
     if (!SR) { toast('Este navegador não reconhece voz. Use o Chrome no Android ou o Safari no iPhone.'); return; }
     if (rec) { try { rec.stop(); } catch (e) {} return; }
     try { if (synth) synth.cancel(); player.pause(); } catch (e) {}
     var r = new SR(); rec = r; recBtn = btn;
-    r.lang = 'en-US'; r.interimResults = true; r.maxAlternatives = 3; r.continuous = false;
+    r.lang = lang || 'en-US'; r.interimResults = true; r.maxAlternatives = 3; r.continuous = false;
     var finals = [];
     r.onresult = function (ev) {
       var interim = '';
@@ -1490,6 +1527,261 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   /* three versions: Escrita (written) / Falada (English with ' at the joins) / Pronúncia (Brazilian letters) */
   /* lets long pronunciations wrap only between blocks (after each ') */
   function quebra(s) { return String(s || '').replace(/'/g, "'\u200B"); }
+  /* ---------- Aula falada: daily spoken course with recap gate ---------- */
+  var CUR = { est: null, parar: false, rodando: false };
+  function curVozes() { var vt = vozTutor(); return { en: vt, pt: vt === 'feminina' ? 'masculina' : 'feminina' }; }
+  function curAuto() { return !!SR && lsGet('caderno_hf') !== '0'; }
+  /* plays [[text, 'en'|'pt'], …] in order, fetching the audio first */
+  function curTocar(seq, cb) {
+    var V = curVozes(), porV = {};
+    seq.forEach(function (x) { var v = V[x[1]] || x[1]; (porV[v] = porV[v] || []).push(x[0]); });
+    var vs = Object.keys(porV), p = Promise.resolve();
+    vs.forEach(function (v) { p = p.then(function () { return fetchAudio(porV[v], 'fix:' + v); }); });
+    p.then(function () {
+      var i = 0; (function nx() { if (CUR.parar) return; var x = seq[i++]; if (!x) { if (cb) cb(); return; } playLine(x[0], 'fix:' + (V[x[1]] || x[1]), nx); })();
+    });
+  }
+  function curPalco(eyebrow, k, total) {
+    var t = el('div', 'task palco'), top = el('div', 'passo');
+    top.append(el('p', 'eyebrow', eyebrow), el('span', 'small muted', total ? k + ' de ' + total : ''));
+    t.append(top);
+    if (total) { var b = el('div', 'barra'), i = el('i'); i.style.width = Math.round(100 * (k - 1) / total) + '%'; b.append(i); t.append(b); }
+    $('cursoPalco').replaceChildren(t);
+    t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    return t;
+  }
+  function curMic(t, onTap) {
+    var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Falar'); mic.style.justifySelf = 'center';
+    var heard = el('p', 'heard', ''), words = el('div', 'words');
+    mic.onclick = onTap; t.append(mic, words, heard);
+    return { mic: mic, heard: heard, words: words };
+  }
+  function melhorTentativa(alvo, alts) {
+    var best = null;
+    alts.forEach(function (a) { var sc = scoreWords(alvo, a), n = sc.filter(function (x) { return x.ok; }).length; if (!best || n > best.n) best = { sc: sc, n: n, a: a }; });
+    return best;
+  }
+
+  /* one phrase taught: hear it (pt, fast, normal), see the 3 versions and repeat */
+  function curEnsinar(f, k, total, rotulo, cb) {
+    var t = curPalco(rotulo || 'Frase nova', k, total);
+    var bf = blocoFrase(f); bf.classList.add('alvo-fr'); t.append(bf, velocidadesEl(f));
+    var tent = 0, m;
+    var segue = el('button', 'btn ghost', 'Próxima →'); segue.type = 'button'; segue.onclick = function () { if (rec) { try { rec.abort(); } catch (e) {} } cb(); };
+    function ouvir() {
+      if (!SR) { m.heard.textContent = 'Repita em voz alta e toque em Próxima.'; return; }
+      m.heard.textContent = 'Sua vez: repita no ritmo da rápida…';
+      listen(m.mic, function (x) { m.heard.textContent = x; }, function (alts) {
+        if (CUR.parar) return;
+        if (!alts.length) { m.heard.textContent = 'Não ouvi. Toque no microfone e repita.'; return; }
+        var b = melhorTentativa(f.en, alts); tent++;
+        m.words.replaceChildren.apply(m.words, b.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
+        var ok = b.n >= Math.ceil(b.sc.length * 0.7);
+        m.heard.textContent = (ok ? 'Boa! ' : 'Entendi: ') + '"' + b.a + '"';
+        if (ok || tent >= 2) setTimeout(function () { if (!CUR.parar) cb(); }, 1200);
+        else curTocar([['~pt~ Ouça de novo e repita.', 'pt'], [kR(f), 'en']], function () { if (curAuto()) ouvir(); });
+      });
+    }
+    m = curMic(t, ouvir); t.append(segue);
+    curTocar([['~pt~ ' + f.pt, 'pt'], [kR(f), 'en'], [kN(f), 'en'], ['~pt~ Repita.', 'pt']], function () { if (curAuto()) ouvir(); });
+  }
+
+  /* "how do you say …?": the student must produce the sentence; returns ok on the first try */
+  function curPerguntar(f, k, total, rotulo, cb) {
+    var t = curPalco(rotulo, k, total);
+    t.append(el('p', 'small muted', 'Como se diz em inglês:'), el('p', 'pt-big', f.pt));
+    var resp = el('div', 'stack'); resp.hidden = true;
+    var m, feito = false;
+    function fim(ok) { if (feito) return; feito = true; cb(ok); }
+    function mostrarCerto() { resp.hidden = false; resp.replaceChildren.apply(resp, tresVersoes(f.en, f.falada, f.pron, '')); }
+    function corrigir(c) {
+      var card = cartaoCorrecao(c); t.append(card);
+      correcaoFalada(c, m.mic, card, function () { setTimeout(function () { fim(false); }, 600); });
+    }
+    function ouvir() {
+      if (!SR) { m.heard.textContent = 'Diga em voz alta e toque em "Mostrar resposta".'; return; }
+      m.heard.textContent = 'Ouvindo…';
+      listen(m.mic, function (x) { m.heard.textContent = x; }, function (alts) {
+        if (CUR.parar || feito) return;
+        if (!alts.length) { m.heard.textContent = 'Não ouvi. Toque no microfone e fale.'; return; }
+        var b = melhorTentativa(f.en, alts);
+        m.words.replaceChildren.apply(m.words, b.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
+        if (b.n === b.sc.length) { acertou(b.a); return; }
+        m.heard.textContent = 'Conferindo "' + b.a + '"…';
+        api('cursoAvaliar', TOKEN, { en: f.en, pt: f.pt, resposta: b.a, aula: CUR.est && CUR.est.n }).then(function (r) {
+          if (r.ok) { acertou(b.a); return; }
+          m.heard.textContent = 'Você disse: "' + b.a + '"';
+          t.append(el('p', 'no-msg', r.tipo === 'pronuncia' ? 'Quase: parece que o som saiu diferente.' : 'Ainda não.'));
+          mostrarCerto();
+          corrigir({ normal: r.melhor || f.en, rapida: r.melhorRapida || f.rapida, falada: r.falada || f.falada, falado: r.faladoRapido || f.pron, porque: r.explicacaoCurta });
+        }).catch(function () { mostrarCerto(); corrigir({ normal: f.en, rapida: f.rapida, falada: f.falada, falado: f.pron }); });
+      });
+    }
+    function acertou(a) {
+      m.heard.textContent = 'Você disse: "' + a + '"';
+      t.append(el('p', 'ok-msg', 'Isso! ✓')); mostrarCerto();
+      curTocar([[kR(f), 'en']], function () { setTimeout(function () { fim(true); }, 500); });
+    }
+    m = curMic(t, ouvir);
+    var row = el('div', 'row'), ns = el('button', 'btn ghost', 'Não sei'); ns.type = 'button';
+    ns.onclick = function () { if (rec) { try { rec.abort(); } catch (e) {} } mostrarCerto(); corrigir({ normal: f.en, rapida: f.rapida, falada: f.falada, falado: f.pron }); };
+    row.append(ns); t.append(row, resp);
+    curTocar([['~pt~ Como se diz: ' + f.pt, 'pt']], function () { if (curAuto()) ouvir(); });
+  }
+
+  /* short conversation: the tutor asks, the student answers freely using the lesson */
+  function curConversa(q, k, total, cb) {
+    var t = curPalco('Conversa', k, total);
+    var tx = el('p', 'pt-big', q.en); tx.style.color = 'var(--accent)';
+    var trad = el('p', 'small muted', q.pt); trad.hidden = true;
+    var vt = el('button', 'linkbtn', 'Ver tradução'); vt.type = 'button'; vt.onclick = function () { trad.hidden = !trad.hidden; };
+    t.append(tx, vt, trad);
+    var m, feito = false;
+    function fim() { if (feito) return; feito = true; cb(); }
+    function ouvir() {
+      if (!SR) { m.heard.textContent = 'Responda em voz alta e toque em Próxima.'; return; }
+      m.heard.textContent = 'Responda em inglês…';
+      listen(m.mic, function (x) { m.heard.textContent = x; }, function (alts) {
+        if (CUR.parar || feito) return;
+        if (!alts.length) { m.heard.textContent = 'Não ouvi. Toque no microfone e responda.'; return; }
+        m.heard.textContent = 'Você disse: "' + alts[0] + '" · conferindo…';
+        api('avaliarResposta', TOKEN, { pergunta: q.en, modelo: q.modelo, resposta: alts[0], aula: 'curso-' + (CUR.est && CUR.est.n) }).then(function (r) {
+          m.heard.textContent = 'Você disse: "' + alts[0] + '"';
+          if (r.comentario) t.append(el('p', 'small', r.comentario));
+          if (r.melhor) { var card = cartaoCorrecao({ normal: r.melhor, falada: r.falada, falado: r.faladoRapido, rapida: r.melhorRapida, porque: r.explicacaoCurta }); t.append(card); correcaoFalada({ normal: r.melhor, rapida: r.melhorRapida, porque: r.explicacaoCurta }, m.mic, card, function () { setTimeout(fim, 600); }); }
+          else { t.append(el('p', 'ok-msg', 'Ótima resposta! ✓')); setTimeout(fim, 1400); }
+        }).catch(function () { setTimeout(fim, 800); });
+      });
+    }
+    m = curMic(t, ouvir);
+    var row = el('div', 'row'), ex = el('button', 'btn ghost', 'Ver um exemplo'), px = el('button', 'btn ghost', 'Próxima →');
+    ex.type = px.type = 'button';
+    ex.onclick = function () { t.append(el('p', 'small', 'Exemplo: ' + q.modelo)); curTocar([[NAT + q.modelo, 'en']]); };
+    px.onclick = function () { if (rec) { try { rec.abort(); } catch (e) {} } fim(); };
+    row.append(ex, px); t.append(row);
+    curTocar([[NAT + q.en, 'en']], function () { if (curAuto()) ouvir(); });
+  }
+
+  function curSequencia(passos, fim) {
+    var i = 0; (function nx() { if (CUR.parar) return; var p = passos[i++]; if (!p) { fim(); return; } p(nx); })();
+  }
+  function curMsg(eyebrow, titulo, texto, botoes) {
+    var t = curPalco(eyebrow); t.append(el('h3', null, titulo)); if (texto) t.append(el('p', 'small', texto));
+    if (botoes) { var r = el('div', 'row'); botoes.forEach(function (b) { r.append(b); }); t.append(r); }
+    return t;
+  }
+  function curFimSessao() { CUR.rodando = false; $('cursoParar').hidden = true; renderCurso(true); }
+
+  /* new lesson: rule, 8 phrases taught, 8 produced, 4 questions */
+  function curAulaNova() {
+    curMsg('Aula ' + CUR.est.n, 'Preparando a aula…', 'O tutor está montando a aula de hoje com as palavras que você já aprendeu (uns 20 segundos).');
+    api('cursoAula', TOKEN).then(function (r) {
+      var A = r.aula, F = A.frases || [], res = [];
+      CUR.aula = A;
+      var passos = [];
+      passos.push(function (nx) {
+        var t = curMsg('Aula ' + A.n + ' · ' + A.nivel, A.titulo, A.regra);
+        var b = el('button', 'btn', 'Vamos lá →'); b.type = 'button'; b.onclick = function () { player.pause(); nx(); }; t.append(b);
+        curTocar([['~pt~ Aula ' + A.n + '. ' + A.regra, 'pt']], function () { if (curAuto()) nx(); });
+      });
+      F.forEach(function (f, i) { passos.push(function (nx) { curEnsinar(f, i + 1, F.length, 'Frase nova', nx); }); });
+      passos.push(function (nx) { var t = curMsg('Agora é com você', 'Sem olhar: diga em inglês', 'Vou falar em português e você responde em inglês. Errou? Eu corrijo e explico a regra.'); var b = el('button', 'btn', 'Começar →'); b.type = 'button'; b.onclick = nx; t.append(b); curTocar([['~pt~ Agora é com você. Eu falo em português e você diz em inglês.', 'pt']], function () { if (curAuto()) nx(); }); });
+      shuffle(F.slice()).forEach(function (f, i) { passos.push(function (nx) { curPerguntar(f, i + 1, F.length, 'Diga em inglês', function (ok) { res.push({ en: f.en, ok: ok }); nx(); }); }); });
+      (A.perguntas || []).forEach(function (q, i) { passos.push(function (nx) { curConversa(q, i + 1, A.perguntas.length, nx); }); });
+      curSequencia(passos, function () {
+        var acertos = res.filter(function (x) { return x.ok; }).length;
+        queue(function () { return api('cursoFim', TOKEN, { resultados: res }); });
+        bumpDay('conversas');
+        curMsg('Aula ' + A.n + ' concluída', 'Muito bem! ✓', 'Você acertou ' + acertos + ' de ' + res.length + ' sem ajuda. Amanhã a aula começa pela recapitulação de hoje: é preciso 80% para abrir a aula ' + (A.n + 1) + '.');
+        curTocar([['~pt~ Aula concluída. Amanhã começamos pela recapitulação.', 'pt']]);
+        curFimSessao();
+      });
+    }).catch(function (err) { curMsg('Aula falada', 'Não deu para montar a aula agora', msgOf(err)); curFimSessao(); });
+  }
+
+  /* recap: what do you remember + sentences from previous lessons; 80% opens the new lesson */
+  function curRecap() {
+    var E = CUR.est, itens = E.recap || [], res = [];
+    var passos = [];
+    passos.push(function (nx) {
+      var t = curMsg('Recapitulação', 'O que você lembra da aula ' + E.n + '?', 'Fale em português o que lembra (pode ser pouco). Depois eu peço ' + itens.length + ' frases em inglês.');
+      var m = curMic(t, ouvir), segue = el('button', 'btn ghost', 'Seguir para as frases →'); segue.type = 'button'; segue.onclick = function () { if (rec) { try { rec.abort(); } catch (e) {} } player.pause(); nx(); }; t.append(segue);
+      function ouvir() {
+        if (!SR) return;
+        m.heard.textContent = 'Ouvindo (em português)…';
+        listen(m.mic, function (x) { m.heard.textContent = x; }, function (alts) {
+          m.heard.textContent = alts.length ? 'Você lembrou: "' + alts[0] + '"' : 'Tudo bem, vamos às frases.';
+          t.append(el('p', 'small', 'A aula ' + E.n + ' foi: ' + (E.resumo || E.tema)));
+          curTocar([['~pt~ Agora, as frases.', 'pt']], function () { setTimeout(nx, 600); });
+        }, 'pt-BR');
+      }
+      curTocar([['~pt~ Antes da aula nova, vamos recapitular. O que você lembra da aula anterior?', 'pt']], function () { if (curAuto()) ouvir(); });
+    });
+    itens.forEach(function (f, i) { passos.push(function (nx) { curPerguntar(f, i + 1, itens.length, 'Recapitulação', function (ok) { res.push({ en: f.en, pt: f.pt, falada: f.falada, pron: f.pron, rapida: f.rapida, ok: ok }); nx(); }); }); });
+    curSequencia(passos, function () {
+      curMsg('Recapitulação', 'Calculando…', '');
+      api('cursoRecap', TOKEN, { resultados: res }).then(function (r) {
+        if (r.aprovado) {
+          var b = el('button', 'btn', 'Começar a aula ' + (E.n + 1) + ' →'); b.type = 'button';
+          b.onclick = function () { cursoAtualizar().then(function () { curAulaNova(); }); };
+          curMsg('Recapitulação aprovada', r.nota + '% de acerto ✓', 'Passou dos 80%. A aula ' + (E.n + 1) + ' está liberada.', [b]);
+          curTocar([['~pt~ Muito bem! Você passou na recapitulação. Vamos para a aula nova.', 'pt']], function () { if (curAuto()) b.click(); });
+        } else {
+          curMsg('Recapitulação', r.nota + '% de acerto', 'Faltou pouco: é preciso 80%. Vamos reforçar as frases que escaparam. Amanhã a recapitulação se repete e, passando, abre a aula ' + (E.n + 1) + '.');
+          curTocar([['~pt~ Ainda não chegou a oitenta por cento. Vamos reforçar as frases que você errou.', 'pt']], function () { curReforco(r.falhas || []); });
+        }
+      }).catch(function (err) { curMsg('Recapitulação', 'Não consegui salvar o resultado', msgOf(err)); curFimSessao(); });
+    });
+  }
+  function curReforco(falhas) {
+    var passos = falhas.map(function (f, i) { return function (nx) { curEnsinar(f, i + 1, falhas.length, 'Reforço', nx); }; });
+    curSequencia(passos, function () {
+      curMsg('Reforço concluído', 'Bom treino ✓', 'Amanhã a recapitulação de novo. Se quiser, ouça hoje mais uma vez as frases no Áudio do dia.');
+      curFimSessao();
+    });
+  }
+
+  function cursoAtualizar() { return api('cursoEstado', TOKEN).then(function (e) { CUR.est = e; return e; }); }
+  function renderCurso(manterPalco) {
+    if (!S) return;
+    if (!manterPalco && !CUR.rodando) $('cursoPalco').replaceChildren();
+    cursoAtualizar().then(function (E) {
+      var tema = E.tema, eb = $('cursoEyebrow'), tit = $('cursoTit'), tx = $('cursoTxt'), ir = $('cursoIr');
+      eb.textContent = 'Aula falada · aula ' + E.n + ' de ' + E.total;
+      ir.hidden = CUR.rodando; ir.className = 'btn';
+      if (E.etapa === 'nova') { tit.textContent = tema; tx.textContent = E.n === 1 ? 'A primeira aula: 15 a 20 minutos falando. O tutor apresenta 8 frases, você repete, depois diz em inglês e conversa com ele.' : 'Recapitulação aprovada. A aula ' + E.n + ' está liberada.'; ir.textContent = 'Começar a aula ' + E.n; ir.onclick = function () { curIniciar(curAulaNova); }; }
+      else if (E.etapa === 'recap') { tit.textContent = 'Recapitulação da aula ' + E.n; tx.textContent = 'Antes da aula ' + (E.n + 1) + ', vamos ver se ficou: ' + (E.recap || []).length + ' frases das aulas anteriores. Com 80% de acerto, a aula nova abre na hora.'; ir.textContent = 'Começar a recapitulação'; ir.onclick = function () { curIniciar(curRecap); }; }
+      else if (E.etapa === 'feita') { tit.textContent = 'Aula ' + E.n + ' de hoje concluída ✓'; tx.textContent = 'Amanhã a aula começa pela recapitulação de hoje. Se quiser, pratique de novo agora.'; ir.textContent = 'Praticar de novo a aula ' + E.n; ir.className = 'btn ghost'; ir.onclick = function () { curIniciar(curAulaNova); }; }
+      else if (E.etapa === 'reforco') { tit.textContent = 'Reforço da aula ' + E.n; tx.textContent = 'A recapitulação de hoje ficou abaixo de 80%. Treine as frases que escaparam; amanhã tentamos de novo.'; ir.textContent = 'Treinar o reforço'; ir.onclick = function () { curIniciar(function () { curReforco(E.falhas || []); }); }; }
+      var L = $('cursoLista'), H = {}; (E.historico || []).forEach(function (h) { H[h.n] = h; });
+      var ate = Math.min(E.total, Math.max(E.n + 3, 6)), itens = [];
+      for (var n = Math.max(1, E.n - 6); n <= ate; n++) {
+        var h = H[n], it = el('div', 'cur-it'), st = '';
+        if (h && h.status === 'aprovada') { it.classList.add('ok'); st = 'Aprovada' + (h.nota ? ' · ' + h.nota + '%' : ''); }
+        else if (n === E.n) { it.classList.add('atual'); st = E.etapa === 'recap' ? 'Recapitular' : E.etapa === 'reforco' ? 'Reforço' : E.etapa === 'feita' ? 'Feita hoje' : 'Liberada'; }
+        else if (h) { st = h.status === 'reforco' ? 'Reforço' : 'Feita'; }
+        else { it.classList.add('fut'); st = 'Bloqueada'; }
+        it.append(el('span', 'num', String(n)), el('span', 'tm', (n === E.n ? E.tema : (h ? h.tema : '')) || ''), el('span', 'st', st));
+        if (!h && n !== E.n) it.children[1].textContent = 'Aula ' + n;
+        itens.push(it);
+      }
+      L.replaceChildren.apply(L, itens); $('cursoCaminho').hidden = false;
+    }).catch(function (err) { $('cursoTit').textContent = 'Aula falada'; $('cursoTxt').textContent = msgOf(err); });
+  }
+  function curIniciar(fn) {
+    if (!S.iaAtiva) { toast('O tutor ainda não está ativado (chave da API na engrenagem).'); return; }
+    CUR.parar = false; CUR.rodando = true; $('cursoIr').hidden = true; $('cursoParar').hidden = false; $('cursoCaminho').hidden = true;
+    fn();
+  }
+  $('curAtalho').onclick = function () { show('aula'); };
+  $('cursoParar').onclick = function () {
+    CUR.parar = true; CUR.rodando = false;
+    if (rec) { try { rec.abort(); } catch (e) {} }
+    try { player.pause(); if (synth) synth.cancel(); } catch (e) {}
+    $('cursoParar').hidden = true; $('cursoPalco').replaceChildren(); renderCurso();
+    toast('Aula parada. O que você já fez hoje fica salvo.');
+  };
+
   /* ---------- Montar a fala: word cards (each word alone) + the joined pronunciation with the changed part highlighted ---------- */
   function chaveMont(en) { return String(en || '').trim().toLowerCase().replace(/[\s​]+/g, ' '); }
   var MONT_FILA = [], MONT_PEDIDO = {}, MONT_T = null;
@@ -1559,7 +1851,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function velocidadesEl(f) {
     var d = el('div', 'vel');
     var mjr = S && S.montagens && S.montagens[chaveMont(f.en)];
-    [['Rápida', mjr ? String(mjr.marcada).replace(/[\[\]]/g, '') : (f.pron || f.soaRapida || f.soa), kR(f), true], ['Normal', f.pronNormal || f.soa, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
+    [['Rápida', mjr ? String(mjr.marcada).replace(/[\[\]]/g, '') : (f.pron || f.soaRapida || f.soa), kR(f), true], ['Normal', f.pronNormal || f.soa || f.pron, kN(f)], ['Cuidadosa', f.extenso || f.en, kC(f)]].forEach(function (x) {
       var r = el('div', 'v' + (x[3] ? ' on' : ''));
       var b = el('button', 'btn' + (x[3] ? '' : ' ghost'), 'Ouvir'); b.type = 'button'; b.setAttribute('aria-label', 'Ouvir ' + x[0].toLowerCase());
       b.onclick = function () { speak(x[2], f.voice); };
