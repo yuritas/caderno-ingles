@@ -84,7 +84,7 @@ header.top { position: sticky; top: 0; z-index: 12; background: var(--navy); col
 .today b { font: 800 1.15rem var(--f-display); font-variant-numeric: tabular-nums }
 .today span { font-size: .78rem; color: var(--muted) }
 .today .streak b { color: var(--amber) }
-nav.tabs { position: fixed; z-index: 14; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(5, 1fr); gap: 2px; padding: 6px max(8px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -4px 18px rgba(15, 42, 68, .07) }
+nav.tabs { position: fixed; z-index: 14; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 1px solid var(--line); display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; padding: 6px max(8px, env(safe-area-inset-left, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)); box-shadow: 0 -4px 18px rgba(15, 42, 68, .07) }
 @media (min-width: 680px) { nav.tabs { left: 50%; right: auto; width: 640px; transform: translateX(-50%); border: 1px solid var(--line); border-bottom: 0; border-radius: 18px 18px 0 0 } }
 nav.tabs button { position: relative; display: grid; justify-items: center; align-content: center; gap: 3px; font: 700 .72rem var(--f-display); background: none; border: 0; color: var(--muted); padding: 6px 0; border-radius: 14px; cursor: pointer; min-height: 54px; min-width: 0 }
 nav.tabs button svg { width: 56px; height: 30px; padding: 3px 16px; border-radius: 999px; transition: background-color .15s }
@@ -312,6 +312,40 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .cena-l .res { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px }
 .cena-l.esc .en, .cena-l.esc .fal, .cena-l.esc .pron { filter: blur(6px); }
 #cenaModo button { font-size: .76rem; padding: 10px 1px }
+#cursoPalco .cena-del, #v-hoje.rodando .hoje-passos, #v-hoje.rodando #versoDia, #v-hoje.rodando #audioDia, #v-hoje.rodando #hojeFim { display: none !important }
+.hoje-passos { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px }
+.hp { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14) }
+.hp .n { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font: 800 .82rem var(--f-display); background: rgba(255, 255, 255, .14) }
+.hp .tx { display: grid; gap: 1px; min-width: 0 } .hp .tx b { font: 800 .98rem var(--f-display) } .hp .tx .small { opacity: .8 }
+.hp .tm { font: 700 .74rem var(--f-display); opacity: .75 }
+.hp.ok .n { background: var(--amber); color: #0F2A44 } .hp.ok .tx b { text-decoration: line-through; opacity: .75 }
+.hp.atual { background: rgba(255, 255, 255, .16); border-color: var(--amber) }
+#hojeHero .btn { background: var(--on-hero); color: var(--hero); border-color: var(--on-hero) }
+#hojeHero .linkbtn { color: var(--on-hero); opacity: .9 }
+.shd { display: grid; gap: 8px }
+.shd-row { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; align-items: center }
+.shd-row .btn { min-width: 0; padding-left: 8px; padding-right: 8px }
+.ponto .shd { min-width: 0 }
+@media (max-width: 380px) { .shd-row { grid-template-columns: 1fr 1fr } .shd-row .shd-rec { grid-column: 1 / -1; grid-row: 1; grid-auto-flow: column; justify-content: center; gap: 8px } }
+.shd-rec { display: grid; justify-items: center; gap: 2px; border: 0; background: var(--accent); color: var(--on-accent); border-radius: 18px; padding: 10px 16px; font: 800 .8rem var(--f-display); cursor: pointer; min-width: 92px }
+.shd-rec svg { width: 26px; height: 26px }
+.shd-rec.on { background: var(--bad); animation: pulso 1s infinite }
+@keyframes pulso { 50% { transform: scale(1.05) } }
+.shd-st { text-align: center }
+.ponto { gap: 8px }
+.ex-lista { display: grid; gap: 6px }
+.ex-it summary { padding: 8px 0; cursor: pointer }
+.avt-wrap { width: min(210px, 60vw); aspect-ratio: 1; justify-self: center; cursor: pointer; transition: transform .2s }
+.avt-wrap.fala { transform: scale(1.03) }
+.avt { width: 100%; height: 100% }
+.avt-bg { fill: var(--accent-soft) } .avt-face { fill: #E9B892 } .avt-hair { fill: #2B2A33 } .avt-wrap.f .avt-hair { fill: #6B3A22 }
+.avt-eyes ellipse { fill: #1B2430; animation: piscar 4s infinite; transform-origin: center; transform-box: fill-box }
+@keyframes piscar { 0%, 94%, 100% { transform: scaleY(1) } 96% { transform: scaleY(.1) } }
+.avt-cheek { fill: #E28C80; opacity: .35 } .avt-mouth { fill: #7A2E2E }
+.avt-nome { font: 800 1.1rem var(--f-display) } .avt-t { font: 700 .82rem var(--f-display); color: var(--muted); font-variant-numeric: tabular-nums }
+.avt-st { text-align: center; font-weight: 700; color: var(--accent); min-height: 1.5em }
+.live-log { display: grid; gap: 6px; max-height: 260px; overflow: auto; padding: 10px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2) }
+.live-log .ll { margin: 0; font-size: .92rem } .live-log .ll.aluno { color: var(--muted) }
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
@@ -379,11 +413,11 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 
   <div id="app" hidden>
     <nav class="tabs" role="tablist" aria-label="Seções">
-      <button role="tab" data-v="ouvido" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 10a6 6 0 1 1 12 0c0 3-2 4-3 5.5S14 19 12 20.5 8.5 20 8.5 18"/><path d="M10 10a2 2 0 1 1 4 0"/></svg>Ouvido</button>
+      <button role="tab" data-v="hoje" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v2M12 19v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M3 12h2M19 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/><circle cx="12" cy="12" r="4"/></svg>Hoje</button>
       <button role="tab" data-v="frases" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v10H9l-5 4z"/><path d="M8 9h8M8 12h5"/></svg>Frases</button>
-      <button role="tab" data-v="conversar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 17.5 3.5 21l4-1.8A8.5 8.5 0 1 0 5 17.5z"/><path d="M8.5 11h.01M12 11h.01M15.5 11h.01"/></svg>Conversa</button>
-      <button role="tab" data-v="revisar" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="6" width="13" height="14" rx="2"/><path d="M8 3h10a2 2 0 0 1 2 2v12"/></svg>Revisar<span class="badge" id="dueBadge"></span></button>
-      <button role="tab" data-v="mais" id="tabMais" aria-selected="false" aria-expanded="false" aria-controls="maisMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><g class="i-mais"><circle cx="5" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="19" cy="12" r="1.6" fill="currentColor"/></g><path class="i-x" d="M6 6l12 12M18 6 6 18"/></svg><span id="maisLbl">Mais</span></button>
+      <button role="tab" data-v="extras" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Extras</button>
+      <button role="tab" data-v="evolucao" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Progresso</button>
+      <button role="tab" data-v="mais" id="tabMais" aria-selected="false" aria-expanded="false" style="display:none"><span id="maisLbl">Mais</span></button>
     </nav>
     <div class="mais" id="maisMenu" hidden>
       <div class="mais-bg" id="maisBg"></div>
@@ -396,14 +430,17 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       </div>
     </div>
 
-    <section class="view" id="v-ouvido" hidden>
-      <div class="task" id="versoDia" hidden></div>
-      <div class="task hero">
-        <p class="eyebrow">Treino do dia, 5 minutos</p>
-        <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
-        <button class="btn" id="ouvDia" type="button">Começar o treino do dia</button>
+    <section class="view" id="v-hoje" hidden>
+      <div class="task hero" id="hojeHero">
+        <div class="passo"><p class="eyebrow">Hoje · cerca de 25 minutos</p><span class="small" id="hojeData"></span></div>
+        <h2 id="hojeTit">Carregando…</h2>
+        <ol class="hoje-passos" id="hojePassos"></ol>
+        <button class="btn" id="hojeIr" type="button" hidden>Começar</button>
+        <button class="linkbtn" id="hojeExtra" type="button" hidden></button>
       </div>
-      <button class="task cur-atalho" id="curAtalho" type="button"><span><b>Aula falada de hoje</b><span class="small muted" id="curAtalhoTxt">Recapitulação, frases novas e conversa com o tutor · 15 a 20 min</span></span><span aria-hidden="true">→</span></button>
+      <div id="cursoPalco" class="stack"></div>
+      <div class="task" id="hojeFim" hidden></div>
+      <div class="task" id="versoDia" hidden></div>
       <div class="task" id="audioDia">
         <p class="eyebrow">Áudio do dia · sem tela</p>
         <p class="small">Um MP3 com as frases de hoje. Para cada uma: você ouve em português, tenta dizer em inglês, ouve a rápida e a normal e repete junto. Toca com a tela apagada, no carro ou no fone.</p>
@@ -416,6 +453,35 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <p class="small muted" id="adInfo" hidden></p>
         <div id="adPronto" class="stack" hidden></div>
       </div>
+    </section>
+
+    <section class="view" id="v-extras" hidden>
+      <div class="task">
+        <h2>Cenas</h2>
+        <p class="small muted">Diálogos curtos como os de uma série, criados para o seu nível com as frases que você já aprendeu. Cada fala toca em inglês e logo depois dublada em português. Depois, repita a mesma cena com legenda em inglês, só ouvindo e repetindo junto.</p>
+        <label class="f" for="cenaTema">Situação<select id="cenaTema">
+          <option value="surpresa">Surpresa</option><option value="amigos">Amigos no café</option><option value="trabalho">Trabalho</option>
+          <option value="familia">Família e bebê</option><option value="restaurante">Restaurante e mercado</option><option value="medico">Médico e farmácia</option><option value="mudanca">Mudança para os EUA</option>
+        </select></label>
+        <button class="btn" id="cenaNova" type="button">Criar cena nova</button>
+      </div>
+      <div id="cenaAtual" class="stack"></div>
+      <div class="task" id="cenaListaBox" hidden><h3 id="cenaListaTit">Suas cenas</h3><div id="cenaLista" class="mf-lista"></div></div>
+      <div class="task" id="exUnidBox">
+        <h2>Shadowing por unidade</h2>
+        <p class="small muted">As frases das unidades e da trilha Fé, para ouvir, gravar a sua voz e comparar com a do nativo.</p>
+        <label class="f" for="exUnid">Unidade<select id="exUnid"></select></label>
+        <div id="exLista" class="ex-lista"></div>
+      </div>
+    </section>
+
+    <section class="view" id="v-ouvido" hidden>
+      <div class="task hero">
+        <p class="eyebrow">Treino do dia, 5 minutos</p>
+        <p class="small" id="ouvDiaInfo">12 frases misturadas das unidades que você já começou. O que errar volta no fim da fila até acertar.</p>
+        <button class="btn" id="ouvDia" type="button">Começar o treino do dia</button>
+      </div>
+      <button class="task cur-atalho" id="curAtalho" type="button"><span><b>Aula falada de hoje</b><span class="small muted" id="curAtalhoTxt">Recapitulação, frases novas e conversa com o tutor · 15 a 20 min</span></span><span aria-hidden="true">→</span></button>
       <label class="f" for="pickSom">Unidade<select id="pickSom"></select></label>
       <div class="seg" id="ouvSeg" role="tablist">
         <button type="button" data-p="regra" aria-selected="true">Regra</button>
@@ -443,7 +509,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       <div id="mfAtual" class="stack"></div>
       <div class="task" id="mfListaBox" hidden>
         <h3 id="mfListaTit">Frases guardadas</h3>
-        <p class="small muted">Elas também entram no Revisar, junto com as palavras das aulas.</p>
+        <p class="small muted">Elas também entram na recapitulação da Aula falada, junto com as frases das aulas.</p>
         <div id="mfLista" class="mf-lista"></div>
       </div>
     </section>
@@ -454,12 +520,6 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <h2 id="cursoTit">Carregando…</h2>
         <p class="small" id="cursoTxt"></p>
         <div class="row"><button class="btn" id="cursoIr" type="button" hidden>Começar</button><button class="btn ghost" id="cursoParar" type="button" hidden>Parar a aula</button></div>
-      </div>
-      <div id="cursoPalco" class="stack"></div>
-      <div class="task" id="cursoCaminho" hidden>
-        <h3>Seu caminho</h3>
-        <p class="small muted">Uma aula nova por dia. A partir da segunda, o dia começa pela recapitulação, e a aula nova só abre com 80% de acerto.</p>
-        <div id="cursoLista" class="cur-lista"></div>
       </div>
       <details class="conv" id="aulaAntiga">
         <summary>Lições escritas (as aulas antigas)</summary>
@@ -547,19 +607,6 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       </div>
     </section>
 
-    <section class="view" id="v-cenas" hidden>
-      <div class="task">
-        <h2>Cenas</h2>
-        <p class="small muted">Diálogos curtos como os de uma série, criados para o seu nível com as frases que você já aprendeu. Cada fala toca em inglês e logo depois dublada em português. Depois, repita a mesma cena com legenda em inglês, só ouvindo e repetindo junto.</p>
-        <label class="f" for="cenaTema">Situação<select id="cenaTema">
-          <option value="surpresa">Surpresa</option><option value="amigos">Amigos no café</option><option value="trabalho">Trabalho</option>
-          <option value="familia">Família e bebê</option><option value="restaurante">Restaurante e mercado</option><option value="medico">Médico e farmácia</option><option value="mudanca">Mudança para os EUA</option>
-        </select></label>
-        <button class="btn" id="cenaNova" type="button">Criar cena nova</button>
-      </div>
-      <div id="cenaAtual" class="stack"></div>
-      <div class="task" id="cenaListaBox" hidden><h3 id="cenaListaTit">Suas cenas</h3><div id="cenaLista" class="mf-lista"></div></div>
-    </section>
 
     <section class="view" id="v-escrever" hidden>
       <div class="stack">
@@ -585,11 +632,16 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <div class="streak"><b id="tSeq">0</b><span>dias seguidos</span></div>
       </div>
     </div>
+      <div class="task" id="cursoCaminho" hidden>
+        <h3>Seu caminho</h3>
+        <p class="small muted">Uma aula nova por dia. A partir da segunda, o dia começa pela recapitulação, e a aula nova só abre com 80% de acerto.</p>
+        <div id="cursoLista" class="cur-lista"></div>
+      </div>
       <div class="stats">
         <div class="stat"><b id="stStreak">0</b><span>dias seguidos</span></div>
         <div class="stat"><b id="stHours">0 h</b><span>de estudo no total</span></div>
         <div class="stat"><b id="stAcc">–</b><span>de acerto nas últimas 4 semanas</span></div>
-        <div class="stat"><b id="stKnown">0</b><span>palavras firmes (caixa 4 ou 5)</span></div>
+        <div hidden class="stat"><b id="stKnown">0</b><span>palavras firmes (caixa 4 ou 5)</span></div>
       </div>
       <div class="stack">
         <div class="row" style="justify-content:space-between"><p class="eyebrow">Horas rumo ao B2</p><span class="small muted" id="b2txt"></span></div>
@@ -599,14 +651,14 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       <div class="stack"><p class="eyebrow">Acerto por semana, últimas 12</p><div id="chAcc"></div></div>
       <div class="stack"><p class="eyebrow">Minutos por semana (meta: 420)</p><div id="chMin"></div></div>
       <div class="stack"><p class="eyebrow">Últimos 14 dias</p><div class="days" id="days"></div></div>
-      <div class="task">
+      <div hidden class="task">
         <label class="q" for="minutes">Quantos minutos você estudou hoje?</label>
         <div class="row"><input type="number" id="minutes" min="0" max="300" step="5" value="60" style="max-width:120px"><button class="btn" id="saveMin" type="button">Registrar</button></div>
         <p class="hint">Meta: 60 minutos por dia, somando aula, revisão, escrita e o que você ouviu.</p>
       </div>
-      <div class="stack"><p class="eyebrow">Palavras que você mais erra</p><div class="list" id="worst"></div></div>
-      <div class="stack"><p class="eyebrow">Palavras mais praticadas</p><div class="list" id="most"></div></div>
-      <div class="stack"><p class="eyebrow">Aulas</p><div class="list" id="lessonList"></div></div>
+      <div hidden class="stack"><p class="eyebrow">Palavras que você mais erra</p><div class="list" id="worst"></div></div>
+      <div hidden class="stack"><p class="eyebrow">Palavras mais praticadas</p><div class="list" id="most"></div></div>
+      <div hidden class="stack"><p class="eyebrow">Aulas</p><div class="list" id="lessonList"></div></div>
       <hr>
       <div class="task">
         <h3>Seu perfil</h3>
@@ -816,23 +868,22 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function shownLesson() { return S.aulas.find(function (l) { return l.id === selectedLesson; }) || currentLesson(); }
 
   /* ---------- views ---------- */
-  var views = ['ouvido', 'frases', 'aula', 'cenas', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
+  var views = ['hoje', 'frases', 'extras', 'evolucao', 'admin', 'ouvido', 'aula', 'revisar', 'conversar', 'escrever'];
+  var LEGADO = { ouvido: 'hoje', aula: 'hoje', revisar: 'hoje', conversar: 'hoje', escrever: 'hoje', cenas: 'extras' };
   function show(v) {
-    if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'ouvido';
+    if (LEGADO[v]) v = LEGADO[v];
+    if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'hoje';
     views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
-    var noMais = ['aula', 'cenas', 'escrever', 'evolucao', 'admin'].indexOf(v) >= 0;
-    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v || (b.dataset.v === 'mais' && noMais))); });
-    document.querySelectorAll('.fab-item').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.v === v)); });
+    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v)); });
+    $('tabAdmin').setAttribute('aria-pressed', String(v === 'admin'));
     fecharMais();
-    if (v === 'revisar') setRevMode(revOuvido);
-    if (v === 'conversar') enterConversa();
-    if (v === 'evolucao') renderProgress();
-    if (v === 'admin') loadAdmin();
-    if (v === 'ouvido') renderOuvido();
+    if (v !== 'hoje') hojeParar();
+    if (v !== 'extras') { cenaParar(); shadowSoltar(); }
+    if (v === 'hoje') renderHoje();
     if (v === 'frases') renderFrases();
-    if (v === 'aula') renderCurso();
-    if (v === 'cenas') renderCenas();
-    if (v !== 'cenas') cenaParar();
+    if (v === 'extras') { renderCenas(); renderExtras(); }
+    if (v === 'evolucao') { renderProgress(); renderCurso(); }
+    if (v === 'admin') loadAdmin();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { if (b.dataset.v === 'mais') toggleMais(); else show(b.dataset.v); }; });
@@ -894,9 +945,9 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     return api('carregar', TOKEN).then(function (st) {
       S = st; selectedLesson = null;
       $('loading').hidden = true; $('app').hidden = false;
-      $('tabAdmin').hidden = true;
+      $('tabAdmin').hidden = !S.eu.admin;
       renderAll();
-      show(S.sons && S.sons.length ? 'ouvido' : 'aula');
+      show('hoje');
       preloadAudio();
     }).catch(function (e) {
       if (msgOf(e).indexOf('SESSAO') >= 0) return;
@@ -1128,7 +1179,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     S.cartoes.forEach(function (c) { counts[Math.min(5, Math.max(1, c.caixa || 1)) - 1]++; });
     var labels = ['nova', '2 dias', '4 dias', '8 dias', '16 dias'];
     $('boxes').replaceChildren.apply($('boxes'), counts.map(function (n, i) { var d = el('div'); d.append(el('b', null, String(n)), el('span', null, labels[i])); return d; }));
-    var due = dueCards().length; $('dueBadge').textContent = due ? String(due) : '';
+    var due = dueCards().length, db = $('dueBadge'); if (db) db.textContent = due ? String(due) : '';
   }
   function renderCard() {
     renderBoxes();
@@ -1623,7 +1674,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       if (CENA.i >= c.falas.length) CENA.i = 0;
       CENA.tocando = true; botao(); tocarDe(CENA.i, false);
     };
-    var del = el('button', 'btn ghost', 'Apagar'); del.type = 'button';
+    var del = el('button', 'btn ghost cena-del', 'Apagar'); del.type = 'button';
     del.onclick = function () {
       if (!del.dataset.ok) { del.dataset.ok = '1'; del.textContent = 'Toque de novo'; setTimeout(function () { delete del.dataset.ok; del.textContent = 'Apagar'; }, 4000); return; }
       cenaParar(); api('cenaApagar', TOKEN, c.id).then(function () { S.cenas = S.cenas.filter(function (x) { return x.id !== c.id; }); CENA.sel = null; renderCenas(); toast('Cena apagada.'); }).catch(function (e) { toast(msgOf(e)); });
@@ -1675,6 +1726,349 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     }
     pintar(); botao();
     return t;
+  }
+
+
+  /* =================== HOJE: the single daily route =================== */
+  var HOJE = { passo: null };
+  function hojeEstado() { var o = {}; try { o = JSON.parse(lsGet('caderno_hoje_' + (S && S.hoje)) || '{}') || {}; } catch (e) {} return o; }
+  function hojeMarcar(k) { var o = hojeEstado(); o[k] = true; lsSet('caderno_hoje_' + S.hoje, JSON.stringify(o)); }
+  function hojeParar() {
+    if (CUR.rodando) { CUR.parar = true; CUR.rodando = false; CUR.onFim = null; if (rec) { try { rec.abort(); } catch (e) {} } }
+    liveEncerrar(true); shadowSoltar(); try { player.pause(); } catch (e) {}
+    if (HOJE.passo) { HOJE.passo = null; $('cursoPalco').replaceChildren(); }
+  }
+  var PODCASTS = {
+    A1: [['ESL Pod', 'Podcast americano falado devagar, com explicação das expressões.', 'https://open.spotify.com/search/ESL%20Podcast'], ['Comprehensible input para iniciantes', 'Vídeos em inglês bem fácil, com desenho e gesto para você entender sem tradução.', 'https://www.youtube.com/results?search_query=comprehensible+input+english+beginner']],
+    A2: [['Speak English with Vanessa', 'Professora americana, inglês do dia a dia, um pouco mais rápido.', 'https://www.youtube.com/results?search_query=Speak+English+with+Vanessa'], ['Coffee Break English', 'Episódios curtos com diálogos e explicação.', 'https://open.spotify.com/search/Coffee%20Break%20English']],
+    B1: [['All Ears English', 'Dois americanos conversando sobre a vida e o trabalho.', 'https://open.spotify.com/search/All%20Ears%20English'], ['Friends com o Language Reactor', 'Uma cena de 1 a 2 minutos por dia, com legenda dupla.', 'https://www.languagereactor.com']],
+    B2: [['The Daily (New York Times)', 'Notícias em inglês americano natural, cerca de 20 minutos.', 'https://open.spotify.com/search/The%20Daily'], ['Friends com o Language Reactor', 'Sem legenda em português: só a legenda em inglês.', 'https://www.languagereactor.com']]
+  };
+  function hojeFimCard(nivel) {
+    var L = PODCASTS[nivel] || PODCASTS.A1, sem = Math.floor(Date.parse(S.hoje + 'T12:00:00') / (7 * 86400000)), p = L[sem % L.length];
+    var c = $('hojeFim'); c.hidden = false;
+    var a = el('a', 'btn ghost', 'Abrir: ' + p[0]); a.href = p[2]; a.target = '_blank'; a.rel = 'noopener'; a.style.textAlign = 'center'; a.style.textDecoration = 'none';
+    c.replaceChildren(el('p', 'eyebrow', 'Shadowing fora do caderno · sua fase: ' + nivel), el('h3', null, p[0]), el('p', 'small', p[1]),
+      el('p', 'small muted', 'Escolha um trecho de 1 a 2 minutos. Ouça uma frase, pause, repita imitando o ritmo; repita o trecho até sair junto com o áudio. No computador, a extensão Language Reactor pausa sozinha no fim de cada frase.'), a);
+  }
+  function renderHoje() {
+    if (!S) return;
+    if (!HOJE.passo) $('v-hoje').classList.remove('rodando');
+    $('hojeData').textContent = new Date(S.hoje + 'T12:00:00').toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+    renderVersoDia();
+    cursoAtualizar().then(function (E) {
+      var H = hojeEstado(), hist = E.historico || [], feitaHoje = hist.some(function (x) { return x.data === S.hoje; });
+      var aulaOk = !!H.aula || E.etapa === 'feita';
+      var nivel = (cursoTemaNivel(E) || 'A1');
+      var tAula = E.etapa === 'recap' ? 'Recapitulação da aula ' + E.n + ' e aula ' + (E.n + 1) : E.etapa === 'reforco' ? 'Reforço da aula ' + E.n : (aulaOk && E.etapa === 'feita') ? 'Aula ' + E.n + ': ' + E.tema : 'Aula ' + E.n + ': ' + E.tema;
+      var passos = [['aula', 'Aula falada', tAula, '10 min', aulaOk], ['shadow', 'Shadowing', 'Uma cena curta: ouça, grave a sua voz e compare', '5 min', !!H.shadow], ['conversa', 'Conversa ao vivo', 'Com o tutor, usando a aula de hoje', '10 min', !!H.conversa]];
+      if (!HOJE.passo) $('hojeTit').textContent = passos.every(function (p) { return p[4]; }) ? 'Tudo feito hoje ✓' : (E.n === 1 && !hist.length ? 'Primeiro dia: vamos começar' : tAula);
+      var lista = $('hojePassos'), prox = null;
+      lista.replaceChildren.apply(lista, passos.map(function (p, i) {
+        if (!p[4] && !prox) prox = p;
+        var li = el('li', 'hp' + (p[4] ? ' ok' : (prox === p ? ' atual' : '')));
+        li.append(el('span', 'n', p[4] ? '✓' : String(i + 1)), (function () { var d = el('span', 'tx'); d.append(el('b', null, p[1]), el('span', 'small', p[2])); return d; })(), el('span', 'tm', p[3]));
+        return li;
+      }));
+      var ir = $('hojeIr'); ir.hidden = !!HOJE.passo;
+      if (prox) { ir.textContent = (passos[0] === prox && !aulaOk ? 'Começar' : 'Continuar: ' + prox[1]) + ' →'; ir.className = 'btn'; ir.onclick = function () { hojeRodar(prox[0], E); }; }
+      else { ir.hidden = true; hojeFimCard(nivel); }
+      var ex = $('hojeExtra'); ex.hidden = !!HOJE.passo; if (HOJE.passo) return;
+      if (!prox && E.etapa === 'nova' && feitaHoje && H.aula) { ex.hidden = false; ex.textContent = 'A aula ' + E.n + ' já está liberada: fazer agora (opcional)'; ex.onclick = function () { hojeRodar('aula', E); }; }
+      if (prox) $('hojeFim').hidden = true;
+    }).catch(function (err) { $('hojeTit').textContent = 'Não consegui carregar o dia'; toast(msgOf(err)); });
+  }
+  function cursoTemaNivel(E) { var n = E && E.n || 1; return n <= 14 ? 'A1' : n <= 28 ? 'A2' : n <= 38 ? 'B1' : 'B2'; }
+  function hojeRodar(passo, E) {
+    if (!S.iaAtiva) { toast('O tutor ainda não está ativado (chave da API na engrenagem).'); return; }
+    HOJE.passo = passo; $('hojeIr').hidden = true; $('hojeFim').hidden = true;
+    $('v-hoje').classList.add('rodando'); $('hojeTit').textContent = { aula: 'Aula falada', shadow: 'Shadowing', conversa: 'Conversa ao vivo' }[passo]; window.scrollTo(0, 0);
+    var ex = $('hojeExtra'); ex.hidden = false; ex.textContent = 'Parar e voltar ao roteiro';
+    ex.onclick = function () { hojeParar(); HOJE.passo = null; $('cursoPalco').replaceChildren(); renderHoje(); toast('Parado. O que você já fez fica salvo.'); };
+    var fim = function () { hojeMarcar(passo); HOJE.passo = null; $('cursoPalco').replaceChildren(); renderHoje(); window.scrollTo(0, 0); };
+    if (passo === 'aula') {
+      CUR.parar = false; CUR.rodando = true; CUR.onFim = function () {
+        cursoAtualizar().then(function (E2) {
+          var ok = E2.etapa === 'feita' || E2.etapa === 'reforco' || (E2.etapa === 'nova' && (E2.historico || []).some(function (x) { return x.data === S.hoje; }));
+          if (ok) hojeMarcar('aula');
+          HOJE.passo = null; renderHoje();
+          if (ok) setTimeout(function () { var pr = $('hojeIr'); if (pr && !pr.hidden) pr.scrollIntoView({ block: 'center', behavior: 'smooth' }); }, 900);
+        });
+      };
+      if (E.etapa === 'recap') curRecap(); else if (E.etapa === 'reforco') curReforco(E.falhas || []); else curAulaNova();
+      return;
+    }
+    if (passo === 'shadow') { shadowSessao(fim); return; }
+    if (passo === 'conversa') { liveSessao(fim); return; }
+  }
+
+  /* =================== SHADOWING with recording =================== */
+  var SHD = { stream: null, rec: null, urls: [] };
+  function shadowSoltar() {
+    try { if (SHD.rec && SHD.rec.state === 'recording') SHD.rec.stop(); } catch (e) {}
+    if (SHD.stream) { SHD.stream.getTracks().forEach(function (t) { t.stop(); }); SHD.stream = null; }
+    SHD.urls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); SHD.urls = [];
+  }
+  function shadowMic() {
+    if (SHD.stream && SHD.stream.active) return Promise.resolve(SHD.stream);
+    return navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } }).then(function (s) { SHD.stream = s; return s; });
+  }
+  var recPlayer = new Audio();
+  function tocarBlob(url, cb) { recPlayer.onended = function () { recPlayer.onended = null; if (cb) setTimeout(cb, 250); }; recPlayer.src = url; var p = recPlayer.play(); if (p && p.catch) p.catch(function () { if (cb) cb(); }); }
+  /* one sentence: hear the native, record yourself, hear both side by side */
+  function shadowEl(f, voz, opts) {
+    opts = opts || {};
+    var box = el('div', 'shd'), v = 'fix:' + (voz || vozTutor()), nat = NAT + f.en;
+    if (!opts.semTexto) box.append.apply(box, tresVersoes(f.en, f.falada, f.pron, f.pt));
+    var st = el('p', 'small muted shd-st', 'Ouça o nativo, grave e compare.'), row = el('div', 'shd-row');
+    var bOuv = el('button', 'btn ghost', '▶ Nativo'), bRec = el('button', 'shd-rec'), bCmp = el('button', 'btn ghost', 'Comparar');
+    bOuv.type = bRec.type = bCmp.type = 'button'; bCmp.disabled = true;
+    bRec.innerHTML = micSvg + '<span>Gravar</span>'; bRec.setAttribute('aria-label', 'Gravar a sua voz');
+    var minha = null, vezes = 0;
+    bOuv.onclick = function () { fetchAudio([nat], v).then(function () { playLine(nat, v); }); };
+    function comparar() {
+      if (!minha) return;
+      st.textContent = 'Nativo…'; fetchAudio([nat], v).then(function () {
+        playLine(nat, v, function () { st.textContent = 'Você…'; tocarBlob(minha, function () { st.textContent = 'Ficou parecido? Grave de novo até o ritmo bater.' + (vezes ? ' (' + vezes + 'ª gravação)' : ''); }); });
+      });
+    }
+    bCmp.onclick = comparar;
+    bRec.onclick = function () {
+      if (!window.MediaRecorder || !navigator.mediaDevices) { st.textContent = 'Este navegador não grava áudio. Repita em voz alta junto com o nativo.'; return; }
+      if (SHD.rec && SHD.rec.state === 'recording') { SHD.rec.stop(); return; }
+      st.textContent = 'Ouça…';
+      shadowMic().then(function (stream) {
+        return fetchAudio([nat], v).then(function () {
+          playLine(nat, v, function () {
+            var chunks = [], r = new MediaRecorder(stream); SHD.rec = r;
+            r.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+            r.onstop = function () {
+              bRec.classList.remove('on'); bRec.querySelector('span').textContent = 'Gravar de novo';
+              if (!chunks.length) { st.textContent = 'Não gravou. Tente de novo.'; return; }
+              if (minha) URL.revokeObjectURL(minha);
+              minha = URL.createObjectURL(new Blob(chunks, { type: r.mimeType || 'audio/webm' })); SHD.urls.push(minha); vezes++;
+              bCmp.disabled = false; if (opts.onGravou) opts.onGravou(vezes); comparar();
+            };
+            r.start(); bRec.classList.add('on'); bRec.querySelector('span').textContent = 'Parar';
+            st.textContent = 'Gravando: repita agora, no mesmo ritmo.';
+            var dur = Math.min(9000, 1600 + String(f.en).split(/\s+/).length * 520);
+            setTimeout(function () { if (r.state === 'recording') r.stop(); }, dur);
+          });
+        });
+      }).catch(function () { st.textContent = 'Permita o microfone para gravar.'; });
+    };
+    row.append(bOuv, bRec, bCmp); box.append(row, st);
+    return box;
+  }
+  /* Hoje's shadowing block: the short scene of the day, heard once, then line by line */
+  function shadowSessao(fim) {
+    var t = curPalco('Shadowing'); t.append(el('p', 'small', 'Preparando a cena de hoje…'));
+    api('cenaHoje', TOKEN).then(function (c) {
+      S.cenas = [c].concat((S.cenas || []).filter(function (x) { return x.id !== c.id; }));
+      var t1 = curPalco('Shadowing · 1. Ouça a cena'); CENA.modo = 'enpt'; CENA.sel = c.id;
+      t1.append(el('p', 'small muted', 'Ouça a cena inteira: cada fala em inglês e logo depois em português.'), cenaEl(c));
+      var seg = el('button', 'btn', 'Agora o shadowing →'); seg.type = 'button'; t1.append(seg);
+      seg.onclick = function () {
+        cenaParar(); var i = 0;
+        (function prox() {
+          if (i >= c.falas.length) { shadowSoltar(); var tf = curPalco('Shadowing concluído'); tf.append(el('h3', null, 'Boa! ✓'), el('p', 'small', 'Repetir imitando o ritmo é o que destrava o ouvido e a boca. Agora, a conversa.')); fim(); return; }
+          var f = c.falas[i], k = i + 1, tp = curPalco('Shadowing · ' + c.personagens[f.quem].nome, k, c.falas.length);
+          tp.append(shadowEl(f, c.personagens[f.quem].voz));
+          var nx = el('button', 'btn ghost', k === c.falas.length ? 'Concluir ✓' : 'Próxima fala →'); nx.type = 'button'; nx.onclick = function () { i++; prox(); }; tp.append(nx);
+        })();
+      };
+    }).catch(function (err) { var te = curPalco('Shadowing'); te.append(el('p', null, msgOf(err))); HOJE.passo = null; renderHoje(); });
+  }
+
+  /* =================== CONVERSA AO VIVO (Gemini Live) =================== */
+  var LV = null;
+  var AVATAR = '<svg viewBox="0 0 160 160" class="avt" aria-hidden="true"><circle cx="80" cy="80" r="78" class="avt-bg"/><path class="avt-hair" d="M36 78c0-30 18-50 44-50s44 20 44 50c0 6-2 10-4 13-2-20-14-34-40-34S42 71 40 91c-2-3-4-7-4-13z"/><circle cx="80" cy="86" r="38" class="avt-face"/><path class="avt-hair" d="M44 70c6-20 20-28 36-28s30 8 36 28c-10-8-22-12-36-12s-26 4-36 12z"/><g class="avt-eyes"><ellipse cx="66" cy="84" rx="4.5" ry="5.5"/><ellipse cx="94" cy="84" rx="4.5" ry="5.5"/></g><circle cx="58" cy="98" r="5" class="avt-cheek"/><circle cx="102" cy="98" r="5" class="avt-cheek"/><ellipse id="avtBoca" cx="80" cy="105" rx="9" ry="2.5" class="avt-mouth"/></svg>';
+  function b64(buf) { var s = '', b = new Uint8Array(buf); for (var i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
+  function liveEncerrar(silencioso) {
+    if (!LV) return; var L = LV; LV = null;
+    try { L.ws && L.ws.close(); } catch (e) {}
+    try { L.proc && L.proc.disconnect(); L.src && L.src.disconnect(); } catch (e) {}
+    if (L.stream) L.stream.getTracks().forEach(function (t) { t.stop(); });
+    L.fontes.forEach(function (s) { try { s.stop(); } catch (e) {} });
+    try { L.ac && L.ac.close(); } catch (e) {}
+    clearInterval(L.tick); cancelAnimationFrame(L.raf);
+    if (rec) { try { rec.abort(); } catch (e) {} }
+    try { player.pause(); } catch (e) {}
+    if (!silencioso && L.aoFim) L.aoFim(L);
+  }
+  function liveSessao(fim) {
+    var t = curPalco('Conversa ao vivo');
+    var nomeT = vozTutor() === 'masculina' ? 'Max' : 'Ava';
+    var av = el('div', 'avt-wrap'); av.innerHTML = AVATAR; av.classList.add(vozTutor() === 'masculina' ? 'm' : 'f');
+    var nomeEl = el('p', 'avt-nome', nomeT), st = el('p', 'avt-st', 'Conectando…'), tempo = el('span', 'avt-t', '0:00 / 10:00');
+    var log = el('div', 'live-log'); log.hidden = true;
+    var row = el('div', 'row'), bTxt = el('button', 'btn ghost', 'Mostrar texto'), bFim = el('button', 'btn', 'Encerrar conversa');
+    bTxt.type = bFim.type = 'button';
+    bTxt.onclick = function () { log.hidden = !log.hidden; bTxt.textContent = log.hidden ? 'Mostrar texto' : 'Esconder texto'; };
+    row.append(bTxt, bFim);
+    var cab = el('div', 'passo'); cab.append(nomeEl, tempo);
+    t.append(cab, av, st, row, log);
+    var L = LV = { fontes: [], trans: [], cur: { aluno: null, tutor: null }, seg: 0, falando: false, ws: null, modo: 'live', aoFim: null };
+    function linha(quem, txt) {
+      if (!txt) return;
+      var c = L.cur[quem];
+      if (!c) { c = L.cur[quem] = { quem: quem, texto: '' }; L.trans.push(c); c.el = el('p', 'll ' + quem); log.append(c.el); }
+      c.texto += txt; c.el.textContent = (quem === 'aluno' ? 'Você: ' : nomeT + ': ') + c.texto.trim();
+      log.scrollTop = log.scrollHeight;
+    }
+    var boca = av.querySelector('#avtBoca');
+    function animar() {
+      if (LV !== L) return;
+      var nivel = 0;
+      if (L.an) { var d = new Uint8Array(L.an.fftSize); L.an.getByteTimeDomainData(d); var sum = 0; for (var i = 0; i < d.length; i++) { var x = (d[i] - 128) / 128; sum += x * x; } nivel = Math.min(1, Math.sqrt(sum / d.length) * 6); }
+      else if (L.falando) nivel = 0.35 + 0.35 * Math.abs(Math.sin(Date.now() / 90));
+      boca.setAttribute('ry', (2.5 + nivel * 9).toFixed(1));
+      av.classList.toggle('fala', nivel > 0.05);
+      L.raf = requestAnimationFrame(animar);
+    }
+    L.tick = setInterval(function () {
+      L.seg++; var m = Math.floor(L.seg / 60), s = L.seg % 60; tempo.textContent = m + ':' + (s < 10 ? '0' : '') + s + ' / 10:00';
+      if (L.seg === 600) { if (L.modo === 'live') enviarTexto('WRAP UP: say a warm one-sentence goodbye now.'); else L.encerrarDepois = true; }
+      if (L.seg >= 660) concluir();
+    }, 1000);
+    function concluir() {
+      if (LV !== L) return;
+      var seg = L.seg, trans = L.trans.map(function (x) { return { quem: x.quem, texto: x.texto.trim() }; }).filter(function (x) { return x.texto; });
+      liveEncerrar(true);
+      if (L.modo === 'live' && seg > 5) api('liveFim', TOKEN, { segundos: seg }).catch(function () {});
+      var tr = curPalco('Conversa · resumo'); tr.append(el('p', 'small', 'Preparando o seu resumo…'));
+      api('conversaResumo', TOKEN, { transcricao: trans, tema: L.ctx ? L.ctx.tema : '' }).then(function (r) {
+        var tz = curPalco('Conversa · resumo');
+        tz.append(el('h3', null, Math.round(seg / 60) + ' min de conversa ✓'), el('p', 'small', r.comentario || ''));
+        if ((r.pontos || []).length) {
+          tz.append(el('p', 'eyebrow', 'Para treinar (entram na recapitulação de amanhã)'));
+          r.pontos.forEach(function (p) { var bx = el('div', 'task ponto'); if (p.disse) bx.append(el('p', 'small muted', 'Você disse: "' + p.disse + '"')); bx.append(shadowEl(p, vozTutor())); if (p.porque) bx.append(el('p', 'small', p.porque)); tz.append(bx); });
+        }
+        var ok = el('button', 'btn', 'Concluir ✓'); ok.type = 'button'; ok.onclick = function () { shadowSoltar(); fim(); }; tz.append(ok);
+      }).catch(function (err) { var te = curPalco('Conversa'); te.append(el('p', null, msgOf(err))); var ok = el('button', 'btn', 'Concluir'); ok.type = 'button'; ok.onclick = fim; te.append(ok); });
+    }
+    bFim.onclick = concluir;
+    function enviarTexto(txt) { try { L.ws.send(JSON.stringify({ clientContent: { turns: [{ role: 'user', parts: [{ text: txt }] }], turnComplete: true } })); } catch (e) {} }
+    function sistema(c) {
+      var quem = c.trilha === 'direito' ? 'a Brazilian lawyer' : 'a Brazilian accountant and controller at a health plan, moving to the US with his wife and baby daughter';
+      return ['You are ' + nomeT + ', a warm, upbeat American English conversation tutor talking by voice with ' + c.nome + ', ' + quem + ', who is learning English (level ' + c.nivel + ').',
+        'Today\'s lesson: ' + c.tema + ' (' + c.foco + ').' + (c.frases.length ? ' Sentences from today: ' + c.frases.join(' / ') + '.' : ''),
+        c.conhecidas.length ? 'Sentences learned before: ' + c.conhecidas.slice(-25).join(' / ') + '.' : '',
+        'Run a 10-minute spoken role-play. Start by greeting ' + c.nome + ' by name and setting a simple everyday scene related to today\'s lesson in one short sentence, then ask your first question.',
+        'Speak slowly and clearly with natural American pronunciation. Use very short sentences (' + (c.nivel === 'A1' ? 'up to 8 words' : 'up to 14 words') + '). Ask ONE question at a time, then wait.',
+        'Make him use today\'s sentences. Push him a little: ask follow-up questions so he has to say full sentences, not one word.',
+        'If he makes an important mistake, keep the conversation going but briefly model the correct sentence once ("You can say: ..."), at most once every two or three turns, and do not lecture.',
+        'If he is stuck or speaks Portuguese, give a tiny hint (you may use one or two Portuguese words), then continue in English.',
+        'When you receive a message starting with WRAP UP, say a warm one-sentence goodbye.'].filter(Boolean).join('\n');
+    }
+    function setupMsg(c, fmt) {
+      var voz = vozTutor() === 'masculina' ? 'Charon' : 'Kore', si = { parts: [{ text: sistema(c) }] };
+      if (fmt === 'A') return { setup: { model: 'models/' + c.modelo, generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voz } } } }, systemInstruction: si, inputAudioTranscription: {}, outputAudioTranscription: {} } };
+      return { setup: { model: 'models/' + c.modelo, responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voz } } }, systemInstruction: si, inputAudioTranscription: {}, outputAudioTranscription: {} } };
+    }
+    function tocarPcm(dataB64) {
+      var bin = atob(dataB64), n = bin.length >> 1, f = new Float32Array(n);
+      for (var i = 0; i < n; i++) { var v = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8); if (v >= 32768) v -= 65536; f[i] = v / 32768; }
+      var buf = L.ac.createBuffer(1, n, 24000); buf.copyToChannel(f, 0);
+      var s = L.ac.createBufferSource(); s.buffer = buf; s.connect(L.an);
+      var t0 = Math.max(L.ac.currentTime + 0.03, L.prox || 0); s.start(t0); L.prox = t0 + buf.duration;
+      L.fontes.push(s); s.onended = function () { L.fontes = L.fontes.filter(function (x) { return x !== s; }); if (!L.fontes.length) { L.falando = false; if (LV === L) st.textContent = 'Sua vez: fale quando quiser.'; } };
+      L.falando = true; st.textContent = nomeT + ' está falando… (toque no rosto para interromper)';
+    }
+    av.onclick = function () { if (!L.falando) return; L.fontes.forEach(function (s) { try { s.stop(); } catch (e) {} }); L.fontes = []; L.prox = 0; L.falando = false; st.textContent = 'Sua vez: fale quando quiser.'; if (L.modo !== 'live') try { player.pause(); } catch (e) {} };
+    function iniciarMic() {
+      var src = L.ac.createMediaStreamSource(L.stream), proc = L.ac.createScriptProcessor(4096, 1, 1), razao = L.ac.sampleRate / 16000;
+      proc.onaudioprocess = function (e) {
+        if (LV !== L || !L.pronto || L.falando || L.ws.readyState !== 1) return;
+        var inp = e.inputBuffer.getChannelData(0), n = Math.floor(inp.length / razao), out = new Int16Array(n);
+        for (var i = 0; i < n; i++) { var a = 0, i0 = Math.floor(i * razao), i1 = Math.floor((i + 1) * razao), k; for (k = i0; k < i1; k++) a += inp[k]; a /= Math.max(1, i1 - i0); out[i] = Math.max(-32768, Math.min(32767, a * 32767)); }
+        L.ws.send(JSON.stringify({ realtimeInput: { audio: { data: b64(out.buffer), mimeType: 'audio/pcm;rate=16000' } } }));
+      };
+      var mudo = L.ac.createGain(); mudo.gain.value = 0;
+      src.connect(proc); proc.connect(mudo); mudo.connect(L.ac.destination);
+      L.src = src; L.proc = proc;
+    }
+    function conectar(c, fmt, falhou) {
+      var ws = L.ws = new WebSocket('wss://generativelanguage.googleapis.com/ws/google.ai.generativelanguage.v1beta.GenerativeService.BidiGenerateContentConstrained?access_token=' + encodeURIComponent(c.token));
+      var limite = setTimeout(function () { if (!L.pronto) { try { ws.close(); } catch (e) {} } }, 9000);
+      ws.onopen = function () { ws.send(JSON.stringify(setupMsg(c, fmt))); };
+      ws.onmessage = function (ev) {
+        (typeof ev.data === 'string' ? Promise.resolve(ev.data) : ev.data.text()).then(function (txt) {
+          if (LV !== L) return; var m = JSON.parse(txt);
+          if (m.setupComplete) { clearTimeout(limite); L.pronto = true; st.textContent = nomeT + ' vai começar…'; enviarTexto('(Start now: greet me and set the scene.)'); return; }
+          var sc = m.serverContent; if (!sc) return;
+          if (sc.interrupted) { L.fontes.forEach(function (s) { try { s.stop(); } catch (e) {} }); L.fontes = []; L.prox = 0; L.falando = false; }
+          if (sc.inputTranscription && sc.inputTranscription.text) { L.cur.tutor = null; linha('aluno', sc.inputTranscription.text); }
+          if (sc.outputTranscription && sc.outputTranscription.text) { L.cur.aluno = null; linha('tutor', sc.outputTranscription.text); }
+          (sc.modelTurn && sc.modelTurn.parts || []).forEach(function (p) { if (p.inlineData && p.inlineData.data) { L.cur.aluno = null; tocarPcm(p.inlineData.data); } });
+          if (sc.turnComplete) { L.cur.tutor = null; if (L.seg >= 600) setTimeout(concluir, 2500); }
+        }).catch(function () {});
+      };
+      ws.onclose = function () { clearTimeout(limite); if (LV !== L) return; if (!L.pronto) falhou(); else { st.textContent = 'A conexão caiu.'; } };
+    }
+    /* fallback: turn by turn (speech recognition → Claude → recorded voices) */
+    function porTurnos() {
+      L.modo = 'turnos'; L.pronto = true; if (L.stream) { L.stream.getTracks().forEach(function (x) { x.stop(); }); L.stream = null; }
+      st.textContent = 'Modo por turnos (a conversa ao vivo não conectou).';
+      var hist = [];
+      function falarTutor(txt, cb) {
+        linha('tutor', txt); L.cur.tutor = null; L.falando = true; st.textContent = nomeT + ' está falando…';
+        var k = NAT + txt; fetchAudio([k], 'fix:' + vozTutor()).then(function () { playLine(k, 'fix:' + vozTutor(), function () { L.falando = false; cb(); }); });
+      }
+      function ouvir() {
+        if (LV !== L) return;
+        if (L.encerrarDepois) { concluir(); return; }
+        st.textContent = 'Sua vez: fale (toque no microfone se não abrir).';
+        if (!SR) { st.textContent = 'Este navegador não reconhece voz.'; return; }
+        listen(el('button'), function () {}, function (alts) {
+          if (LV !== L) return;
+          if (!alts.length) { setTimeout(ouvir, 400); return; }
+          linha('aluno', alts[0]); L.cur.aluno = null; st.textContent = nomeT + ' está pensando…';
+          api('conversar', TOKEN, { fala: alts[0], historico: hist.slice(-12), modo: 'livre' }).then(function (r) {
+            hist.push({ quem: 'aluno', texto: alts[0] }, { quem: 'tutor', texto: r.resposta });
+            falarTutor((r.correcao ? 'You can say: ' + r.correcao + ' ' : '') + r.resposta, ouvir);
+          }).catch(function (err) { st.textContent = msgOf(err); });
+        });
+      }
+      api('conversar', TOKEN, { fala: '', historico: [], modo: 'livre' }).then(function (r) { hist.push({ quem: 'tutor', texto: r.resposta }); falarTutor(r.resposta, ouvir); }).catch(function () { falarTutor('Hi ' + S.eu.nome + '! How are you today?', ouvir); });
+    }
+    if (!navigator.mediaDevices || !window.WebSocket) { porTurnos(); requestAnimationFrame(animar); return; }
+    navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 } }).then(function (stream) {
+      if (LV !== L) { stream.getTracks().forEach(function (x) { x.stop(); }); return; }
+      L.stream = stream;
+      var AC = window.AudioContext || window.webkitAudioContext; L.ac = new AC(); try { L.ac.resume(); } catch (e) {}
+      L.an = L.ac.createAnalyser(); L.an.fftSize = 512; L.an.connect(L.ac.destination);
+      requestAnimationFrame(animar);
+      return api('liveToken', TOKEN).then(function (c) {
+        L.ctx = c; iniciarMic();
+        conectar(c, 'A', function () {
+          api('liveToken', TOKEN).then(function (c2) { L.ctx = c2; conectar(c2, 'B', function () { L.an = null; porTurnos(); }); }).catch(function () { L.an = null; porTurnos(); });
+        });
+      });
+    }).catch(function (err) {
+      if (LV !== L) return;
+      if (/limite|Gemini|recusou/.test(msgOf(err))) toast(msgOf(err));
+      L.an = null; requestAnimationFrame(animar); porTurnos();
+    });
+  }
+
+  /* =================== EXTRAS: units as shadowing lists =================== */
+  var EX = { unid: null };
+  function renderExtras() {
+    var L = sonsList(), sel = $('exUnid');
+    if (!sel.options.length) {
+      var g1 = el('optgroup'), g2 = el('optgroup'); g1.label = 'Fala ligada'; g2.label = 'Fé e Bíblia';
+      L.forEach(function (u) { var o = el('option', null, u.n + '. ' + u.title); o.value = u.id; (u.trilha === 'fe' ? g2 : g1).append(o); });
+      sel.append(g1, g2); sel.onchange = function () { shadowSoltar(); EX.unid = sel.value; renderExtras(); };
+    }
+    var u = L.find(function (x) { return x.id === (EX.unid || sel.value); }) || L[0]; if (!u) return;
+    sel.value = u.id;
+    $('exLista').replaceChildren.apply($('exLista'), u.frases.map(function (f) {
+      var d = el('details', 'conv ex-it'), sm = el('summary'); sm.append(el('b', null, f.en), el('span', 'small muted', ' · ' + f.pt));
+      d.append(sm); var aberto = false;
+      d.addEventListener('toggle', function () { if (d.open && !aberto) { aberto = true; d.append(shadowEl({ en: f.en, pt: f.pt, falada: f.falada, pron: f.pron || f.soaRapida || f.soa }, f.voice || vozTutor())); } });
+      return d;
+    }));
   }
 
   /* ---------- Aula falada: daily spoken course with recap gate ---------- */
@@ -1820,7 +2214,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (botoes) { var r = el('div', 'row'); botoes.forEach(function (b) { r.append(b); }); t.append(r); }
     return t;
   }
-  function curFimSessao() { CUR.rodando = false; $('cursoParar').hidden = true; renderCurso(true); }
+  function curFimSessao() { CUR.rodando = false; $('cursoParar').hidden = true; renderCurso(true); var f = CUR.onFim; CUR.onFim = null; if (f) f(); }
 
   /* new lesson: rule, 8 phrases taught, 8 produced, 4 questions */
   function curAulaNova() {
@@ -1837,14 +2231,16 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       F.forEach(function (f, i) { passos.push(function (nx) { curEnsinar(f, i + 1, F.length, 'Frase nova', nx); }); });
       passos.push(function (nx) { var t = curMsg('Agora é com você', 'Sem olhar: diga em inglês', 'Vou falar em português e você responde em inglês. Errou? Eu corrijo e explico a regra.'); var b = el('button', 'btn', 'Começar →'); b.type = 'button'; b.onclick = nx; t.append(b); curTocar([['~pt~ Agora é com você. Eu falo em português e você diz em inglês.', 'pt']], function () { if (curAuto()) nx(); }); });
       shuffle(F.slice()).forEach(function (f, i) { passos.push(function (nx) { curPerguntar(f, i + 1, F.length, 'Diga em inglês', function (ok) { res.push({ en: f.en, ok: ok }); nx(); }); }); });
-      (A.perguntas || []).forEach(function (q, i) { passos.push(function (nx) { curConversa(q, i + 1, A.perguntas.length, nx); }); });
       curSequencia(passos, function () {
         var acertos = res.filter(function (x) { return x.ok; }).length;
-        queue(function () { return api('cursoFim', TOKEN, { resultados: res }); });
         bumpDay('conversas');
-        curMsg('Aula ' + A.n + ' concluída', 'Muito bem! ✓', 'Você acertou ' + acertos + ' de ' + res.length + ' sem ajuda. Amanhã a aula começa pela recapitulação de hoje: é preciso 80% para abrir a aula ' + (A.n + 1) + '.');
-        curTocar([['~pt~ Aula concluída. Amanhã começamos pela recapitulação.', 'pt']]);
-        curFimSessao();
+        var fim = function (r) {
+          var acel = r && r.acelerou;
+          curMsg('Aula ' + A.n + ' concluída', acel ? 'Perfeito: ' + acertos + ' de ' + res.length + ' ✓' : 'Muito bem! ✓', acel ? 'Você acertou tudo sem ajuda, então a aula ' + (A.n + 1) + ' já está liberada. Pode fazer hoje mesmo, se quiser.' : 'Você acertou ' + acertos + ' de ' + res.length + ' sem ajuda. Amanhã a aula começa pela recapitulação de hoje: é preciso 80% para abrir a aula ' + (A.n + 1) + '.');
+          curTocar([['~pt~ Aula concluída.', 'pt']]);
+          curFimSessao();
+        };
+        api('cursoFim', TOKEN, { resultados: res }).then(fim).catch(function () { fim(null); });
       });
     }).catch(function (err) { curMsg('Aula falada', 'Não deu para montar a aula agora', msgOf(err)); curFimSessao(); });
   }
@@ -2123,20 +2519,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var bf = blocoFrase(f); bf.classList.add('alvo-fr'); t.append(bf);
     if (f.nota) { var n = el('div', 'mf-nota'); n.innerHTML = '<b>Dica de uso:</b> ' + esc(f.nota); t.append(n); }
     t.append(velocidadesEl(f));
-    var mic = el('button', 'mic'); mic.type = 'button'; mic.innerHTML = micSvg; mic.setAttribute('aria-label', 'Repetir a frase'); mic.style.justifySelf = 'center';
-    var words = el('div', 'words'), heard = el('p', 'heard', SR ? 'Ouça a rápida e repita no mesmo ritmo.' : 'Repita em voz alta, no ritmo da rápida.');
-    mic.onclick = function () {
-      words.replaceChildren(); heard.textContent = 'Ouvindo…';
-      listen(mic, function (x) { heard.textContent = x; }, function (alts) {
-        if (!alts.length) { heard.textContent = 'Não ouvi. Toque e repita de novo.'; return; }
-        var best = null;
-        alts.forEach(function (a) { var sc = scoreWords(f.en, a), k = sc.filter(function (x) { return x.ok; }).length; if (!best || k > best.n) best = { sc: sc, n: k, a: a }; });
-        words.replaceChildren.apply(words, best.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); }));
-        heard.textContent = (best.n === best.sc.length ? 'Perfeito! ' : 'Entendi: ') + '"' + best.a + '"';
-        queue(function () { return api('registrarRepeticao', TOKEN, { aula: 'minhas', alvo: f.en, reconhecido: best.a, acertos: best.n, total: best.sc.length, faltaram: best.sc.filter(function (x) { return !x.ok; }).map(function (x) { return x.w; }) }); });
-      });
-    };
-    t.append(mic, words, heard, refsEl(f.en));
+    t.append(el('p', 'eyebrow', 'Shadowing'), shadowEl(f, f.voice || 'feminina', { semTexto: true }), refsEl(f.en));
     if ((f.alternativas || []).length) {
       var al = el('details', 'conv'); al.append(el('summary', null, 'Outras formas de dizer (' + f.alternativas.length + ')'));
       f.alternativas.forEach(function (a) {
