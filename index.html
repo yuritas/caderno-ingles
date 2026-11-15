@@ -2100,9 +2100,16 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     mic.onclick = onTap; t.append(mic, words, heard);
     return { mic: mic, heard: heard, words: words };
   }
+  /* names (the student's own, or any capitalized word mid-sentence) are not what is being trained, and speech recognition rarely gets them right */
+  function ehNome(alvo, w) {
+    var meu = norm(S && S.eu && S.eu.nome || '').split(' ').filter(Boolean);
+    if (meu.indexOf(w) >= 0) return true;
+    var orig = String(alvo).replace(/[.,!?;:"]/g, '').split(/\s+/);
+    return orig.some(function (o, i) { return i > 0 && /^[A-Z][a-z]/.test(o) && norm(o) === w; });
+  }
   function melhorTentativa(alvo, alts) {
     var best = null;
-    alts.forEach(function (a) { var sc = scoreWords(alvo, a), n = sc.filter(function (x) { return x.ok; }).length; if (!best || n > best.n) best = { sc: sc, n: n, a: a }; });
+    alts.forEach(function (a) { var sc = scoreWords(alvo, a).map(function (x) { return x.ok || !ehNome(alvo, x.w) ? x : { w: x.w, ok: true, nome: true }; }), n = sc.filter(function (x) { return x.ok; }).length; if (!best || n > best.n) best = { sc: sc, n: n, a: a }; });
     return best;
   }
 
@@ -2135,7 +2142,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     var t = curPalco(rotulo, k, total);
     t.append(el('p', 'small muted', 'Como se diz em inglês:'), el('p', 'pt-big', f.pt));
     var resp = el('div', 'stack'); resp.hidden = true;
-    var m, feito = false;
+    var m, feito = false, chances = 0;
     function fim(ok) { if (feito) return; feito = true; cb(ok); }
     function mostrarCerto() { resp.hidden = false; resp.replaceChildren.apply(resp, tresVersoes(f.en, f.falada, f.pron, '')); }
     function corrigir(c) {
@@ -2154,6 +2161,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         m.heard.textContent = 'Conferindo "' + b.a + '"…';
         api('cursoAvaliar', TOKEN, { en: f.en, pt: f.pt, resposta: b.a, aula: CUR.est && CUR.est.n }).then(function (r) {
           if (r.ok) { acertou(b.a); return; }
+          if (!chances++) { m.heard.textContent = 'Entendi: "' + b.a + '". Não ficou igual: fale de novo, com calma e perto do celular.'; curTocar([['~pt~ Tente de novo.', 'pt']], function () { if (!CUR.parar && !feito) ouvir(); }); return; }
           m.heard.textContent = 'Você disse: "' + b.a + '"';
           t.append(el('p', 'no-msg', r.tipo === 'pronuncia' ? 'Quase: parece que o som saiu diferente.' : 'Ainda não.'));
           mostrarCerto();
