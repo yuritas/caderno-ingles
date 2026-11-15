@@ -300,6 +300,18 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .cur-atalho { display: flex; align-items: center; justify-content: space-between; gap: 12px; text-align: left; font: inherit; color: inherit; cursor: pointer }
 .cur-atalho > span:first-child { display: grid; gap: 2px }
 .cur-atalho > span:last-child { font: 800 1.3rem var(--f-display); color: var(--accent) }
+.cena-ls { display: grid; gap: 8px }
+.cena-l { display: grid; gap: 2px; padding: 9px 12px; border-radius: 14px; background: var(--surface-2); border: 1px solid var(--line); max-width: 92%; cursor: pointer; text-align: left; font: inherit; color: inherit }
+.cena-l.b { justify-self: end; background: var(--accent-soft); border-color: transparent }
+.cena-l.on { outline: 2.5px solid var(--amber); outline-offset: 1px }
+.cena-l .who { font: 800 .72rem var(--f-display); letter-spacing: .04em; text-transform: uppercase; color: var(--muted) }
+.cena-l .en { font-weight: 700; font-size: 1.02rem }
+.cena-l .fal { font-size: .86rem; color: var(--muted) }
+.cena-l .pron { font: 700 .9rem var(--f-body); color: var(--accent) }
+.cena-l .ptl { font-size: .9rem; color: var(--muted); font-style: italic }
+.cena-l .res { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 3px }
+.cena-l.esc .en, .cena-l.esc .fal, .cena-l.esc .pron { filter: blur(6px); }
+#cenaModo button { font-size: .76rem; padding: 10px 1px }
 .mf-nota { background: var(--accent-soft); border-radius: 12px; padding: 10px 12px; font-size: .92rem }
 .mf-alt { border-top: 1px solid var(--line); padding-top: 10px; display: grid; gap: 4px }
 .alvo-fr .lbl .en { font-family: var(--f-display); font-weight: 800; font-size: 1.3rem; line-height: 1.25 }
@@ -378,6 +390,7 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
       <div class="mais-list" role="menu" aria-label="Mais seções">
         <button class="fab-item" type="button" role="menuitem" data-v="aula"><span class="lb">Aula</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5.5A1.5 1.5 0 0 1 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5z"/><path d="M20 5.5A1.5 1.5 0 0 0 18.5 4H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5z"/></svg></span></button>
         <button class="fab-item" type="button" role="menuitem" data-v="escrever"><span class="lb">Escrita</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/><path d="M14 8l3 3"/></svg></span></button>
+        <button class="fab-item" type="button" role="menuitem" data-v="cenas"><span class="lb">Cenas</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 11h16v8a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M4 11 3.3 7.6a1 1 0 0 1 .8-1.2l13.7-2.8a1 1 0 0 1 1.2.8L19.6 7 4 11z"/><path d="m8 6.2 2.6 3.2M13 5.2l2.6 3.2"/></svg></span></button>
         <button class="fab-item" type="button" role="menuitem" data-v="evolucao"><span class="lb">Progresso</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span></button>
         <button class="fab-item" type="button" role="menuitem" data-v="admin" id="fabAdmin" hidden><span class="lb">Admin</span><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></span></button>
       </div>
@@ -532,6 +545,20 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
           <div class="row"><button class="linkbtn" id="tutorReset" type="button">Começar outra conversa</button></div>
         </div>
       </div>
+    </section>
+
+    <section class="view" id="v-cenas" hidden>
+      <div class="task">
+        <h2>Cenas</h2>
+        <p class="small muted">Diálogos curtos como os de uma série, criados para o seu nível com as frases que você já aprendeu. Cada fala toca em inglês e logo depois dublada em português. Depois, repita a mesma cena com legenda em inglês, só ouvindo e repetindo junto.</p>
+        <label class="f" for="cenaTema">Situação<select id="cenaTema">
+          <option value="surpresa">Surpresa</option><option value="amigos">Amigos no café</option><option value="trabalho">Trabalho</option>
+          <option value="familia">Família e bebê</option><option value="restaurante">Restaurante e mercado</option><option value="medico">Médico e farmácia</option><option value="mudanca">Mudança para os EUA</option>
+        </select></label>
+        <button class="btn" id="cenaNova" type="button">Criar cena nova</button>
+      </div>
+      <div id="cenaAtual" class="stack"></div>
+      <div class="task" id="cenaListaBox" hidden><h3 id="cenaListaTit">Suas cenas</h3><div id="cenaLista" class="mf-lista"></div></div>
     </section>
 
     <section class="view" id="v-escrever" hidden>
@@ -789,11 +816,11 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   function shownLesson() { return S.aulas.find(function (l) { return l.id === selectedLesson; }) || currentLesson(); }
 
   /* ---------- views ---------- */
-  var views = ['ouvido', 'frases', 'aula', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
+  var views = ['ouvido', 'frases', 'aula', 'cenas', 'revisar', 'conversar', 'escrever', 'evolucao', 'admin'];
   function show(v) {
     if (views.indexOf(v) < 0 || (v === 'admin' && !(S && S.eu.admin))) v = 'ouvido';
     views.forEach(function (n) { $('v-' + n).hidden = n !== v; });
-    var noMais = ['aula', 'escrever', 'evolucao', 'admin'].indexOf(v) >= 0;
+    var noMais = ['aula', 'cenas', 'escrever', 'evolucao', 'admin'].indexOf(v) >= 0;
     document.querySelectorAll('nav.tabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.v === v || (b.dataset.v === 'mais' && noMais))); });
     document.querySelectorAll('.fab-item').forEach(function (b) { b.setAttribute('aria-current', String(b.dataset.v === v)); });
     fecharMais();
@@ -804,6 +831,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     if (v === 'ouvido') renderOuvido();
     if (v === 'frases') renderFrases();
     if (v === 'aula') renderCurso();
+    if (v === 'cenas') renderCenas();
+    if (v !== 'cenas') cenaParar();
     window.scrollTo(0, 0);
   }
   document.querySelectorAll('nav.tabs button').forEach(function (b) { b.onclick = function () { if (b.dataset.v === 'mais') toggleMais(); else show(b.dataset.v); }; });
@@ -1527,6 +1556,127 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
   /* three versions: Escrita (written) / Falada (English with ' at the joins) / Pronúncia (Brazilian letters) */
   /* lets long pronunciations wrap only between blocks (after each ') */
   function quebra(s) { return String(s || '').replace(/'/g, "'\u200B"); }
+  /* ---------- Cenas: original sitcom-like dialogues, English then the Portuguese dubbing ---------- */
+  var CENA = { sel: null, modo: 'enpt', i: 0, tocando: false, rodada: 0 };
+  var CENA_MODOS = [['enpt', 'Inglês + PT'], ['legenda', 'Legenda'], ['ouvir', 'Só ouvir'], ['repetir', 'Repetir']];
+  function cenaParar() { CENA.tocando = false; CENA.rodada++; try { player.pause(); } catch (e) {} if (rec) { try { rec.abort(); } catch (e) {} } }
+  $('cenaNova').onclick = function () {
+    if (!S.iaAtiva) { toast('O tutor ainda não está ativado (chave da API na engrenagem).'); return; }
+    var b = $('cenaNova'); b.disabled = true; b.textContent = 'Criando a cena…'; cenaParar();
+    $('cenaAtual').replaceChildren(el('div', 'task', 'O tutor está escrevendo a cena com as frases que você já sabe (uns 20 segundos).'));
+    api('cenaNova', TOKEN, { tema: $('cenaTema').value }).then(function (c) {
+      S.cenas = [c].concat(S.cenas || []); CENA.sel = c.id; CENA.modo = 'enpt'; renderCenas(); bumpDay('conversas');
+    }).catch(function (err) { $('cenaAtual').replaceChildren(); toast(msgOf(err)); }).then(function () { b.disabled = false; b.textContent = 'Criar cena nova'; });
+  };
+  function renderCenas() {
+    var L = S.cenas || [];
+    if (CENA.sel && !L.some(function (c) { return c.id === CENA.sel; })) CENA.sel = null;
+    $('cenaListaBox').hidden = !L.length; $('cenaListaTit').textContent = 'Suas cenas (' + L.length + ')';
+    $('cenaLista').replaceChildren.apply($('cenaLista'), L.map(function (c) {
+      var b = el('button', 'mf-item'); b.type = 'button'; b.setAttribute('aria-current', String(c.id === CENA.sel));
+      b.append(el('span', 'e', c.titulo), el('span', 'o', c.cenario || ''));
+      b.onclick = function () { cenaParar(); CENA.sel = c.id; CENA.modo = 'enpt'; renderCenas(); $('cenaAtual').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+      return b;
+    }));
+    var c = L.find(function (x) { return x.id === CENA.sel; });
+    $('cenaAtual').replaceChildren.apply($('cenaAtual'), c ? [cenaEl(c)] : []);
+  }
+  function cenaVoz(c, f) { return c.personagens[f.quem].voz; }
+  function cenaEl(c) {
+    var t = el('div', 'task'); t.style.gap = '12px';
+    t.append(el('p', 'eyebrow', c.cenario || 'Cena'), el('h3', null, c.titulo));
+    var seg = el('div', 'seg'); seg.id = 'cenaModo'; seg.setAttribute('role', 'tablist');
+    var dica = el('p', 'small muted');
+    var DICAS = { enpt: 'Cada fala em inglês e logo depois dublada em português. Comece por aqui.', legenda: 'Só o inglês, com a legenda em inglês, a fala ligada e a pronúncia. Veja como o som vira escrita.', ouvir: 'Só o inglês, com o texto borrado. Toque numa fala para revelar.', repetir: 'Depois de cada fala, o microfone abre: repita no mesmo ritmo do personagem.' };
+    CENA_MODOS.forEach(function (m) {
+      var b = el('button', null, m[1]); b.type = 'button'; b.setAttribute('aria-selected', String(CENA.modo === m[0]));
+      b.onclick = function () { cenaParar(); CENA.modo = m[0]; seg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); }); dica.textContent = DICAS[m[0]]; pintar(); botao(); };
+      seg.append(b);
+    });
+    dica.textContent = DICAS[CENA.modo];
+    var lista = el('div', 'cena-ls'), linhas = [];
+    c.falas.forEach(function (f, i) {
+      var l = el('button', 'cena-l' + (f.quem === 1 ? ' b' : '')); l.type = 'button';
+      var en = el('span', 'en', f.en), fal = el('span', 'fal', f.falada && f.falada !== f.en ? f.falada : ''), pr = el('span', 'pron', quebra(f.pron || '')), pt = el('span', 'ptl', f.pt), res = el('div', 'res');
+      l.append(el('span', 'who', c.personagens[f.quem].nome), en, fal, pr, pt, res);
+      l.onclick = function () {
+        if (CENA.modo === 'ouvir' && l.classList.contains('esc')) { l.classList.remove('esc'); return; }
+        cenaParar(); CENA.i = i; CENA.tocando = true; tocarDe(i, true);
+      };
+      l.parts = { fal: fal, pr: pr, pt: pt, res: res };
+      linhas.push(l); lista.append(l);
+    });
+    function pintar() {
+      linhas.forEach(function (l) {
+        var m = CENA.modo;
+        l.classList.toggle('esc', m === 'ouvir');
+        l.parts.pt.hidden = m !== 'enpt';
+        l.parts.fal.hidden = l.parts.pr.hidden = m === 'enpt';
+        l.parts.res.replaceChildren();
+      });
+    }
+    var play = el('button', 'btn', ''), row = el('div', 'row');
+    function botao() { play.textContent = CENA.tocando ? '⏸ Pausar' : (CENA.i > 0 && CENA.i < c.falas.length ? '▶ Continuar' : '▶ Tocar a cena'); }
+    play.type = 'button';
+    play.onclick = function () {
+      if (CENA.tocando) { cenaParar(); botao(); return; }
+      if (CENA.i >= c.falas.length) CENA.i = 0;
+      CENA.tocando = true; botao(); tocarDe(CENA.i, false);
+    };
+    var del = el('button', 'btn ghost', 'Apagar'); del.type = 'button';
+    del.onclick = function () {
+      if (!del.dataset.ok) { del.dataset.ok = '1'; del.textContent = 'Toque de novo'; setTimeout(function () { delete del.dataset.ok; del.textContent = 'Apagar'; }, 4000); return; }
+      cenaParar(); api('cenaApagar', TOKEN, c.id).then(function () { S.cenas = S.cenas.filter(function (x) { return x.id !== c.id; }); CENA.sel = null; renderCenas(); toast('Cena apagada.'); }).catch(function (e) { toast(msgOf(e)); });
+    };
+    row.append(play, del);
+    var prep = el('p', 'small muted'); prep.hidden = true;
+    t.append(seg, dica, row, prep, lista);
+    var pronto = false;
+    function preparar() {
+      if (pronto) return Promise.resolve();
+      prep.hidden = false; prep.textContent = 'Preparando as vozes…';
+      var por = {};
+      c.falas.forEach(function (f) { var v = cenaVoz(c, f); (por[v] = por[v] || []).push(NAT + f.en, '~pt~ ' + f.pt); });
+      var p = Promise.resolve();
+      Object.keys(por).forEach(function (v) { p = p.then(function () { return fetchAudio(por[v], 'fix:' + v); }); });
+      return p.then(function () { pronto = true; prep.hidden = true; });
+    }
+    function tocarDe(i, umaSo) {
+      var rodada = ++CENA.rodada; CENA.tocando = true; botao();
+      preparar().then(function () {
+        (function passo(k) {
+          if (!CENA.tocando || rodada !== CENA.rodada) return;
+          if (k >= c.falas.length) { CENA.tocando = false; CENA.i = c.falas.length; linhas.forEach(function (l) { l.classList.remove('on'); }); botao(); toast('Fim da cena. Troque o modo e toque de novo.'); return; }
+          CENA.i = k; var f = c.falas[k], v = 'fix:' + cenaVoz(c, f), l = linhas[k];
+          linhas.forEach(function (x) { x.classList.toggle('on', x === l); });
+          l.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          var depois = function () {
+            if (!CENA.tocando || rodada !== CENA.rodada) return;
+            if (umaSo) { CENA.tocando = false; CENA.i = k + 1; botao(); return; }
+            setTimeout(function () { passo(k + 1); }, 350);
+          };
+          playLine(NAT + f.en, v, function () {
+            if (!CENA.tocando || rodada !== CENA.rodada) return;
+            if (CENA.modo === 'enpt') { playLine('~pt~ ' + f.pt, v, depois); return; }
+            if (CENA.modo === 'repetir' && SR) {
+              l.parts.res.replaceChildren(el('span', 'small muted', 'Sua vez…'));
+              listen(el('button'), function () {}, function (alts) {
+                if (!CENA.tocando || rodada !== CENA.rodada) return;
+                if (alts.length) { var b = melhorTentativa(f.en, alts); l.parts.res.replaceChildren.apply(l.parts.res, b.sc.map(function (x) { return el('span', x.ok ? 'w-ok' : 'w-bad', x.w); })); }
+                else l.parts.res.replaceChildren(el('span', 'small muted', 'Não ouvi.'));
+                depois();
+              });
+              return;
+            }
+            depois();
+          });
+        })(i);
+      });
+    }
+    pintar(); botao();
+    return t;
+  }
+
   /* ---------- Aula falada: daily spoken course with recap gate ---------- */
   var CUR = { est: null, parar: false, rodando: false };
   function curVozes() { var vt = vozTutor(); return { en: vt, pt: vt === 'feminina' ? 'masculina' : 'feminina' }; }
