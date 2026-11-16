@@ -334,6 +334,8 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
 .shd-st { text-align: center }
 .ponto { gap: 8px }
 .ex-lista { display: grid; gap: 6px }
+.serie-passos { margin: 0; padding-left: 20px; display: grid; gap: 4px }
+.serie-it { display: grid; gap: 2px; padding: 8px 0; border-top: 1px solid var(--line) } .serie-it p { margin: 0 } .serie-it a { justify-self: start }
 .ex-it summary { padding: 8px 0; cursor: pointer }
 .avt-wrap { width: min(210px, 60vw); aspect-ratio: 1; justify-self: center; cursor: pointer; transition: transform .2s }
 .avt-wrap.fala { transform: scale(1.03) }
@@ -472,6 +474,18 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
         <p class="small muted">As frases das unidades e da trilha Fé, para ouvir, gravar a sua voz e comparar com a do nativo.</p>
         <label class="f" for="exUnid">Unidade<select id="exUnid"></select></label>
         <div id="exLista" class="ex-lista"></div>
+      </div>
+      <div class="task" id="serieBox">
+        <h2>Séries e filmes</h2>
+        <p class="small muted">Uma cena de 2 a 5 minutos por semana, em três passadas:</p>
+        <ol class="serie-passos">
+          <li><b>Com legenda em português</b>, para entender a história.</li>
+          <li><b>Com legenda em inglês</b>, pausando a cada fala e repetindo em voz alta, no mesmo ritmo.</li>
+          <li><b>Sem legenda</b>, no fim da semana: a cena tem que fazer sentido sem nada.</li>
+        </ol>
+        <p class="small muted">Anote 3 a 5 frases que você usaria no trabalho ou em casa e cadastre em Minhas frases: elas entram na recapitulação.</p>
+        <div id="serieLista" class="stack"></div>
+        <button class="btn ghost" id="serieFrase" type="button">Cadastrar uma frase da cena</button>
       </div>
     </section>
 
@@ -2052,9 +2066,45 @@ details.conv summary { cursor: pointer; font-weight: 700; color: var(--accent); 
     });
   }
 
+
+  var SERIES = [
+    ['A1', 'Primeiros passos', [
+      ['Todo Mundo Odeia o Chris', 'Everybody Hates Chris', 'Família e escola; o narrador fala claro. Episódios de 20 min.'],
+      ['The Office (EUA)', 'The Office', 'Escritório: reunião, chefe, metas e planilha. Falas curtas e muito vocabulário de trabalho.'],
+      ['Shark Tank', 'Shark Tank pitch', 'Empreendedores apresentam o negócio em minutos: faturamento, margem e valuation. Modelo para o seu pitch.'],
+      ['Shrek', 'Shrek', 'Para assistir juntos, com legenda em português no começo; o Burro fala muito rápido.']]],
+    ['A2', 'Básico', [
+      ['Eu, a Patroa e as Crianças', 'My Wife and Kids', 'Casal e filhos: conversa do dia a dia em casa.'],
+      ['Moneyball', 'Moneyball', 'Um gestor decide com dados e pouco orçamento: a lógica da Controladoria.'],
+      ['Friends', 'Friends', 'O clássico do inglês do dia a dia; falam rápido.']]],
+    ['B1', 'Intermediário', [
+      ['Suits', 'Suits', 'Advocacia e negócios em Nova York: contratos, negociação, fusões. Bom para assistir em casal.'],
+      ['The Big Short', 'The Big Short', 'A crise de 2008 com balanço, risco e crédito.']]],
+    ['B2', 'Avançado', [
+      ['Margin Call', 'Margin Call', 'Uma noite de diretoria dentro de um banco discutindo risco e exposição.'],
+      ['Billions e Succession', 'Succession board meeting', 'Mercado financeiro e conselho de administração; inglês rápido e com gíria.']]]
+  ];
+  function renderSeries() {
+    var box = $('serieLista'); if (!box || box.childNodes.length) return;
+    var nv = (S && S.eu && S.eu.nivel) || 'A1', ordem = ['A1', 'A2', 'B1', 'B2'], meu = ordem.indexOf(nv);
+    SERIES.forEach(function (g) {
+      var d = el('details', 'conv'), sm = el('summary'); if (ordem.indexOf(g[0]) <= Math.max(0, meu)) d.open = ordem.indexOf(g[0]) === Math.max(0, meu);
+      sm.append(el('b', null, g[0] + ' · ' + g[1]), el('span', 'small muted', ordem.indexOf(g[0]) === meu ? '  ← sua fase' : ''));
+      d.append(sm);
+      g[2].forEach(function (s) {
+        var it = el('div', 'serie-it'); it.append(el('b', null, s[0]), el('p', 'small', s[2]));
+        var a = el('a', 'linkbtn', 'Ver cenas curtas no YouTube'); a.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(s[1] + ' scene english subtitles'); a.target = '_blank'; a.rel = 'noopener';
+        it.append(a); d.append(it);
+      });
+      box.append(d);
+    });
+    $('serieFrase').onclick = function () { show('frases'); setTimeout(function () { var i = document.querySelector('#v-frases textarea, #v-frases input[type=text]'); if (i) i.focus(); }, 200); };
+  }
+
   /* =================== EXTRAS: units as shadowing lists =================== */
   var EX = { unid: null };
   function renderExtras() {
+    renderSeries();
     var L = sonsList(), sel = $('exUnid');
     if (!sel.options.length) {
       var g1 = el('optgroup'), g2 = el('optgroup'); g1.label = 'Fala ligada'; g2.label = 'Fé e Bíblia';
